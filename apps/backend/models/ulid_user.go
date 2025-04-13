@@ -12,7 +12,7 @@ type UserUlid struct {
 
 // TableName sets the table name for UserDTO to "users".
 func (UserUlid) TableName() string {
-	return "user_ulid"
+	return "users_ulid"
 }
 
 func InputToDTO(userCreate UserInput) *UserUlid {
