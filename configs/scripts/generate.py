@@ -2,14 +2,20 @@
 import os
 from pathlib import Path
 import psycopg2
-from ulid import ULID
 import random
 from faker import Faker
 from dotenv import load_dotenv
 
+# Ids
+from ulid import ULID
+from ksuid import Ksuid
+from uuid import uuid4
+from nanoid import generate
+from cuid2 import cuid
+from snowflake import SnowflakeGenerator
+
 # Initialize Faker
 fake = Faker()
-ulid = ULID()
 
 # Example departments list
 departments = [
@@ -37,10 +43,10 @@ def get_db_connection():
     )
     return conn
 
-def create_users_table(conn):
+def create_users_table(conn, table_name):
     with conn.cursor() as cur:
-        cur.execute("""
-            CREATE TABLE IF NOT EXISTS USERS (
+        cur.execute(f"""
+            CREATE {table_name} IF NOT EXISTS USERS (
                 ID varchar(26) NOT NULL,
                 HASH VARCHAR(64) NOT NULL,
                 USER_NAME VARCHAR(50) NOT NULL,
@@ -56,9 +62,7 @@ def create_users_table(conn):
         conn.commit()
         print("USERS table created (or already exists).")
 
-def generate_fake_user():
-    # Generate fake user data using Faker and Python's uuid
-    user_id = str(ulid.generate())
+def generate_fake_user(id):
     # Generate a random 64-character hex string (32 bytes * 2 hex digits each)
     hash_value = os.urandom(32).hex()
     user_name = fake.user_name()[:50]
@@ -67,24 +71,27 @@ def generate_fake_user():
     email = fake.email()[:255]
     # Example: random user status letter; adjust choices as needed.
     department = random.choice(departments)
-    return (user_id, hash_value, user_name, first_name, last_name, email, department)
+    return (id, hash_value, user_name, first_name, last_name, email, department)
 
-def insert_fake_users(conn, num_records):
+def insert_fake_users(conn, id, tables, num_records):
     with conn.cursor() as cur:
         for _ in range(num_records):
-            user_data = generate_fake_user()
-            cur.execute("""
-                INSERT INTO users (id, HASH, USER_NAME, FIRST_NAME, LAST_NAME, EMAIL, DEPARTMENT)
+            user_data = generate_fake_user(id())
+            cur.execute(f"""
+                INSERT INTO {tables} (id, HASH, USER_NAME, FIRST_NAME, LAST_NAME, EMAIL, DEPARTMENT)
                 VALUES (%s, %s, %s, %s, %s, %s, %s);
             """, user_data)
         conn.commit()
         print(f"Inserted {num_records} fake user records.")
 
 def main():
-    num_records = 300  # Adjust the number of records you want to generate
+    num_records = 1_000_000  # Adjust the number of records you want to genera
     conn = get_db_connection()
     try:
-        insert_fake_users(conn, num_records)
+        ids = [(ULID, "UserUlid"), (uuid4, "UserUuid4"), (Ksuid, "UserKsuid"), (generate, "UserNanoid"), (cuid, "UserCuid"), (SnowflakeGenerator(), "UserSnowflake")]
+        for id, table in ids:
+            create_users_table(conn, table)
+            insert_fake_users(conn, id, table, num_records)
     finally:
         conn.close()
 
