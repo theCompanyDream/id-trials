@@ -11,22 +11,35 @@ import (
 )
 
 // GetUser retrieves a user by its HASH column.
+<<<<<<< HEAD
 func GetUser(Id string) (*model.UserDTO, error) {
 	var user model.UserDTO
 	// Ensure the table name is correctly referenced (if needed, use Table("users"))
 	if err := db.Table("users").Where("ID = ?", Id).First(&user).Error; err != nil {
+=======
+func GetUser(hashId string) (*model.UserUlid, error) {
+	var user model.UserUlid
+	// Ensure the table name is correctly referenced (if needed, use Table("users"))
+	if err := db.Table("users").Where("id = ?", hashId).First(&user).Error; err != nil {
+>>>>>>> caa74c2 (feat: we updated tables that look better now)
 		return nil, err
 	}
 	return &user, nil
 }
 
 // GetUsers retrieves a page of users that match a search criteria.
+<<<<<<< HEAD
 func GetUsers(search string, page, limit int, c echo.Context) (*model.UserDTOPaging, error) {
 	var users []model.UserDTO
+=======
+func GetUsers(search string, page, limit int, c echo.Context) (*model.UserPaging, error) {
+	var users []model.UserUlid
+	var userInput []model.UserInput
+>>>>>>> caa74c2 (feat: we updated tables that look better now)
 	var totalCount int64
 
 	// Use db.Model instead of db.Table
-	query := db.Model(&model.UserDTO{})
+	query := db.Model(&model.UserUlid{})
 
 	if search != "" {
 		likeSearch := "%" + search + "%"
@@ -67,7 +80,7 @@ func GetUsers(search string, page, limit int, c echo.Context) (*model.UserDTOPag
 }
 
 // CreateUser creates a new user record.
-func CreateUser(requestedUser model.UserDTO) (*model.UserDTO, error) {
+func CreateUser(requestedUser model.UserUlid) (*model.UserUlid, error) {
 	// Generate a new UUID for the user.
 	id := ulid.Make()
 	requestedUser.ID = id.String()
@@ -80,8 +93,8 @@ func CreateUser(requestedUser model.UserDTO) (*model.UserDTO, error) {
 }
 
 // UpdateUser updates an existing user's details.
-func UpdateUser(requestedUser model.UserDTO) (*model.UserDTO, error) {
-	var user model.UserDTO
+func UpdateUser(requestedUser model.UserUlid) (*model.UserUlid, error) {
+	var user model.UserUlid
 	// Retrieve the user to be updated by its HASH.
 	if err := db.Table("users").Where("ID LIKE ?", requestedUser.ID).First(&user).Error; err != nil {
 		return nil, err
@@ -105,12 +118,12 @@ func UpdateUser(requestedUser model.UserDTO) (*model.UserDTO, error) {
 	}
 
 	// Update the record in the USERS table.
-	if err := db.Table("users").Where("ID = ?", user.ID).Updates(user).Error; err != nil {
+	if err := db.Table("users").Where("id = ?", user.ID).Updates(user).Error; err != nil {
 		return nil, err
 	}
 
 	// Optionally, re-fetch the updated record.
-	if err := db.Table("users").Where("ID = ?", user.ID).First(&user).Error; err != nil {
+	if err := db.Table("users").Where("id = ?", user.ID).First(&user).Error; err != nil {
 		return nil, err
 	}
 	return &user, nil
@@ -118,7 +131,11 @@ func UpdateUser(requestedUser model.UserDTO) (*model.UserDTO, error) {
 
 // DeleteUser removes a user record based on its HASH.
 func DeleteUser(id string) error {
+<<<<<<< HEAD
 	if err := db.Table("users").Where("ID = ?", id).Delete(&model.UserDTO{}).Error; err != nil {
+=======
+	if err := db.Table("users").Where("id = ?", id).Delete(&model.UserUlid{}).Error; err != nil {
+>>>>>>> caa74c2 (feat: we updated tables that look better now)
 		return err
 	}
 	return nil

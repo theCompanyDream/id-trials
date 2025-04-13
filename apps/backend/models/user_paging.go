@@ -13,7 +13,7 @@ type Paging struct {
 
 // UserDTOPaging defines the structure for user pagination which includes the users and pagination details
 // @Description UserDTOPaging
-type UserDTOPaging struct {
+type UserPaging struct {
 	Paging // Embedded Paging struct
 	// A list of users
 	Users []UserDTO `json:"users"`
