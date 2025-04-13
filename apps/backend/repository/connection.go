@@ -50,7 +50,13 @@ func InitDB() error {
 	}
 
 	// Auto migrate with more detailed error handling
-	if err := db.AutoMigrate(&model.UserDTO{}); err != nil {
+	if err := db.AutoMigrate(
+		&model.UserUlid{},
+		&model.UserCUID{},
+		&model.UserKSUID{},
+		&model.UserNanoID{},
+		&model.UserSnowflake{},
+		&model.UserUUID{}); err != nil {
 		// Log the error as a warning and continue
 		fmt.Printf("Warning: Failed to auto migrate: %v", err)
 	}
