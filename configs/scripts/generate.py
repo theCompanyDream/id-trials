@@ -50,12 +50,19 @@ async def get_db_connection():
     conn = await asyncpg.connect(conn_str)
     return conn
 
+
+def generate_unique_email(unique_id, first_name):
+    # Use Faker for a realistic name and append the unique ID to ensure uniqueness.
+    name = first_name.lower()
+    domain = fake.free_email_domain()
+    return f"{name}{unique_id}@{domain}"
+
 def generate_fake_user(id):
     # Generate fake user data using Faker.
     user_name = fake.user_name()[:50]
     first_name = fake.first_name()[:255]
     last_name = fake.last_name()[:255]
-    email = fake.email()[:255]
+    email = generate_unique_email(id, first_name)
     department = random.choice(departments)
     # Return a tuple corresponding to the table columns.
     return (id, user_name, first_name, last_name, email, department)
@@ -66,9 +73,10 @@ async def insert_fake_users(conn, table, num_records):
         user_data = None
         if table == "users_ulid":
             # ULID expects an integer timestamp in milliseconds.
-            ts = int(time.time() * 1000)
-            id = ULID().encode_timestamp(ts)
-            user_data = generate_fake_user(str(id))
+            ulid = ULID()
+            id = str(ulid)
+            print(f"Generated ULID: {str(id)} length: {len(id)}")
+            user_data = generate_fake_user(id)
         elif table == "users_uuid":
             id = uuid4()
             user_data = generate_fake_user(str(id))
@@ -101,7 +109,7 @@ async def insert_fake_users(conn, table, num_records):
     print(f"Inserted {num_records} fake user records into table {table}.")
 
 async def main():
-    num_records = 10  # Adjust the number of records as needed.
+    num_records = 1_000_000  # Adjust the number of records as needed.
     conn = await get_db_connection()
     try:
         tables = [
