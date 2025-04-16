@@ -15,7 +15,7 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/user": {
+        "/cuid": {
             "post": {
                 "description": "Create a new user with the provided information",
                 "consumes": [
@@ -35,7 +35,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.UserCreate"
+                            "$ref": "#/definitions/models.UserInput"
                         }
                     }
                 ],
@@ -43,7 +43,7 @@ const docTemplate = `{
                     "201": {
                         "description": "User Created",
                         "schema": {
-                            "$ref": "#/definitions/models.UserDTO"
+                            "$ref": "#/definitions/models.UserInput"
                         }
                     },
                     "400": {
@@ -55,7 +55,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/user/{id}": {
+        "/cuid/{id}": {
             "get": {
                 "description": "Get a user by their ID or username",
                 "consumes": [
@@ -86,7 +86,7 @@ const docTemplate = `{
                     "302": {
                         "description": "User Found",
                         "schema": {
-                            "$ref": "#/definitions/models.UserDTO"
+                            "$ref": "#/definitions/models.UserInput"
                         }
                     },
                     "400": {
@@ -123,7 +123,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.UserUpdate"
+                            "$ref": "#/definitions/models.UserInput"
                         }
                     }
                 ],
@@ -131,7 +131,7 @@ const docTemplate = `{
                     "200": {
                         "description": "User Updated",
                         "schema": {
-                            "$ref": "#/definitions/models.UserDTO"
+                            "$ref": "#/definitions/models.UserInput"
                         }
                     },
                     "400": {
@@ -179,7 +179,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/users": {
+        "/cuids": {
             "get": {
                 "description": "Get a list of users, with optional search, pagination, and limit",
                 "consumes": [
@@ -218,7 +218,781 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/models.UserDTOPaging"
+                                "$ref": "#/definitions/models.UserPaging"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "/ksuid": {
+            "post": {
+                "description": "Create a new user with the provided information",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "Create a user",
+                "parameters": [
+                    {
+                        "description": "User object",
+                        "name": "user",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.UserInput"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "User Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.UserInput"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "/ksuid/{id}": {
+            "get": {
+                "description": "Get a user by their ID or username",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "Get a single user",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User ID",
+                        "name": "id",
+                        "in": "path"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Username",
+                        "name": "user_name",
+                        "in": "path"
+                    }
+                ],
+                "responses": {
+                    "302": {
+                        "description": "User Found",
+                        "schema": {
+                            "$ref": "#/definitions/models.UserInput"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Delete a user by their ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "Delete a user",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "User Deleted",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "/ksuids": {
+            "get": {
+                "description": "Get a list of users, with optional search, pagination, and limit",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "Get multiple users",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Term",
+                        "name": "search",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Limit",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page Number",
+                        "name": "page",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "302": {
+                        "description": "Users Found",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.UserPaging"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "/nano": {
+            "post": {
+                "description": "Create a new user with the provided information",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "Create a user",
+                "parameters": [
+                    {
+                        "description": "User object",
+                        "name": "user",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.UserInput"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "User Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.UserInput"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "/nano/{id}": {
+            "get": {
+                "description": "Get a user by their ID or username",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "Get a single user",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User ID",
+                        "name": "id",
+                        "in": "path"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Username",
+                        "name": "user_name",
+                        "in": "path"
+                    }
+                ],
+                "responses": {
+                    "302": {
+                        "description": "User Found",
+                        "schema": {
+                            "$ref": "#/definitions/models.UserInput"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Delete a user by their ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "Delete a user",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "User Deleted",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "/nanos": {
+            "get": {
+                "description": "Get a list of users, with optional search, pagination, and limit",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "Get multiple users",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Term",
+                        "name": "search",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Limit",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page Number",
+                        "name": "page",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "302": {
+                        "description": "Users Found",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.UserPaging"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "/ulid": {
+            "get": {
+                "description": "Get a list of users, with optional search, pagination, and limit",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "Get multiple users",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Term",
+                        "name": "search",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Limit",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page Number",
+                        "name": "page",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "302": {
+                        "description": "Users Found",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.UserPaging"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Create a new user with the provided information",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "Create a user",
+                "parameters": [
+                    {
+                        "description": "User object",
+                        "name": "user",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.UserInput"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "User Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.UserInput"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "/ulid/{id}": {
+            "get": {
+                "description": "Get a user by their ID or username",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "Get a single user",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User ID",
+                        "name": "id",
+                        "in": "path"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Username",
+                        "name": "user_name",
+                        "in": "path"
+                    }
+                ],
+                "responses": {
+                    "302": {
+                        "description": "User Found",
+                        "schema": {
+                            "$ref": "#/definitions/models.UserInput"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "Update a user's information by their ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "Update a user",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "User object",
+                        "name": "user",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.UserInput"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "User Updated",
+                        "schema": {
+                            "$ref": "#/definitions/models.UserInput"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Delete a user by their ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "Delete a user",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "User Deleted",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "/user/{id}": {
+            "put": {
+                "description": "Update a user's information by their ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "Update a user",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "User object",
+                        "name": "user",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.UserInput"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "User Updated",
+                        "schema": {
+                            "$ref": "#/definitions/models.UserInput"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "/uuid4": {
+            "post": {
+                "description": "Create a new user with the provided information",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "Create a user",
+                "parameters": [
+                    {
+                        "description": "User object",
+                        "name": "user",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.UserInput"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "User Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.UserInput"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "/uuid4/{id}": {
+            "get": {
+                "description": "Get a user by their ID or username",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "Get a single user",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User ID",
+                        "name": "id",
+                        "in": "path"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Username",
+                        "name": "user_name",
+                        "in": "path"
+                    }
+                ],
+                "responses": {
+                    "302": {
+                        "description": "User Found",
+                        "schema": {
+                            "$ref": "#/definitions/models.UserInput"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Delete a user by their ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "Delete a user",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "User Deleted",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "/uuid4s": {
+            "get": {
+                "description": "Get a list of users, with optional search, pagination, and limit",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "Get multiple users",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search Term",
+                        "name": "search",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Limit",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page Number",
+                        "name": "page",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "302": {
+                        "description": "Users Found",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.UserPaging"
                             }
                         }
                     },
@@ -233,102 +1007,52 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "models.UserCreate": {
-            "description": "User object contains user information.",
+        "models.UserInput": {
             "type": "object",
-            "required": [
-                "email",
-                "first_name",
-                "last_name",
-                "user_name",
-                "user_status"
-            ],
             "properties": {
                 "department": {
-                    "description": "Department is the user's department, can be null",
+                    "description": "Department is optional.",
                     "type": "string"
                 },
                 "email": {
-                    "description": "Email is the user's email address, required, must be a valid email format",
+                    "description": "Email is required when creating a new user.",
                     "type": "string",
                     "maxLength": 255
                 },
                 "first_name": {
-                    "description": "FirstName is the user's first name, required, between 5 and 50 characters",
+                    "description": "FirstName is required when creating a new user.",
                     "type": "string",
                     "maxLength": 255,
                     "minLength": 3
                 },
                 "id": {
-                    "description": "HashId is the public identifier for the user",
+                    "description": "HashId is the public identifier for the user (UUID).\nFor create operations, this might be generated internally.",
                     "type": "string"
                 },
                 "last_name": {
-                    "description": "LastName is the user's last name, required, between 5 and 50 characters",
+                    "description": "LastName is required when creating a new user.",
                     "type": "string",
                     "maxLength": 255,
                     "minLength": 3
                 },
                 "user_name": {
-                    "description": "UserName is the user's username, required, between 5 and 50 characters",
+                    "description": "UserName is required when creating a new user.",
                     "type": "string",
                     "maxLength": 50,
                     "minLength": 5
-                },
-                "user_status": {
-                    "description": "UserStatus is the user's status, required, must be exactly 1 character and contain \"IAT\"",
-                    "type": "string",
-                    "enum": [
-                        "I",
-                        "A",
-                        "T"
-                    ]
                 }
             }
         },
-        "models.UserDTO": {
-            "type": "object",
-            "properties": {
-                "department": {
-                    "description": "Department is the user's department, can be null",
-                    "type": "string"
-                },
-                "email": {
-                    "description": "Email is the user's email address, must be a valid email format",
-                    "type": "string"
-                },
-                "first_name": {
-                    "description": "FirstName is the user's first name, between 5 and 50 characters",
-                    "type": "string"
-                },
-                "id": {
-                    "description": "HashId is the public identifier for the user",
-                    "type": "string"
-                },
-                "last_name": {
-                    "description": "LastName is the user's last name, between 5 and 50 characters",
-                    "type": "string"
-                },
-                "user_name": {
-                    "description": "UserName is the user's username, between 5 and 50 characters",
-                    "type": "string"
-                },
-                "user_status": {
-                    "description": "UserStatus is the user's status, must be exactly 1 character and contain \"IAT\"",
-                    "type": "string"
-                }
-            }
-        },
-        "models.UserDTOPaging": {
+        "models.UserPaging": {
             "description": "UserDTOPaging",
             "type": "object",
             "properties": {
-                "length": {
-                    "description": "The total number of items available",
-                    "type": "integer"
-                },
                 "page": {
                     "description": "The current page number",
+                    "type": "integer"
+                },
+                "page_count": {
+                    "description": "The total number of items available",
                     "type": "integer"
                 },
                 "page_size": {
@@ -339,53 +1063,8 @@ const docTemplate = `{
                     "description": "A list of users",
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.UserDTO"
+                        "$ref": "#/definitions/models.UserInput"
                     }
-                }
-            }
-        },
-        "models.UserUpdate": {
-            "type": "object",
-            "properties": {
-                "department": {
-                    "description": "Department is the user's department, can be null",
-                    "type": "string"
-                },
-                "email": {
-                    "description": "Email is the user's email address, must be a valid email format",
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "first_name": {
-                    "description": "FirstName is the user's first name, between 5 and 50 characters",
-                    "type": "string",
-                    "maxLength": 255,
-                    "minLength": 3
-                },
-                "id": {
-                    "description": "HashId is the public identifier for the user",
-                    "type": "string"
-                },
-                "last_name": {
-                    "description": "LastName is the user's last name, between 5 and 50 characters",
-                    "type": "string",
-                    "maxLength": 255,
-                    "minLength": 3
-                },
-                "user_name": {
-                    "description": "UserName is the user's username, between 5 and 50 characters",
-                    "type": "string",
-                    "maxLength": 50,
-                    "minLength": 5
-                },
-                "user_status": {
-                    "description": "UserStatus is the user's status, must be exactly 1 character and contain \"IAT\"",
-                    "type": "string",
-                    "enum": [
-                        "I",
-                        "A",
-                        "T"
-                    ]
                 }
             }
         }
