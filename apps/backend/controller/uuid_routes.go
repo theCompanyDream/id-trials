@@ -7,20 +7,20 @@ import (
 
 	"github.com/go-playground/validator/v10"
 	"github.com/labstack/echo/v4"
-	model "github.com/theCompanyDream/id-trials/apps/backend/models"
-	db "github.com/theCompanyDream/id-trials/apps/backend/repository"
+	model "github.com/theCompanyDream/user-table/apps/backend/models"
+	repo "github.com/theCompanyDream/user-table/apps/backend/repository"
 	"gorm.io/gorm"
 )
 
-type UsersUlidControllers struct {
-	repo db.GormUlidRepository
+type UuidUsersController struct {
+	repo *repo.GormUuidRepository
 }
 
-func NewGormUserRepository(repo *gorm.DB) UsersUlidControllers {
-	repository := db.NewGormUlidRepository(repo)
+func NewGormUuidController(db *gorm.DB) UuidUsersController {
+	repository := repo.NewGormUuidRepository(db)
 
-	return UsersUlidControllers{
-		repo: *repository,
+	return UuidUsersController{
+		repo: repository,
 	}
 }
 
@@ -32,10 +32,10 @@ func NewGormUserRepository(repo *gorm.DB) UsersUlidControllers {
 // @Produce json
 // @Param id path string false "User ID"
 // @Param user_name path string false "Username"
-// @Success 302 {object} models.UserUlid "User Found"
+// @Success 302 {object} models.UserInput "User Found"
 // @Failure 400 {object} object "Bad Request"
-// @Router /user/{id} [get]
-func (uuc *UsersUlidControllers) GetUser(c echo.Context) error {
+// @Router /uuid4/{id} [get]
+func (uuc *UuidUsersController) GetUser(c echo.Context) error {
 	// Extract the user ID from the URL and query the database
 	id := c.Param("id")
 	if id == "" {
@@ -57,10 +57,10 @@ func (uuc *UsersUlidControllers) GetUser(c echo.Context) error {
 // @Param search query string false "Search Term"
 // @Param limit query int false "Limit"
 // @Param page query int false "Page Number"
-// @Success 302 {object} []models.UserUlidPaging "Users Found"
+// @Success 302 {object} []models.UserPaging "Users Found"
 // @Failure 400 {object} object "Bad Request"
-// @Router /users [get]
-func (uuc *UsersUlidControllers) GetUsers(c echo.Context) error {
+// @Router /uuid4s [get]
+func (uuc *UuidUsersController) GetUsers(c echo.Context) error {
 	// Extract the user ID from the URL and query the database
 	var page, limit int
 	search := c.QueryParam("search")
@@ -91,10 +91,10 @@ func (uuc *UsersUlidControllers) GetUsers(c echo.Context) error {
 // @Accept json
 // @Produce json
 // @Param user body models.UserInput true "User object"
-// @Success 201 {object} models.UserUlid "User Created"
+// @Success 201 {object} models.UserInput "User Created"
 // @Failure 400 {object} object "Bad Request"
-// @Router /user [post]
-func (uuc *UsersUlidControllers) CreateUser(c echo.Context) error {
+// @Router /uuid4 [post]
+func (uuc *UuidUsersController) CreateUser(c echo.Context) error {
 	// Parse user details from the request body and insert into the database
 	request := model.UserInput{}
 	err := c.Bind(&request)
@@ -106,7 +106,7 @@ func (uuc *UsersUlidControllers) CreateUser(c echo.Context) error {
 		validationErrors := err.(validator.ValidationErrors)
 		return c.JSON(http.StatusUnprocessableEntity, validationErrorsToMap(validationErrors))
 	}
-	dto := model.InputToDTO(request)
+	dto := model.InputToUUID(request)
 	user, error := uuc.repo.CreateUser(*dto)
 	if error != nil {
 		return error
@@ -122,10 +122,10 @@ func (uuc *UsersUlidControllers) CreateUser(c echo.Context) error {
 // @Produce json
 // @Param id path string true "User ID"
 // @Param user body models.UserInput true "User object"
-// @Success 200 {object} models.UserUlid "User Updated"
+// @Success 200 {object} models.UserInput "User Updated"
 // @Failure 400 {object} object "Bad Request"
 // @Router /user/{id} [put]
-func (uuc *UsersUlidControllers) UpdateUser(c echo.Context) error {
+func (uuc *UuidUsersController) UpdateUser(c echo.Context) error {
 	// Parse user details from the request body and insert into the database
 	// request := checkConstraints(c)
 	request := model.UserInput{}
@@ -141,7 +141,7 @@ func (uuc *UsersUlidControllers) UpdateUser(c echo.Context) error {
 	if id := c.Param("id"); id != "" {
 		request.Id = &id
 	}
-	dto := model.InputToDTO(request)
+	dto := model.InputToUUID(request)
 	user, error := uuc.repo.UpdateUser(*dto)
 	if error != nil {
 		return error
@@ -158,8 +158,8 @@ func (uuc *UsersUlidControllers) UpdateUser(c echo.Context) error {
 // @Param id path string true "User ID"
 // @Success 200 {string} string "User Deleted"
 // @Failure 400 {object} object "Bad Request"
-// @Router /user/{id} [delete]
-func (uuc *UsersUlidControllers) DeleteUser(c echo.Context) error {
+// @Router /uuid4/{id} [delete]
+func (uuc *UuidUsersController) DeleteUser(c echo.Context) error {
 	// Parse user details from the request body and insert into the database
 	id := c.Param("id")
 	if id == "" {

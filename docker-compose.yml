@@ -31,8 +31,7 @@ services:
     ports:
       - 5432:5432
     volumes:
-      # - ./.db-data:/var/lib/postgresql/data
-      - ./configs/scripts:/docker-entrypoint-initdb.d:rwx
+      - postgres_data:/var/lib/postgresql/data
     environment:
       # Beware of special characters in password that can be interpreted by shell
       POSTGRES_DB: ${DATABASE_NAME}
@@ -72,3 +71,6 @@ services:
       - ./apps/frontend/public:/opt/app/public
     networks:
       - app-nework
+
+volumes:
+  postgres_data:
