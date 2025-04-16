@@ -5,41 +5,41 @@ import (
 	"math"
 
 	"github.com/labstack/echo/v4"
-	"github.com/oklog/ulid/v2"
+	"github.com/segmentio/ksuid"
+	"gorm.io/gorm"
 
-	model "github.com/theCompanyDream/id-trials/apps/backend/models"
+	model "github.com/theCompanyDream/user-table/apps/backend/models"
 )
 
+type GormNanoIdRepository struct {
+	DB *gorm.DB
+}
+
+// NewGormNanoIdRepository creates a new instance of GormNanoIdRepository.
+func NewGormNanoIdRepository(repo *gorm.DB) *GormNanoIdRepository {
+	return &GormNanoIdRepository{
+		DB: repo,
+	}
+}
+
 // GetUser retrieves a user by its HASH column.
-<<<<<<< HEAD
-func GetUser(Id string) (*model.UserDTO, error) {
-	var user model.UserDTO
+func (uc *GormNanoIdRepository) GetUser(hashId string) (*model.UserNanoID, error) {
+	var user model.UserNanoID
 	// Ensure the table name is correctly referenced (if needed, use Table("users"))
-	if err := db.Table("users").Where("ID = ?", Id).First(&user).Error; err != nil {
-=======
-func GetUser(hashId string) (*model.UserUlid, error) {
-	var user model.UserUlid
-	// Ensure the table name is correctly referenced (if needed, use Table("users"))
-	if err := db.Table("users").Where("id = ?", hashId).First(&user).Error; err != nil {
->>>>>>> caa74c2 (feat: we updated tables that look better now)
+	if err := uc.DB.Table("users").Where("id = ?", hashId).First(&user).Error; err != nil {
 		return nil, err
 	}
 	return &user, nil
 }
 
 // GetUsers retrieves a page of users that match a search criteria.
-<<<<<<< HEAD
-func GetUsers(search string, page, limit int, c echo.Context) (*model.UserDTOPaging, error) {
-	var users []model.UserDTO
-=======
-func GetUsers(search string, page, limit int, c echo.Context) (*model.UserPaging, error) {
-	var users []model.UserUlid
+func (uc *GormNanoIdRepository) GetUsers(search string, page, limit int, c echo.Context) (*model.UserPaging, error) {
+	var users []model.UserNanoID
 	var userInput []model.UserInput
->>>>>>> caa74c2 (feat: we updated tables that look better now)
 	var totalCount int64
 
 	// Use db.Model instead of db.Table
-	query := db.Model(&model.UserUlid{})
+	query := uc.DB.Model(&model.UserNanoID{})
 
 	if search != "" {
 		likeSearch := "%" + search + "%"
@@ -73,30 +73,43 @@ func GetUsers(search string, page, limit int, c echo.Context) (*model.UserPaging
 		PageSize:  &limit,
 	}
 
-	return &model.UserDTOPaging{
+	userInput = make([]model.UserInput, 0, len(users))
+	// Correct loop to iterate through users
+	for _, user := range users { // Use index and value pattern
+		userInput = append(userInput, model.UserInput{
+			Id:         &user.ID,        // Use the value, not the index
+			UserName:   &user.UserName,  // Use the value, not the index
+			FirstName:  &user.FirstName, // Use the value, not the index
+			LastName:   &user.LastName,  // Use the value, not the index
+			Email:      &user.Email,     // Use the value, not the index
+			Department: user.Department, // Use the value, not the index
+		})
+	}
+
+	return &model.UserPaging{
 		Paging: paging,
-		Users:  users,
+		Users:  userInput,
 	}, nil
 }
 
 // CreateUser creates a new user record.
-func CreateUser(requestedUser model.UserUlid) (*model.UserUlid, error) {
+func (uc *GormNanoIdRepository) CreateUser(requestedUser model.UserNanoID) (*model.UserNanoID, error) {
 	// Generate a new UUID for the user.
-	id := ulid.Make()
+	id := ksuid.New()
 	requestedUser.ID = id.String()
 
 	// Insert the record into the USERS table.
-	if err := db.Table("users").Create(&requestedUser).Error; err != nil {
+	if err := uc.DB.Table("users").Create(&requestedUser).Error; err != nil {
 		return nil, err
 	}
 	return &requestedUser, nil
 }
 
 // UpdateUser updates an existing user's details.
-func UpdateUser(requestedUser model.UserUlid) (*model.UserUlid, error) {
-	var user model.UserUlid
+func (uc *GormNanoIdRepository) UpdateUser(requestedUser model.UserNanoID) (*model.UserNanoID, error) {
+	var user model.UserNanoID
 	// Retrieve the user to be updated by its HASH.
-	if err := db.Table("users").Where("ID LIKE ?", requestedUser.ID).First(&user).Error; err != nil {
+	if err := uc.DB.Table("users").Where("id LIKE ?", requestedUser.ID).First(&user).Error; err != nil {
 		return nil, err
 	}
 	if user.ID == "" {
@@ -118,24 +131,20 @@ func UpdateUser(requestedUser model.UserUlid) (*model.UserUlid, error) {
 	}
 
 	// Update the record in the USERS table.
-	if err := db.Table("users").Where("id = ?", user.ID).Updates(user).Error; err != nil {
+	if err := uc.DB.Table("users").Where("id = ?", user.ID).Updates(user).Error; err != nil {
 		return nil, err
 	}
 
 	// Optionally, re-fetch the updated record.
-	if err := db.Table("users").Where("id = ?", user.ID).First(&user).Error; err != nil {
+	if err := uc.DB.Table("users").Where("id = ?", user.ID).First(&user).Error; err != nil {
 		return nil, err
 	}
 	return &user, nil
 }
 
 // DeleteUser removes a user record based on its HASH.
-func DeleteUser(id string) error {
-<<<<<<< HEAD
-	if err := db.Table("users").Where("ID = ?", id).Delete(&model.UserDTO{}).Error; err != nil {
-=======
-	if err := db.Table("users").Where("id = ?", id).Delete(&model.UserUlid{}).Error; err != nil {
->>>>>>> caa74c2 (feat: we updated tables that look better now)
+func (uc *GormNanoIdRepository) DeleteUser(id string) error {
+	if err := uc.DB.Table("users").Where("id = ?", id).Delete(&model.UserNanoID{}).Error; err != nil {
 		return err
 	}
 	return nil

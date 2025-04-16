@@ -9,7 +9,20 @@ import (
 	"github.com/labstack/echo/v4"
 	model "github.com/theCompanyDream/id-trials/apps/backend/models"
 	db "github.com/theCompanyDream/id-trials/apps/backend/repository"
+	"gorm.io/gorm"
 )
+
+type UsersUlidControllers struct {
+	repo db.GormUlidRepository
+}
+
+func NewGormUserRepository(repo *gorm.DB) UsersUlidControllers {
+	repository := db.NewGormUlidRepository(repo)
+
+	return UsersUlidControllers{
+		repo: *repository,
+	}
+}
 
 // GetUser godoc
 // @Summary Get a single user
@@ -22,13 +35,13 @@ import (
 // @Success 302 {object} models.UserUlid "User Found"
 // @Failure 400 {object} object "Bad Request"
 // @Router /user/{id} [get]
-func GetUser(c echo.Context) error {
+func (uuc *UsersUlidControllers) GetUser(c echo.Context) error {
 	// Extract the user ID from the URL and query the database
 	id := c.Param("id")
 	if id == "" {
 		return c.JSON(http.StatusNotFound, errors.New("id not applicable there"))
 	}
-	user, err := db.GetUser(id)
+	user, err := uuc.repo.GetUser(id)
 	if err != nil {
 		return err
 	}
@@ -47,7 +60,7 @@ func GetUser(c echo.Context) error {
 // @Success 302 {object} []models.UserUlidPaging "Users Found"
 // @Failure 400 {object} object "Bad Request"
 // @Router /users [get]
-func GetUsers(c echo.Context) error {
+func (uuc *UsersUlidControllers) GetUsers(c echo.Context) error {
 	// Extract the user ID from the URL and query the database
 	var page, limit int
 	search := c.QueryParam("search")
@@ -63,7 +76,7 @@ func GetUsers(c echo.Context) error {
 	} else {
 		page = 1
 	}
-	users, error := db.GetUsers(search, page, limit, c)
+	users, error := uuc.repo.GetUsers(search, page, limit, c)
 	if error != nil {
 		return error
 	}
@@ -81,7 +94,7 @@ func GetUsers(c echo.Context) error {
 // @Success 201 {object} models.UserUlid "User Created"
 // @Failure 400 {object} object "Bad Request"
 // @Router /user [post]
-func CreateUser(c echo.Context) error {
+func (uuc *UsersUlidControllers) CreateUser(c echo.Context) error {
 	// Parse user details from the request body and insert into the database
 	request := model.UserInput{}
 	err := c.Bind(&request)
@@ -94,7 +107,7 @@ func CreateUser(c echo.Context) error {
 		return c.JSON(http.StatusUnprocessableEntity, validationErrorsToMap(validationErrors))
 	}
 	dto := model.InputToDTO(request)
-	user, error := db.CreateUser(*dto)
+	user, error := uuc.repo.CreateUser(*dto)
 	if error != nil {
 		return error
 	}
@@ -112,7 +125,7 @@ func CreateUser(c echo.Context) error {
 // @Success 200 {object} models.UserUlid "User Updated"
 // @Failure 400 {object} object "Bad Request"
 // @Router /user/{id} [put]
-func UpdateUser(c echo.Context) error {
+func (uuc *UsersUlidControllers) UpdateUser(c echo.Context) error {
 	// Parse user details from the request body and insert into the database
 	// request := checkConstraints(c)
 	request := model.UserInput{}
@@ -129,7 +142,7 @@ func UpdateUser(c echo.Context) error {
 		request.Id = &id
 	}
 	dto := model.InputToDTO(request)
-	user, error := db.UpdateUser(*dto)
+	user, error := uuc.repo.UpdateUser(*dto)
 	if error != nil {
 		return error
 	}
@@ -146,13 +159,13 @@ func UpdateUser(c echo.Context) error {
 // @Success 200 {string} string "User Deleted"
 // @Failure 400 {object} object "Bad Request"
 // @Router /user/{id} [delete]
-func DeleteUser(c echo.Context) error {
+func (uuc *UsersUlidControllers) DeleteUser(c echo.Context) error {
 	// Parse user details from the request body and insert into the database
 	id := c.Param("id")
 	if id == "" {
 		return errors.New("id must not be null")
 	}
-	err := db.DeleteUser(id)
+	err := uuc.repo.DeleteUser(id)
 	if err != nil {
 		return err
 	}

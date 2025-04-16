@@ -6,7 +6,7 @@ import (
 
 // UserDTO represents a user in the system.
 type UserUlid struct {
-	ID         string `gorm:"column:id;type:varchar(26);primaryKey" json:"id"`
+	ID string `gorm:"column:id;type:varchar(26);primaryKey" json:"id"`
 	*UserBase
 }
 
