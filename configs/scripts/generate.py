@@ -50,19 +50,12 @@ async def get_db_connection():
     conn = await asyncpg.connect(conn_str)
     return conn
 
-
-def generate_unique_email(unique_id, first_name):
-    # Use Faker for a realistic name and append the unique ID to ensure uniqueness.
-    name = first_name.lower()
-    domain = fake.free_email_domain()
-    return f"{name}{unique_id}@{domain}"
-
 def generate_fake_user(id):
     # Generate fake user data using Faker.
     user_name = fake.user_name()[:50]
-    first_name = fake.first_name()[:255]
-    last_name = fake.last_name()[:255]
-    email = generate_unique_email(id, first_name)
+    first_name = fake.first_name()[:40]
+    last_name = fake.last_name()[:40]
+    email = fake.email()
     department = random.choice(departments)
     # Return a tuple corresponding to the table columns.
     return (id, user_name, first_name, last_name, email, department)
@@ -78,19 +71,19 @@ async def insert_fake_users(conn, table, num_records):
             print(f"Generated ULID: {str(id)} length: {len(id)}")
             user_data = generate_fake_user(id)
         elif table == "users_uuid":
-            id = uuid4()
+            id = str(uuid4())
             user_data = generate_fake_user(str(id))
         elif table == "users_ksuid":
-            id = Ksuid()
+            id = str(Ksuid())
+            print(f"Generated Ksuid: {id} length: {len(id)}")
             user_data = generate_fake_user(str(id))
         elif table == "users_nanoid":
             id = generate(size=21)
+            print(f"Generated NanoId: {id} length: {len(id)}")
             user_data = generate_fake_user(id)
         elif table == "users_cuid":
-            id = cuid_generator.generate()
-            user_data = generate_fake_user(id)
-        elif table == "users_snowflake":
-            id = next(snow_flake_generator)
+            id = str(cuid_generator.generate())
+            print(f"Generated Cuid: {id} length: {len(id)}")
             user_data = generate_fake_user(id)
         # Execute the insert asynchronously.
         await conn.execute(
@@ -113,12 +106,11 @@ async def main():
     conn = await get_db_connection()
     try:
         tables = [
-            "users_ulid",
+            # "users_ulid",
             "users_uuid",
             "users_ksuid",
             "users_nanoid",
             "users_cuid",
-            "users_snowflake"
         ]
         # Loop through each table and insert fake users asynchronously.
         for table in tables:
