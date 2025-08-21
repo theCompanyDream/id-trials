@@ -106,7 +106,7 @@ func (uuc *UsersUlidControllers) CreateUser(c echo.Context) error {
 		validationErrors := err.(validator.ValidationErrors)
 		return c.JSON(http.StatusUnprocessableEntity, validationErrorsToMap(validationErrors))
 	}
-	dto := model.InputToDTO(request)
+	dto := model.InputToUlid(request)
 	user, error := uuc.repo.CreateUser(*dto)
 	if error != nil {
 		return error
@@ -141,7 +141,7 @@ func (uuc *UsersUlidControllers) UpdateUser(c echo.Context) error {
 	if id := c.Param("id"); id != "" {
 		request.Id = &id
 	}
-	dto := model.InputToDTO(request)
+	dto := model.InputToUlid(request)
 	user, error := uuc.repo.UpdateUser(*dto)
 	if error != nil {
 		return error

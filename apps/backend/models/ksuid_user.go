@@ -6,7 +6,7 @@ import (
 
 // UserDTO represents a user in the system.
 type UserKSUID struct {
-	ID         string `gorm:"column:id;type:varchar(27);primaryKey" json:"id"`
+	ID string `gorm:"column:id;type:varchar(27);primaryKey" json:"id"`
 	UserBase
 }
 
@@ -18,5 +18,10 @@ func (UserKSUID) TableName() string {
 func InputToKSUID(userCreate UserInput) *UserKSUID {
 	var user UserKSUID
 	copier.Copy(&user, &userCreate)
+	if userCreate.Id != nil {
+		user.ID = *userCreate.Id
+	} else {
+		user.ID = ""
+	}
 	return &user
 }
