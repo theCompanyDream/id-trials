@@ -15,8 +15,13 @@ func (UserUlid) TableName() string {
 	return "users_ulid"
 }
 
-func InputToDTO(userCreate UserInput) *UserUlid {
+func InputToUlid(userCreate UserInput) *UserUlid {
 	var user UserUlid
 	copier.Copy(&user, &userCreate)
+	if userCreate.Id != nil {
+		user.ID = *userCreate.Id
+	} else {
+		user.ID = "" // or generate UUID here
+	}
 	return &user
 }
