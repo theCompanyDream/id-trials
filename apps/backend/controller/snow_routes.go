@@ -34,7 +34,7 @@ func NewSnowCuidController(db *gorm.DB) SnowUsersController {
 // @Param user_name path string false "Username"
 // @Success 302 {object} models.UserInput "User Found"
 // @Failure 400 {object} object "Bad Request"
-// @Router /cuid/{id} [get]
+// @Router /snow/{id} [get]
 func (uuc *SnowUsersController) GetUser(c echo.Context) error {
 	// Extract the user ID from the URL and query the database
 	id := c.Param("id")
@@ -59,7 +59,7 @@ func (uuc *SnowUsersController) GetUser(c echo.Context) error {
 // @Param page query int false "Page Number"
 // @Success 302 {object} []models.UserPaging "Users Found"
 // @Failure 400 {object} object "Bad Request"
-// @Router /cuids [get]
+// @Router /snows [get]
 func (uuc *SnowUsersController) GetUsers(c echo.Context) error {
 	// Extract the user ID from the URL and query the database
 	var page, limit int
@@ -93,7 +93,7 @@ func (uuc *SnowUsersController) GetUsers(c echo.Context) error {
 // @Param user body models.UserInput true "User object"
 // @Success 201 {object} models.UserInput "User Created"
 // @Failure 400 {object} object "Bad Request"
-// @Router /cuid [post]
+// @Router /snow [post]
 func (uuc *SnowUsersController) CreateUser(c echo.Context) error {
 	// Parse user details from the request body and insert into the database
 	request := model.UserInput{}
@@ -124,7 +124,7 @@ func (uuc *SnowUsersController) CreateUser(c echo.Context) error {
 // @Param user body models.UserInput true "User object"
 // @Success 200 {object} models.UserInput "User Updated"
 // @Failure 400 {object} object "Bad Request"
-// @Router /cuid/{id} [put]
+// @Router /snow/{id} [put]
 func (uuc *SnowUsersController) UpdateUser(c echo.Context) error {
 	// Parse user details from the request body and insert into the database
 	// request := checkConstraints(c)
@@ -158,7 +158,7 @@ func (uuc *SnowUsersController) UpdateUser(c echo.Context) error {
 // @Param id path string true "User ID"
 // @Success 200 {string} string "User Deleted"
 // @Failure 400 {object} object "Bad Request"
-// @Router /cuid/{id} [delete]
+// @Router /snow/{id} [delete]
 func (uuc *SnowUsersController) DeleteUser(c echo.Context) error {
 	// Parse user details from the request body and insert into the database
 	id := c.Param("id")

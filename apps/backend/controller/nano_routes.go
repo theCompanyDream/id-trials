@@ -124,7 +124,7 @@ func (uuc *NanoUsersController) CreateUser(c echo.Context) error {
 // @Param user body models.UserInput true "User object"
 // @Success 200 {object} models.UserInput "User Updated"
 // @Failure 400 {object} object "Bad Request"
-// @Router /user/{id} [put]
+// @Router /nano/{id} [put]
 func (uuc *NanoUsersController) UpdateUser(c echo.Context) error {
 	// Parse user details from the request body and insert into the database
 	// request := checkConstraints(c)
