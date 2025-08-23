@@ -4,7 +4,6 @@ import (
 	"errors"
 	"math"
 
-	"github.com/labstack/echo/v4"
 	"github.com/lucsky/cuid"
 	"gorm.io/gorm"
 
@@ -33,7 +32,7 @@ func (uc *GormSnowRepository) GetUser(hashId string) (*model.UserCUID, error) {
 }
 
 // GetUsers retrieves a page of users that match a search criteria.
-func (uc *GormSnowRepository) GetUsers(search string, page, limit int, c echo.Context) (*model.UserPaging, error) {
+func (uc *GormSnowRepository) GetUsers(search string, page, limit int) (*model.UserPaging, error) {
 	var users []model.UserCUID
 	var userInput []model.UserInput
 	var totalCount int64
