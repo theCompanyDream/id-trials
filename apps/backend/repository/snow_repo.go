@@ -4,27 +4,27 @@ import (
 	"errors"
 	"math"
 
-	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
+	"github.com/lucsky/cuid"
 	"gorm.io/gorm"
 
 	model "github.com/theCompanyDream/user-table/apps/backend/models"
 )
 
-type GormUuidRepository struct {
+type GormSnowRepository struct {
 	DB *gorm.DB
 }
 
-// NewGormUuidRepository creates a new instance of GormUuidRepository.
-func NewGormUuidRepository(repo *gorm.DB) *GormUuidRepository {
-	return &GormUuidRepository{
+// NewGormCuidRepository creates a new instance of GormCuidRepository.
+func NewGormSnowRepository(repo *gorm.DB) *GormSnowRepository {
+	return &GormSnowRepository{
 		DB: repo,
 	}
 }
 
 // GetUser retrieves a user by its HASH column.
-func (uc *GormUuidRepository) GetUser(hashId string) (*model.UserUUID, error) {
-	var user model.UserUUID
+func (uc *GormSnowRepository) GetUser(hashId string) (*model.UserCUID, error) {
+	var user model.UserCUID
 	// Ensure the table name is correctly referenced (if needed, use Table("users"))
 	if err := uc.DB.Table("users").Where("id = ?", hashId).First(&user).Error; err != nil {
 		return nil, err
@@ -33,13 +33,13 @@ func (uc *GormUuidRepository) GetUser(hashId string) (*model.UserUUID, error) {
 }
 
 // GetUsers retrieves a page of users that match a search criteria.
-func (uc *GormUuidRepository) GetUsers(search string, page, limit int, c echo.Context) (*model.UserPaging, error) {
-	var users []model.UserUUID
+func (uc *GormSnowRepository) GetUsers(search string, page, limit int, c echo.Context) (*model.UserPaging, error) {
+	var users []model.UserCUID
 	var userInput []model.UserInput
 	var totalCount int64
 
 	// Use db.Model instead of db.Table
-	query := uc.DB.Model(&model.UserUUID{})
+	query := uc.DB.Model(&model.UserCUID{})
 
 	if search != "" {
 		likeSearch := "%" + search + "%"
@@ -77,12 +77,12 @@ func (uc *GormUuidRepository) GetUsers(search string, page, limit int, c echo.Co
 	// Correct loop to iterate through users
 	for _, user := range users { // Use index and value pattern
 		userInput = append(userInput, model.UserInput{
-			Id:         &user.ID,
-			UserName:   &user.UserName,
-			FirstName:  &user.FirstName,
-			LastName:   &user.LastName,
-			Email:      &user.Email,
-			Department: user.Department,
+			Id:         &user.ID,        // Use the value, not the index
+			UserName:   &user.UserName,  // Use the value, not the index
+			FirstName:  &user.FirstName, // Use the value, not the index
+			LastName:   &user.LastName,  // Use the value, not the index
+			Email:      &user.Email,     // Use the value, not the index
+			Department: user.Department, // Use the value, not the index
 		})
 	}
 
@@ -93,10 +93,10 @@ func (uc *GormUuidRepository) GetUsers(search string, page, limit int, c echo.Co
 }
 
 // CreateUser creates a new user record.
-func (uc *GormUuidRepository) CreateUser(requestedUser model.UserUUID) (*model.UserUUID, error) {
+func (uc *GormSnowRepository) CreateUser(requestedUser model.UserCUID) (*model.UserCUID, error) {
 	// Generate a new UUID for the user.
-	id := uuid.New()
-	requestedUser.ID = id.String()
+	id := cuid.New()
+	requestedUser.ID = id
 
 	// Insert the record into the USERS table.
 	if err := uc.DB.Table("users").Create(&requestedUser).Error; err != nil {
@@ -106,8 +106,8 @@ func (uc *GormUuidRepository) CreateUser(requestedUser model.UserUUID) (*model.U
 }
 
 // UpdateUser updates an existing user's details.
-func (uc *GormUuidRepository) UpdateUser(requestedUser model.UserUUID) (*model.UserUUID, error) {
-	var user model.UserUUID
+func (uc *GormSnowRepository) UpdateUser(requestedUser model.UserCUID) (*model.UserCUID, error) {
+	var user model.UserCUID
 	// Retrieve the user to be updated by its HASH.
 	if err := uc.DB.Table("users").Where("id LIKE ?", requestedUser.ID).First(&user).Error; err != nil {
 		return nil, err
@@ -143,8 +143,8 @@ func (uc *GormUuidRepository) UpdateUser(requestedUser model.UserUUID) (*model.U
 }
 
 // DeleteUser removes a user record based on its HASH.
-func (uc *GormUuidRepository) DeleteUser(id string) error {
-	if err := uc.DB.Table("users").Where("id = ?", id).Delete(&model.UserUUID{}).Error; err != nil {
+func (uc *GormSnowRepository) DeleteUser(id string) error {
+	if err := uc.DB.Table("users").Where("id = ?", id).Delete(&model.UserCUID{}).Error; err != nil {
 		return err
 	}
 	return nil
