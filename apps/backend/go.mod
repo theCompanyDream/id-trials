@@ -3,7 +3,6 @@ module github.com/theCompanyDream/id-trials/apps/backend
 go 1.21
 
 require (
-	github.com/DATA-DOG/go-sqlmock v1.5.2
 	github.com/go-playground/validator/v10 v10.19.0
 	github.com/google/uuid v1.6.0
 	github.com/jinzhu/copier v0.4.0
