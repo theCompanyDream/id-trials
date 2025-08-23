@@ -77,12 +77,12 @@ func (uc *GormNanoIdRepository) GetUsers(search string, page, limit int, c echo.
 	// Correct loop to iterate through users
 	for _, user := range users { // Use index and value pattern
 		userInput = append(userInput, model.UserInput{
-			Id:         &user.ID,        // Use the value, not the index
-			UserName:   &user.UserName,  // Use the value, not the index
-			FirstName:  &user.FirstName, // Use the value, not the index
-			LastName:   &user.LastName,  // Use the value, not the index
-			Email:      &user.Email,     // Use the value, not the index
-			Department: user.Department, // Use the value, not the index
+			Id:         &user.ID,
+			UserName:   &user.UserName,
+			FirstName:  &user.FirstName,
+			LastName:   &user.LastName,
+			Email:      &user.Email,
+			Department: user.Department,
 		})
 	}
 

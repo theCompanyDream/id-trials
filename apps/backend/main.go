@@ -36,6 +36,7 @@ func main() {
 	nanoIdController := controller.NewGormNanoController(db)
 	ksuidController := controller.NewGormKsuidController(db)
 	cuidController := controller.NewGormCuidController(db)
+	snowController := controller.NewSnowCuidController(db)
 
 	// Middleware
 	server.Use(middleware.Recover())
@@ -75,6 +76,12 @@ func main() {
 	server.POST("/cuid", cuidController.CreateUser)
 	server.PUT("/cuid/:id", cuidController.UpdateUser)
 	server.DELETE("/cuid/:id", cuidController.DeleteUser)
+
+	server.GET("/snow", snowController.GetUsers)
+	server.GET("/snow/:id", snowController.GetUser)
+	server.POST("/snow", snowController.CreateUser)
+	server.PUT("/snow/:id", snowController.UpdateUser)
+	server.DELETE("/snow/:id", snowController.DeleteUser)
 	// Start the server
 	server.Logger.Info("Server is running...")
 	port := os.Getenv("BACKEND_PORT")
