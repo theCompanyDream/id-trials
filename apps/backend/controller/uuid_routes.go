@@ -59,7 +59,7 @@ func (uuc *UuidUsersController) GetUser(c echo.Context) error {
 // @Param page query int false "Page Number"
 // @Success 302 {object} []models.UserPaging "Users Found"
 // @Failure 400 {object} object "Bad Request"
-// @Router /uuid4s [get]
+// @Router /uuid4 [get]
 func (uuc *UuidUsersController) GetUsers(c echo.Context) error {
 	// Extract the user ID from the URL and query the database
 	var page, limit int
@@ -124,7 +124,7 @@ func (uuc *UuidUsersController) CreateUser(c echo.Context) error {
 // @Param user body models.UserInput true "User object"
 // @Success 200 {object} models.UserInput "User Updated"
 // @Failure 400 {object} object "Bad Request"
-// @Router /user/{id} [put]
+// @Router /uuid4/{id} [put]
 func (uuc *UuidUsersController) UpdateUser(c echo.Context) error {
 	// Parse user details from the request body and insert into the database
 	// request := checkConstraints(c)
