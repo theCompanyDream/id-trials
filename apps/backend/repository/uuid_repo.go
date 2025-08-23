@@ -5,7 +5,6 @@ import (
 	"math"
 
 	"github.com/google/uuid"
-	"github.com/labstack/echo/v4"
 	"gorm.io/gorm"
 
 	model "github.com/theCompanyDream/user-table/apps/backend/models"
@@ -33,7 +32,7 @@ func (uc *GormUuidRepository) GetUser(hashId string) (*model.UserUUID, error) {
 }
 
 // GetUsers retrieves a page of users that match a search criteria.
-func (uc *GormUuidRepository) GetUsers(search string, page, limit int, c echo.Context) (*model.UserPaging, error) {
+func (uc *GormUuidRepository) GetUsers(search string, page, limit int) (*model.UserPaging, error) {
 	var users []model.UserUUID
 	var userInput []model.UserInput
 	var totalCount int64
