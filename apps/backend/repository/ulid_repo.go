@@ -4,7 +4,7 @@ import (
 	"errors"
 	"math"
 
-	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo"
 	"github.com/oklog/ulid/v2"
 	"gorm.io/gorm"
 
@@ -34,7 +34,6 @@ func GetUser(hashId string) (*model.UserUlid, error) {
 
 func (uc *GormUlidRepository) GetUsers(search string, page, limit int, c echo.Context) (*model.UserPaging, error) {
 	var users []model.UserUlid
-	var userInput []model.UserInput
 	var totalCount int64
 
 	// Use db.Model instead of db.Table

@@ -4,7 +4,6 @@ import (
 	"errors"
 	"math"
 
-	"github.com/labstack/echo/v4"
 	"github.com/segmentio/ksuid"
 	"gorm.io/gorm"
 
@@ -33,7 +32,7 @@ func (uc *GormNanoIdRepository) GetUser(hashId string) (*model.UserNanoID, error
 }
 
 // GetUsers retrieves a page of users that match a search criteria.
-func (uc *GormNanoIdRepository) GetUsers(search string, page, limit int, c echo.Context) (*model.UserPaging, error) {
+func (uc *GormNanoIdRepository) GetUsers(search string, page, limit int) (*model.UserPaging, error) {
 	var users []model.UserNanoID
 	var userInput []model.UserInput
 	var totalCount int64
