@@ -76,7 +76,7 @@ func (uuc *UsersUlidControllers) GetUsers(c echo.Context) error {
 	} else {
 		page = 1
 	}
-	users, error := uuc.repo.GetUsers(search, page, limit, c)
+	users, error := uuc.repo.GetUsers(search, page, limit)
 	if error != nil {
 		return error
 	}
