@@ -4,7 +4,7 @@ import (
 	"errors"
 	"math"
 
-	"github.com/segmentio/ksuid"
+	gonanoid "github.com/matoous/go-nanoid/v2"
 	"gorm.io/gorm"
 
 	model "github.com/theCompanyDream/user-table/apps/backend/models"
@@ -94,8 +94,11 @@ func (uc *GormNanoIdRepository) GetUsers(search string, page, limit int) (*model
 // CreateUser creates a new user record.
 func (uc *GormNanoIdRepository) CreateUser(requestedUser model.UserNanoID) (*model.UserNanoID, error) {
 	// Generate a new UUID for the user.
-	id := ksuid.New()
-	requestedUser.ID = id.String()
+	id, err := gonanoid.New()
+	if err != nil {
+		return nil, err
+	}
+	requestedUser.ID = id
 
 	// Insert the record into the USERS table.
 	if err := uc.DB.Table("users").Create(&requestedUser).Error; err != nil {
