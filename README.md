@@ -19,8 +19,8 @@ Before you begin, make sure you have Docker installed on your machine. If not, y
 1. Clone the repository:
 
    ```bash
-   git clone https://github.com/theCompanyDream/User-Angular.git
-   cd User-Angular
+   git clone https://github.com/theCompanyDream/id-trials.git
+   cd id-trials
    ```
 
 2. Check for the `.env` file:
