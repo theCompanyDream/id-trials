@@ -1,6 +1,6 @@
 module github.com/theCompanyDream/id-trials
 
-go 1.23.0
+go 1.20
 
 toolchain go1.24.4
 
