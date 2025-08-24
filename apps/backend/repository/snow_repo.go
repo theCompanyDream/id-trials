@@ -4,7 +4,7 @@ import (
 	"errors"
 	"math"
 
-	"github.com/lucsky/cuid"
+	"github.com/bwmarrin/snowflake"
 	"gorm.io/gorm"
 
 	model "github.com/theCompanyDream/user-table/apps/backend/models"
@@ -94,8 +94,12 @@ func (uc *GormSnowRepository) GetUsers(search string, page, limit int) (*model.U
 // CreateUser creates a new user record.
 func (uc *GormSnowRepository) CreateUser(requestedUser model.UserCUID) (*model.UserCUID, error) {
 	// Generate a new UUID for the user.
-	id := cuid.New()
-	requestedUser.ID = id
+	node, err := snowflake.NewNode(1)
+	if err != nil {
+		return nil, err
+	}
+	id := node.Generate()
+	requestedUser.ID = id.String()
 
 	// Insert the record into the USERS table.
 	if err := uc.DB.Table("users").Create(&requestedUser).Error; err != nil {

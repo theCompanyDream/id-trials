@@ -9,7 +9,7 @@ import (
 // UserDTO represents a user in the system.
 type UserSnowflake struct {
 	ID int64 `gorm:"column:id;type:bigint;primaryKey;autoIncrement:false" json:"id"`
-	UserBase
+	*UserBase
 }
 
 // TableName sets the table name for UserDTO to "users".
