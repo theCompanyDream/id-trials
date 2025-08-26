@@ -125,7 +125,7 @@ const UserDetail = () => {
             <ul className="list-disc list-inside space-y-1">
               {Object.entries(errors).map(([field, message]) => (
                 <li key={field}>
-                  <span className="font-medium">{field}:</span> {message.replace(`Field validation for '${field}' failed on the '`, '').replace(`' tag`, '')}
+                  <span className="font-medium">{field}:</span> {message}
                 </li>
               ))}
             </ul>
