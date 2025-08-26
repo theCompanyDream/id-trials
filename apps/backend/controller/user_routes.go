@@ -7,8 +7,8 @@ import (
 
 	"github.com/go-playground/validator/v10"
 	"github.com/labstack/echo/v4"
-	model "github.com/theCompanyDream/user-table/apps/backend/models"
-	db "github.com/theCompanyDream/user-table/apps/backend/repository"
+	model "github.com/theCompanyDream/id-trials/apps/backend/models"
+	db "github.com/theCompanyDream/id-trials/apps/backend/repository"
 )
 
 // GetUser godoc
@@ -126,7 +126,7 @@ func UpdateUser(c echo.Context) error {
 		return c.JSON(http.StatusUnprocessableEntity, validationErrorsToMap(validationErrors))
 	}
 	if id := c.Param("id"); id != "" {
-		request.HashId = &id
+		request.Id = &id
 	}
 	dto := model.InputToDTO(request)
 	user, error := db.UpdateUser(*dto)

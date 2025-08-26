@@ -10,7 +10,10 @@ const UserTable = () => {
   const fetchUsers = (page = 1, query = search) => {
     fetch(`/api/users?search=${encodeURIComponent(query)}&page=${page}`)
       .then((response) => response.json())
-      .then((data) => setUsers(data))
+      .then((data) => {
+        setUsers(data);
+        setFetched(true);
+      })
       .catch((err) => console.error("Error fetching users:", err));
   };
 
@@ -19,7 +22,7 @@ const UserTable = () => {
       method: "DELETE"
     })
     .then((data) => {
-      const newUsers = users.users.filter(user => userId !== user.id);
+      const newUsers = users.users.filter(user => userId != user.id);
       setUsers({...users, users: newUsers})
     })
   }

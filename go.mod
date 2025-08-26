@@ -1,4 +1,4 @@
-module github.com/theCompanyDream/user-table
+module github.com/theCompanyDream/id-trials
 
 go 1.23.0
 
@@ -7,7 +7,7 @@ toolchain go1.24.4
 require (
 	github.com/labstack/echo/v4 v4.13.4
 	github.com/swaggo/echo-swagger v1.4.1
-	github.com/theCompanyDream/user-table/apps/backend v0.0.17
+	github.com/theCompanyDream/id-trials/apps/backend v0.0.27
 	golang.org/x/time v0.12.0
 )
 

@@ -22,7 +22,7 @@ const UserDetail = () => {
   // If editing, fetch the existing user data.
   useMemo(() => {
     if (id) {
-      fetch(`/api/user/${id}`)
+      fetch(`https://user.tbrantleyii.dev/api/user/${id}`)
         .then((res) => {
           if (!res.ok) throw new Error('Error fetching user data');
           return res.json();
@@ -77,6 +77,8 @@ const UserDetail = () => {
       .then(async (res) => {
         const data = await res.json();
 
+        console.log('Response data:', res.ok, res.status);
+
         if (!res.ok) {
           // Handle validation errors from Echo (status 422)
           if (res.status === 422) {
@@ -86,12 +88,13 @@ const UserDetail = () => {
             // Handle other types of errors
             setErrors({ general: data.message || 'Error saving user' });
           }
-          throw new Error('Validation failed');
+          return;
         }
+        setErrors({});
 
         // Success - navigate to the user detail page
         // Use the ID field from the UserDTO response
-        const userId = data.ID || id; // data.ID is the primary key from your UserDTO
+        const userId = data.id || id; // data.ID is the primary key from your UserDTO
         navigate(`/detail/${userId}`);
 
         return data;
@@ -115,10 +118,19 @@ const UserDetail = () => {
       </h2>
 
       {/* Display general errors */}
-      {errors.general && (
-        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-          {errors.general}
-        </div>
+      {errors && Object.keys(errors).length > 0 && (
+        <section className="bg-red-50 border-l-4 border-red-400 p-4 mb-6">
+          <div className="text-sm text-red-700">
+            <p className="font-medium text-red-800 mb-2">Please correct the following errors:</p>
+            <ul className="list-disc list-inside space-y-1">
+              {Object.entries(errors).map(([field, message]) => (
+                <li key={field}>
+                  <span className="font-medium">{field}:</span> {message}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </section>
       )}
 
       <form onSubmit={handleSubmit} className="space-y-4">

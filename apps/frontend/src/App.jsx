@@ -14,8 +14,8 @@ const App = () => {
   const defaultBookContext = {
     users: [],
     page: 1,
-    Length: 10,
-    PageSize: 20
+    page_count: 10,
+    page_size: 20
   };
 
   const [users, setUsers] = useState(defaultBookContext);
