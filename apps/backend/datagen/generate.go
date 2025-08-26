@@ -14,7 +14,7 @@ import (
 	"github.com/segmentio/ksuid"
 	"gorm.io/gorm"
 
-	"github.com/theCompanyDream/user-table/apps/backend/models"
+	"github.com/theCompanyDream/id-trials/apps/backend/models"
 )
 
 type Config struct {

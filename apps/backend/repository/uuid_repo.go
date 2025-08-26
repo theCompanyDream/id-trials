@@ -7,7 +7,7 @@ import (
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 
-	model "github.com/theCompanyDream/user-table/apps/backend/models"
+	model "github.com/theCompanyDream/id-trials/apps/backend/models"
 )
 
 type GormUuidRepository struct {
