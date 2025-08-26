@@ -32,6 +32,7 @@ const App = () => {
             <Route index path="/" element={<Table />} />
             <Route path="/detail/:id?" element={<Detail />} />
             <Route path="*" element={<Page404 />} />
+            <Route path="/api/*" element={null} />
           </Routes>
         </Suspense>
       </Layout>
