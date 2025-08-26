@@ -25,3 +25,9 @@ func InputToCuid(userCreate UserInput) *UserCUID {
 	}
 	return &user
 }
+
+func (cuid *UserCUID) CuidToDTO(user UserCUID) *UserDTO {
+	var userDTO UserDTO
+	copier.Copy(&userDTO, &user)
+	return &userDTO
+}

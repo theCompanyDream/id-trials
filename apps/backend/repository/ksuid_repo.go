@@ -7,7 +7,7 @@ import (
 	"github.com/segmentio/ksuid"
 	"gorm.io/gorm"
 
-	model "github.com/theCompanyDream/user-table/apps/backend/models"
+	model "github.com/theCompanyDream/id-trials/apps/backend/models"
 )
 
 type GormKsuidRepository struct {

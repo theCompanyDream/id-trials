@@ -25,3 +25,9 @@ func InputToNanoId(userCreate UserInput) *UserNanoID {
 	}
 	return &user
 }
+
+func (nanoid *UserNanoID) NanoIdToDTO(user UserNanoID) *UserDTO {
+	var userDTO UserDTO
+	copier.Copy(&userDTO, &user)
+	return &userDTO
+}
