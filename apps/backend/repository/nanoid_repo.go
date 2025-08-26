@@ -7,7 +7,7 @@ import (
 	gonanoid "github.com/matoous/go-nanoid/v2"
 	"gorm.io/gorm"
 
-	model "github.com/theCompanyDream/user-table/apps/backend/models"
+	model "github.com/theCompanyDream/id-trials/apps/backend/models"
 )
 
 type GormNanoIdRepository struct {

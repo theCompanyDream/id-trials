@@ -7,8 +7,8 @@ import (
 
 	"github.com/go-playground/validator/v10"
 	"github.com/labstack/echo/v4"
-	model "github.com/theCompanyDream/user-table/apps/backend/models"
-	repo "github.com/theCompanyDream/user-table/apps/backend/repository"
+	model "github.com/theCompanyDream/id-trials/apps/backend/models"
+	repo "github.com/theCompanyDream/id-trials/apps/backend/repository"
 	"gorm.io/gorm"
 )
 
