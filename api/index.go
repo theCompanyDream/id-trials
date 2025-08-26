@@ -38,7 +38,7 @@ func initEcho() {
 	e.Use(middleware.RateLimiter(middleware.NewRateLimiterMemoryStore(rate.Limit(10))))
 
 	// Adjust routes to include /api prefix
-	e.GET("/swagger/*", echoSwagger.WrapHandler)
+	e.GET("/api/swagger/*", echoSwagger.WrapHandler)
 	e.GET("/api", controller.Home)
 	e.GET("/api/users", controller.GetUsers)
 	e.GET("/api/user/:id", controller.GetUser)
