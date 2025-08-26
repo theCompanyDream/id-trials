@@ -77,6 +77,8 @@ const UserDetail = () => {
       .then(async (res) => {
         const data = await res.json();
 
+        console.log('Response data:', res.ok, res.status);
+
         if (!res.ok) {
           // Handle validation errors from Echo (status 422)
           if (res.status === 422) {
