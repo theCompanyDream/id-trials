@@ -25,3 +25,9 @@ func InputToKSUID(userCreate UserInput) *UserKSUID {
 	}
 	return &user
 }
+
+func (ksuid *UserKSUID) KsuidToDTO(user UserKSUID) *UserDTO {
+	var userDTO UserDTO
+	copier.Copy(&userDTO, &user)
+	return &userDTO
+}

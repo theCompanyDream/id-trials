@@ -4,7 +4,7 @@ import (
 	"flag"
 	"log"
 
-	"github.com/theCompanyDream/user-table/apps/backend/repository"
+	"github.com/theCompanyDream/id-trials/apps/backend/repository"
 )
 
 func RunCmd() {

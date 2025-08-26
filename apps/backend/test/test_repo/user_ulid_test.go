@@ -4,14 +4,14 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/theCompanyDream/user-table/apps/backend/test/setup"
+	"github.com/theCompanyDream/user-trials/apps/backend/test/setup"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
 	// Import your repository package and models package using the proper module paths.
-	"github.com/theCompanyDream/user-table/apps/backend/models"
-	"github.com/theCompanyDream/user-table/apps/backend/repository"
+	"github.com/theCompanyDream/id-trials/apps/backend/models"
+	"github.com/theCompanyDream/id-trials/apps/backend/repository"
 )
 
 // TestCreateAndGetUser tests creating a user and then retrieving it.

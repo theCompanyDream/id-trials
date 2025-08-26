@@ -7,7 +7,7 @@ import (
 	"github.com/bwmarrin/snowflake"
 	"gorm.io/gorm"
 
-	model "github.com/theCompanyDream/user-table/apps/backend/models"
+	model "github.com/theCompanyDream/id-trials/apps/backend/models"
 )
 
 type GormSnowRepository struct {
