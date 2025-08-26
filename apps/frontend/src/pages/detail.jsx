@@ -88,7 +88,6 @@ const UserDetail = () => {
             // Handle other types of errors
             setErrors({ general: data.message || 'Error saving user' });
           }
-          throw new Error('Validation failed');
         }
 
         // Success - navigate to the user detail page
@@ -117,7 +116,7 @@ const UserDetail = () => {
       </h2>
 
       {/* Display general errors */}
-      {errors.general && (
+      {errors && (
         <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
           {errors.general}
         </div>
