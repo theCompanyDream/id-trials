@@ -13,7 +13,7 @@ const Navigation = memo(() => {
         {/* Desktop Navigation */}
         <nav className="hidden md:flex space-x-4">
           <Link to="/detail" className="hover:text-gray-300">Create</Link>
-          <Link to="/api/swagger" className="hover:text-gray-300">Docs</Link>
+          <Link to="/api/swagger/" className="hover:text-gray-300">Docs</Link>
           <Link to="https://github.com/theCompanyDream/id-trials" className="hover:text-gray-300">
             <img src={github} alt="github logo" class="w-7 -c-7" />
           </Link>
