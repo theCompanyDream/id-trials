@@ -91,7 +91,7 @@ const UserDetail = () => {
 
         // Success - navigate to the user detail page
         // Use the ID field from the UserDTO response
-        const userId = data.ID || id; // data.ID is the primary key from your UserDTO
+        const userId = data.id || id; // data.ID is the primary key from your UserDTO
         navigate(`/detail/${userId}`);
 
         return data;
