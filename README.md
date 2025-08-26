@@ -1,11 +1,11 @@
-# User Administration
+# Id Trials
 
 Welcome to the User Test repository! This repository is a comprehensive setup for a project utilizing Go 1.22, Angular 16, and Docker. It's designed to provide a streamlined development environment with all the necessary configurations in place.
 
 ## Technologies
 
 - **Go 1.24**: A popular programming language designed for simplicity and efficiency.
-- **Angular 16**: A platform for building mobile and desktop web applications using TypeScript/JavaScript.
+- **React 19**: A platform for building mobile and desktop web applications using JavaScript.
 - **Docker**: A set of platform-as-a-service products that use OS-level virtualization to deliver software in packages called containers.
 - **Makefile**: used to run basic site dev functionality
 - **Nginx**: used to host angular and the go server
@@ -17,6 +17,7 @@ Before you begin, make sure you have Docker installed on your machine. If not, y
 ### Initial Setup
 
 1. Clone the repository:
+
    ```bash
    git clone https://github.com/theCompanyDream/User-Angular.git
    cd User-Angular
