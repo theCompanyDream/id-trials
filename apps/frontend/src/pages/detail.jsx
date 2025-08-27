@@ -22,7 +22,7 @@ const UserDetail = () => {
   // If editing, fetch the existing user data.
   useMemo(() => {
     if (id) {
-      fetch(`https://user.tbrantleyii.dev/api/user/${id}`)
+      fetch(`/api/user/${id}`)
         .then((res) => {
           if (!res.ok) throw new Error('Error fetching user data');
           return res.json();
