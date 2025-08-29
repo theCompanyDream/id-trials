@@ -1,92 +1,130 @@
 #!/usr/bin/env python3
 import os
+import asyncio
 from pathlib import Path
-import psycopg2
-from ulid import ULID
 import random
+import time
 from faker import Faker
 from dotenv import load_dotenv
 
+# Id generators
+from ulid import ULID
+from ksuid import Ksuid
+from uuid import uuid4
+from nanoid import generate
+from cuid2 import Cuid
+from snowflake import SnowflakeGenerator
+
 # Initialize Faker
 fake = Faker()
-ulid = ULID()
 
 # Example departments list
 departments = [
     "accounting", "sales", "engineering", "hr", "marketing", "it", "operations", "marketing", "operations"
 ]
 
-def get_db_connection():
-    # Get database connection parameters from environment variables.
-    # Adjust defaults as needed.
+# Create generators if needed
+cuid_generator = Cuid(length=25)
+snow_flake_generator = SnowflakeGenerator(25)
+
+async def get_db_connection():
+    # Determine the .env file location relative to this script.
     env_path = Path(__file__).resolve().parents[2] / '.env'
-    print(env_path)
-    # Load environment variables
+    print("Loading env from:", env_path)
     load_dotenv(dotenv_path=env_path)
+
     postgres_user = os.getenv("DATABASE_USERNAME", "postgres")
     postgres_db = os.getenv("DATABASE_NAME")
     postgres_password = os.getenv("DATABASE_PASSWORD")
     postgres_port = os.getenv("DATABASE_PORT")
+    postgres_host = "localhost"
 
-    conn = psycopg2.connect(
-        dbname=postgres_db,
-        user=postgres_user,
-        password=postgres_password,
-        host="localhost",
-        port=postgres_port
+    # Construct connection string using URL (URI) format.
+    conn_str = (
+        f"postgresql://{postgres_user}:{postgres_password}"
+        f"@{postgres_host}:{postgres_port}/{postgres_db}?sslmode=disable"
     )
+
+    # Use asyncpg to connect asynchronously.
+    import asyncpg  # Import here if not installed globally.
+    conn = await asyncpg.connect(conn_str)
     return conn
 
-def create_users_table(conn):
-    with conn.cursor() as cur:
-        cur.execute("""
-            CREATE TABLE IF NOT EXISTS USERS (
-                ID varchar(26) NOT NULL,
-                HASH VARCHAR(64) NOT NULL,
-                USER_NAME VARCHAR(50) NOT NULL,
-                FIRST_NAME VARCHAR(255) NOT NULL,
-                LAST_NAME VARCHAR(255) NOT NULL,
-                EMAIL VARCHAR(255) NOT NULL,
-                DEPARTMENT VARCHAR(255),
-                PRIMARY KEY(ID),
-                UNIQUE(EMAIL),
-                UNIQUE(USER_NAME)
-            );
-        """)
-        conn.commit()
-        print("USERS table created (or already exists).")
 
-def generate_fake_user():
-    # Generate fake user data using Faker and Python's uuid
-    user_id = str(ulid.generate())
-    # Generate a random 64-character hex string (32 bytes * 2 hex digits each)
-    hash_value = os.urandom(32).hex()
+def generate_unique_email(unique_id, first_name):
+    # Use Faker for a realistic name and append the unique ID to ensure uniqueness.
+    name = first_name.lower()
+    domain = fake.free_email_domain()
+    return f"{name}{unique_id}@{domain}"
+
+def generate_fake_user(id):
+    # Generate fake user data using Faker.
     user_name = fake.user_name()[:50]
     first_name = fake.first_name()[:255]
     last_name = fake.last_name()[:255]
-    email = fake.email()[:255]
-    # Example: random user status letter; adjust choices as needed.
+    email = generate_unique_email(id, first_name)
     department = random.choice(departments)
-    return (user_id, hash_value, user_name, first_name, last_name, email, department)
+    # Return a tuple corresponding to the table columns.
+    return (id, user_name, first_name, last_name, email, department)
 
-def insert_fake_users(conn, num_records):
-    with conn.cursor() as cur:
-        for _ in range(num_records):
-            user_data = generate_fake_user()
-            cur.execute("""
-                INSERT INTO users (id, HASH, USER_NAME, FIRST_NAME, LAST_NAME, EMAIL, DEPARTMENT)
-                VALUES (%s, %s, %s, %s, %s, %s, %s);
-            """, user_data)
-        conn.commit()
-        print(f"Inserted {num_records} fake user records.")
+async def insert_fake_users(conn, table, num_records):
+    # Insert 'num_records' rows into the given table.
+    for _ in range(num_records):
+        user_data = None
+        if table == "users_ulid":
+            # ULID expects an integer timestamp in milliseconds.
+            ulid = ULID()
+            id = str(ulid)
+            print(f"Generated ULID: {str(id)} length: {len(id)}")
+            user_data = generate_fake_user(id)
+        elif table == "users_uuid":
+            id = uuid4()
+            user_data = generate_fake_user(str(id))
+        elif table == "users_ksuid":
+            id = Ksuid()
+            user_data = generate_fake_user(str(id))
+        elif table == "users_nanoid":
+            id = generate(size=21)
+            user_data = generate_fake_user(id)
+        elif table == "users_cuid":
+            id = cuid_generator.generate()
+            user_data = generate_fake_user(id)
+        elif table == "users_snowflake":
+            id = next(snow_flake_generator)
+            user_data = generate_fake_user(id)
+        # Execute the insert asynchronously.
+        await conn.execute(
+            f"""
+            INSERT INTO {table}
+              (id, USER_NAME, FIRST_NAME, LAST_NAME, EMAIL, DEPARTMENT)
+            VALUES ($1, $2, $3, $4, $5, $6)
+            """,
+            user_data[0],
+            user_data[1],
+            user_data[2],
+            user_data[3],
+            user_data[4],
+            user_data[5]
+        )
+    print(f"Inserted {num_records} fake user records into table {table}.")
 
-def main():
-    num_records = 300  # Adjust the number of records you want to generate
-    conn = get_db_connection()
+async def main():
+    num_records = 1_000_000  # Adjust the number of records as needed.
+    conn = await get_db_connection()
     try:
-        insert_fake_users(conn, num_records)
+        tables = [
+            "users_ulid",
+            "users_uuid",
+            "users_ksuid",
+            "users_nanoid",
+            "users_cuid",
+            "users_snowflake"
+        ]
+        # Loop through each table and insert fake users asynchronously.
+        for table in tables:
+            await insert_fake_users(conn, table, num_records)
     finally:
-        conn.close()
+        await conn.close()
 
 if __name__ == '__main__':
-    main()
+    asyncio.run(main())
