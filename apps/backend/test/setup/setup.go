@@ -3,7 +3,7 @@ package setup
 import (
 	"log"
 
-	"github.com/theCompanyDream/user-trials/apps/backend/models"
+	"github.com/theCompanyDream/id-trials/apps/backend/models"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 )

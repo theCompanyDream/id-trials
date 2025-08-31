@@ -106,7 +106,7 @@ func (uuc *SnowUsersController) CreateUser(c echo.Context) error {
 		validationErrors := err.(validator.ValidationErrors)
 		return c.JSON(http.StatusUnprocessableEntity, validationErrorsToMap(validationErrors))
 	}
-	dto := model.InputToCuid(request)
+	dto := model.InputToSnowFlake(request)
 	user, error := uuc.repo.CreateUser(*dto)
 	if error != nil {
 		return error
@@ -141,7 +141,7 @@ func (uuc *SnowUsersController) UpdateUser(c echo.Context) error {
 	if id := c.Param("id"); id != "" {
 		request.Id = &id
 	}
-	dto := model.InputToCuid(request)
+	dto := model.InputToSnowFlake(request)
 	user, error := uuc.repo.UpdateUser(*dto)
 	if error != nil {
 		return error

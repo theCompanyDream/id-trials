@@ -4,7 +4,6 @@ import (
 	"errors"
 	"math"
 
-	"github.com/labstack/echo"
 	"github.com/oklog/ulid/v2"
 	"gorm.io/gorm"
 
@@ -23,18 +22,19 @@ func NewGormUlidRepository(repo *gorm.DB) *GormUlidRepository {
 }
 
 // GetUser retrieves a user by its HASH column.
-func GetUser(hashId string) (*model.UserUlid, error) {
+func (uc *GormUlidRepository) GetUser(hashId string) (*model.UserUlid, error) {
 	var user model.UserUlid
 	// Ensure the table name is correctly referenced (if needed, use Table("users"))
-	if err := db.Table("users").Where("id = ?", hashId).First(&user).Error; err != nil {
+	if err := uc.DB.Table("users").Where("id = ?", hashId).First(&user).Error; err != nil {
 		return nil, err
 	}
 	return &user, nil
 }
 
-func (uc *GormUlidRepository) GetUsers(search string, page, limit int, c echo.Context) (*model.UserPaging, error) {
+func (uc *GormUlidRepository) GetUsers(search string, page, limit int) (*model.UserPaging, error) {
 	var users []model.UserUlid
 	var totalCount int64
+	var userInput []model.UserDTO
 
 	// Use db.Model instead of db.Table
 	query := uc.DB.Model(&model.UserUlid{})
@@ -71,9 +71,15 @@ func (uc *GormUlidRepository) GetUsers(search string, page, limit int, c echo.Co
 		PageSize:  &limit,
 	}
 
+	userInput = make([]model.UserDTO, 0, len(users))
+	// Correct loop to iterate through users
+	for _, user := range users {
+		userInput = append(userInput, *user.UlidToDTO())
+	}
+
 	return &model.UserPaging{
 		Paging: paging,
-		Users:  users,
+		Users:  userInput,
 	}, nil
 }
 
@@ -94,7 +100,7 @@ func (uc *GormUlidRepository) CreateUser(requestedUser model.UserUlid) (*model.U
 func (uc *GormUlidRepository) UpdateUser(requestedUser model.UserUlid) (*model.UserUlid, error) {
 	var user model.UserUlid
 	// Retrieve the user to be updated by its HASH.
-	if err := db.Table("users").Where("ID LIKE ?", requestedUser.ID).First(&user).Error; err != nil {
+	if err := uc.DB.Table("users").Where("ID LIKE ?", requestedUser.ID).First(&user).Error; err != nil {
 		return nil, err
 	}
 	if user.ID == "" {
