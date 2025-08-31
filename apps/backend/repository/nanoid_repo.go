@@ -34,7 +34,7 @@ func (uc *GormNanoIdRepository) GetUser(hashId string) (*model.UserNanoID, error
 // GetUsers retrieves a page of users that match a search criteria.
 func (uc *GormNanoIdRepository) GetUsers(search string, page, limit int) (*model.UserPaging, error) {
 	var users []model.UserNanoID
-	var userInput []model.UserInput
+	var userInput []model.UserDTO
 	var totalCount int64
 
 	// Use db.Model instead of db.Table
@@ -72,17 +72,10 @@ func (uc *GormNanoIdRepository) GetUsers(search string, page, limit int) (*model
 		PageSize:  &limit,
 	}
 
-	userInput = make([]model.UserInput, 0, len(users))
+	userInput = make([]model.UserDTO, 0, len(users))
 	// Correct loop to iterate through users
 	for _, user := range users { // Use index and value pattern
-		userInput = append(userInput, model.UserInput{
-			Id:         &user.ID,
-			UserName:   &user.UserName,
-			FirstName:  &user.FirstName,
-			LastName:   &user.LastName,
-			Email:      &user.Email,
-			Department: user.Department,
-		})
+		userInput = append(userInput, *user.NanoIdToDTO())
 	}
 
 	return &model.UserPaging{

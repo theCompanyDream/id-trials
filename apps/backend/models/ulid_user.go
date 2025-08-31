@@ -26,8 +26,8 @@ func InputToUlid(userCreate UserInput) *UserUlid {
 	return &user
 }
 
-func (ulid *UserUlid) UlidToDTO(user UserUlid) *UserDTO {
+func (ulid *UserUlid) UlidToDTO() *UserDTO {
 	var userDTO UserDTO
-	copier.Copy(&userDTO, &user)
+	copier.Copy(&userDTO, &ulid)
 	return &userDTO
 }

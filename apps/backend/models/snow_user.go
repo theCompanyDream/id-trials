@@ -33,8 +33,8 @@ func InputToSnowFlake(userCreate UserInput) *UserSnowflake {
 	return &user
 }
 
-func (snowflake *UserSnowflake) SnowflakeToDTO(user UserSnowflake) *UserDTO {
+func (snowflake *UserSnowflake) SnowflakeToDTO() *UserDTO {
 	var userDTO UserDTO
-	copier.Copy(&userDTO, &user)
+	copier.Copy(&userDTO, &snowflake)
 	return &userDTO
 }
