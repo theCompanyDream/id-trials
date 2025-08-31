@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/theCompanyDream/user-trials/apps/backend/test/setup"
+	"github.com/theCompanyDream/id-trials/apps/backend/test/setup"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
