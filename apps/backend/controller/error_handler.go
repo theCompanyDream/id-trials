@@ -14,7 +14,7 @@ func HttpErrorHandler(err error, c echo.Context) {
 
 	// Respond with a generic error message to the client
 	if !c.Response().Committed {
-		if c.Request().Method == http.MethodHead { // Issue #608
+		if c.Request().Method == http.MethodHead {
 			c.NoContent(http.StatusInternalServerError)
 		} else {
 			c.JSON(http.StatusInternalServerError, map[string]string{"message": "Internal server error"})
