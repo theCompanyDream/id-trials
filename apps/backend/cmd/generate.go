@@ -15,17 +15,22 @@ import (
 	"gorm.io/gorm"
 
 	"github.com/theCompanyDream/id-trials/apps/backend/models"
+	"github.com/theCompanyDream/id-trials/apps/backend/repository"
 )
 
 type Config struct {
-	DatabaseURL     string
 	RecordsPerTable int
 	BatchSize       int
 	Concurrent      bool
 }
 
-func GenerateData(db *gorm.DB, config Config) {
+func GenerateData(config *Config) {
 	var wg sync.WaitGroup
+	db, err := repository.InitDB()
+
+	if err != nil {
+		log.Fatalf("Failed to connect to database: %v", err)
+	}
 
 	generators := []struct {
 		name string
@@ -221,12 +226,8 @@ func generateKuidData(db *gorm.DB, totalRecords, batchSize int) {
 		for j := 0; j < remaining; j++ {
 			id := ksuid.New()
 
-			if err != nil {
-				log.Fatalf("Failed to generate NanoID: %v", err)
-			}
-
 			users = append(users, models.UserKSUID{
-				ID: id,
+				ID: id.String(),
 				UserBase: &models.UserBase{
 					UserName:   gofakeit.Username(),
 					FirstName:  gofakeit.FirstName(),

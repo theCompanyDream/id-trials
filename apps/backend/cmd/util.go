@@ -1,4 +1,4 @@
-package datagen
+package cmd
 
 import "github.com/brianvoe/gofakeit/v6"
 
