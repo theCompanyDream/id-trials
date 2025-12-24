@@ -1,4 +1,3 @@
-# Specifies a parent image
 FROM golang:1.25.0-alpine
 
 # Install Air (requires git and build-base)

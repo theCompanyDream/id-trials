@@ -33,7 +33,7 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 		}
 		db = initial_db
 	})
-	echoOnce.Do(controller.RunServer())
+	echoOnce.Do(controller.RunServer)
 
 	// Pass the request to Echo's HTTP handler.
 	e.ServeHTTP(w, r)
