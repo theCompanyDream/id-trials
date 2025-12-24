@@ -1,5 +1,5 @@
 # Specifies a parent image
-FROM golang:1.24.0-alpine
+FROM golang:1.25.0-alpine
 
 # Install Air (requires git and build-base)
 RUN apk add --no-cache git build-base
