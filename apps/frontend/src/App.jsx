@@ -9,6 +9,7 @@ import {UserContext, Layout} from "./components";
 const Page404 = React.lazy(() => import('./pages/notFound'));
 const Table = React.lazy(() => import('./pages/userTable'));
 const Detail = React.lazy(() => import('./pages/detail'));
+const About = React.lazy(() => import('./pages/about'));
 
 const App = () => {
   const defaultBookContext = {
@@ -32,6 +33,7 @@ const App = () => {
             <Route index path="/" element={<Table />} />
             <Route path="/detail/:id?" element={<Detail />} />
             <Route path="*" element={<Page404 />} />
+            <Route path="/about" element={<About />} />
           </Routes>
         </Suspense>
       </Layout>
