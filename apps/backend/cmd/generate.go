@@ -18,13 +18,7 @@ import (
 	"github.com/theCompanyDream/id-trials/apps/backend/repository"
 )
 
-type Config struct {
-	RecordsPerTable int
-	BatchSize       int
-	Concurrent      bool
-}
-
-func GenerateData(config *Config) {
+func GenerateData(config *models.Config) {
 	var wg sync.WaitGroup
 	db, err := repository.InitDB()
 
