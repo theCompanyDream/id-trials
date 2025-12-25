@@ -3,9 +3,7 @@ testdata_dir = "testdata"
 tmp_dir = ".tmp"
 
 [build]
-args_bin = []
-# DEPRECATED - remove this line if you have it
-# bin = "./tmp/main"
+args_bin = ["server"]
 
 # Use this instead
 entrypoint = "./tmp/main"
