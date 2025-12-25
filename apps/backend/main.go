@@ -32,12 +32,10 @@ var generateCmd = &cobra.Command{
 	Run: func(command *cobra.Command, args []string) {
 		records, _ := command.Flags().GetInt("records")
 		batch, _ := command.Flags().GetInt("batch")
-		concurrent, _ := command.Flags().GetBool("concurrent")
 
 		config := &models.Config{
 			RecordsPerTable: records,
 			BatchSize:       batch,
-			Concurrent:      concurrent,
 		}
 
 		cmd.GenerateData(config)
@@ -52,7 +50,6 @@ func init() {
 	// Generate command flags
 	generateCmd.Flags().IntP("records", "r", 10000, "Number of records per table")
 	generateCmd.Flags().IntP("batch", "b", 1000, "Batch size for inserts")
-	generateCmd.Flags().BoolP("concurrent", "c", true, "Generate data concurrently across tables")
 	generateCmd.Flags().StringP("database", "d", "", "Database connection string")
 
 	// Add commands to root
