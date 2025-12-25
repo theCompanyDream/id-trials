@@ -43,6 +43,7 @@ services:
   user_api:
     container_name: ${BACKEND_NAME}
     command: ["go", "run", "main.go"]
+    restart: always
     networks:
       - app-nework
     depends_on:
@@ -55,7 +56,16 @@ services:
       context: ./apps/backend
       dockerfile: Dockerfile
     volumes:
-      - ./apps/backend:/opt/app:rw
+      - ./apps/backend/cmd:/opt/app/cmd:rw
+      - ./apps/backend/controllers:/opt/app/controllers:rw
+      - ./apps/backend/models:/opt/app/models:rw
+      - ./apps/backend/docs:/opt/app/docs:rw
+      - ./apps/backend/repository:/opt/app/repository:rw
+      - ./apps/backend/test:/opt/app/test:rw
+      - ./apps/backend/main.go:/opt/app/main.go:rw
+      - ./apps/backend/go.mod:/opt/app/go.mod:rw
+      - ./apps/backend/go.sum:/opt/app/go.sum:rw
+      - ./apps/backend/.air.toml:/opt/app/.air.toml:rw
 
   user_web:
     container_name: ${FRONTEND_NAME}
