@@ -25,11 +25,9 @@ services:
 
   user_db:
     container_name: ${DATABASE_HOST}
-    image: postgres
+    image: postgres:17.6-alpine
     networks:
       - app-nework
-    ports:
-      - 5432:5432
     volumes:
       - postgres_data:/var/lib/postgresql/data
     environment:
