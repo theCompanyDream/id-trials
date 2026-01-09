@@ -9,6 +9,7 @@ import (
 	"github.com/brianvoe/gofakeit/v6"
 	"github.com/bwmarrin/snowflake"
 	"github.com/google/uuid"
+	"github.com/lucsky/cuid"
 	gonanoid "github.com/matoous/go-nanoid/v2"
 	"github.com/oklog/ulid/v2"
 	"github.com/segmentio/ksuid"
@@ -36,6 +37,7 @@ func GenerateData(config *models.Config) {
 		{"Snowflake", generateSnowflakeData},
 		{"NanoID", generateNanoIDData},
 		{"Kuid", generateKuidData},
+		{"CUID", generateCUIDData},
 	}
 
 	fmt.Printf("Generating %d records per table across %d tables concurrently...\n",
@@ -59,7 +61,7 @@ func GenerateData(config *models.Config) {
 	wg.Wait()
 	totalDuration := time.Since(start)
 
-	fmt.Printf("\n🎉 Total: Generated %d records across all tables in %v\n",
+	fmt.Printf("\n Total: Generated %d records across all tables in %v\n",
 		config.RecordsPerTable*len(generators), totalDuration)
 }
 
@@ -234,6 +236,33 @@ func generateKuidData(db *gorm.DB, totalRecords, batchSize int) {
 
 		if err := db.CreateInBatches(users, batchSize).Error; err != nil {
 			log.Fatalf("Failed to insert UUID4 batch: %v", err)
+		}
+	}
+}
+
+func generateCUIDData(db *gorm.DB, totalRecords, batchSize int) {
+	for i := 0; i < totalRecords; i += batchSize {
+		remaining := totalRecords - i
+		if remaining > batchSize {
+			remaining = batchSize
+		}
+
+		var users []models.UserCUID
+		for j := 0; j < remaining; j++ {
+			users = append(users, models.UserCUID{
+				ID: cuid.New(),
+				UserBase: &models.UserBase{
+					UserName:   gofakeit.Username(),
+					FirstName:  gofakeit.FirstName(),
+					LastName:   gofakeit.LastName(),
+					Email:      gofakeit.Email(),
+					Department: randomDepartment(),
+				},
+			})
+		}
+
+		if err := db.CreateInBatches(users, batchSize).Error; err != nil {
+			log.Fatalf("Failed to insert ULID batch: %v", err)
 		}
 	}
 }
