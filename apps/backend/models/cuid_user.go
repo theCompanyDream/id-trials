@@ -7,7 +7,7 @@ import (
 // UserDTO represents a user in the system.
 type UserCUID struct {
 	ID string `gorm:"column:id;type:varchar(25);primaryKey" json:"id"`
-	UserBase
+	*UserBase
 }
 
 // TableName sets the table name for UserDTO to "users".

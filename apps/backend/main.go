@@ -44,8 +44,8 @@ var generateCmd = &cobra.Command{
 
 func init() {
 	// Server command flags
-	serverCmd.Flags().StringP("port", "p", "3000", "Port to run server on")
-	serverCmd.Flags().StringP("host", "H", "localhost", "Host to bind server to")
+	serverCmd.Flags().StringP("port", "p", os.Getenv("BACKEND_PORT"), "Port to run server on")
+	serverCmd.Flags().StringP("host", "H", os.Getenv("BACKEND_HOST"), "Host to bind server to")
 
 	// Generate command flags
 	generateCmd.Flags().IntP("records", "r", 10000, "Number of records per table")
