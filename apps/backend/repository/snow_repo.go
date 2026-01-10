@@ -11,13 +11,16 @@ import (
 )
 
 type GormSnowRepository struct {
-	DB *gorm.DB
+	DB   *gorm.DB
+	Node *snowflake.Node
 }
 
 // NewGormCuidRepository creates a new instance of GormCuidRepository.
 func NewGormSnowRepository(repo *gorm.DB) *GormSnowRepository {
+	node, _ := snowflake.NewNode(1)
 	return &GormSnowRepository{
-		DB: repo,
+		DB:   repo,
+		Node: node,
 	}
 }
 
@@ -87,11 +90,7 @@ func (uc *GormSnowRepository) GetUsers(search string, page, limit int) (*model.U
 // CreateUser creates a new user record.
 func (uc *GormSnowRepository) CreateUser(requestedUser model.UserSnowflake) (*model.UserSnowflake, error) {
 	// Generate a new UUID for the user.
-	node, err := snowflake.NewNode(1)
-	if err != nil {
-		return nil, err
-	}
-	id := node.Generate()
+	id := uc.Node.Generate()
 	requestedUser.ID = id.Int64()
 
 	// Insert the record into the USERS table.
