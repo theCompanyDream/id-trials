@@ -23,6 +23,11 @@ var (
 	db         *gorm.DB
 )
 
+func RunServer() {
+	e = echo.New()
+	controller.RunServer(db)
+}
+
 func Handler(w http.ResponseWriter, r *http.Request) {
 	// Initialize the database, capturing errors with full stack trace.
 	initDBOnce.Do(func() {
@@ -33,7 +38,7 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 		}
 		db = initial_db
 	})
-	echoOnce.Do(controller.RunServer)
+	echoOnce.Do(RunServer)
 
 	// Pass the request to Echo's HTTP handler.
 	e.ServeHTTP(w, r)

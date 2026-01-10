@@ -2,12 +2,14 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"os"
 
 	"github.com/spf13/cobra"
 	"github.com/theCompanyDream/id-trials/apps/backend/cmd"
 	"github.com/theCompanyDream/id-trials/apps/backend/controller"
 	"github.com/theCompanyDream/id-trials/apps/backend/models"
+	"github.com/theCompanyDream/id-trials/apps/backend/repository"
 )
 
 var rootCmd = &cobra.Command{
@@ -21,7 +23,11 @@ var serverCmd = &cobra.Command{
 	Short: "Start the web API server",
 	Long:  `Starts the web server with REST API endpoints for all ID types.`,
 	Run: func(command *cobra.Command, args []string) {
-		controller.RunServer()
+		db, err := repository.InitDB()
+		if err != nil {
+			log.Fatal(err)
+		}
+		controller.RunServer(db)
 	},
 }
 
@@ -38,7 +44,12 @@ var generateCmd = &cobra.Command{
 			BatchSize:       batch,
 		}
 
-		cmd.GenerateData(config)
+		db, err := repository.InitDB()
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		cmd.GenerateData(config, db)
 	},
 }
 

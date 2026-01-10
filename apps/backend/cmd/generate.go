@@ -16,16 +16,10 @@ import (
 	"gorm.io/gorm"
 
 	"github.com/theCompanyDream/id-trials/apps/backend/models"
-	"github.com/theCompanyDream/id-trials/apps/backend/repository"
 )
 
-func GenerateData(config *models.Config) {
+func GenerateData(config *models.Config, db *gorm.DB) {
 	var wg sync.WaitGroup
-	db, err := repository.InitDB()
-
-	if err != nil {
-		log.Fatalf("Failed to connect to database: %v", err)
-	}
 
 	generators := []struct {
 		name string
