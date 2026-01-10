@@ -8,17 +8,12 @@ import (
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/labstack/gommon/log"
 	echoSwagger "github.com/swaggo/echo-swagger"
-	"github.com/theCompanyDream/id-trials/apps/backend/repository"
 	"github.com/ziflex/lecho"
 	"golang.org/x/time/rate"
 	"gorm.io/gorm"
 )
 
 func RunServer(db *gorm.DB) {
-	db, err := repository.InitDB()
-	if err != nil {
-		log.Fatal(err)
-	}
 	server := echo.New()
 	logger := lecho.New(
 		os.Stdout,

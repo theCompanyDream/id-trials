@@ -1,4 +1,19 @@
 definitions:
+  models.UserDTO:
+    properties:
+      department:
+        type: string
+      email:
+        type: string
+      first_name:
+        type: string
+      id:
+        type: string
+      last_name:
+        type: string
+      user_name:
+        type: string
+    type: object
   models.UserInput:
     properties:
       department:
@@ -44,7 +59,7 @@ definitions:
       users:
         description: A list of users
         items:
-          $ref: '#/definitions/models.UserInput'
+          $ref: '#/definitions/models.UserDTO'
         type: array
     type: object
 info:

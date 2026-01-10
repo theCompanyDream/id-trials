@@ -1309,6 +1309,29 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "models.UserDTO": {
+            "type": "object",
+            "properties": {
+                "department": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "first_name": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "last_name": {
+                    "type": "string"
+                },
+                "user_name": {
+                    "type": "string"
+                }
+            }
+        },
         "models.UserInput": {
             "type": "object",
             "properties": {
@@ -1365,7 +1388,7 @@ const docTemplate = `{
                     "description": "A list of users",
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.UserInput"
+                        "$ref": "#/definitions/models.UserDTO"
                     }
                 }
             }
