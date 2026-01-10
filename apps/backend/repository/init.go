@@ -10,8 +10,6 @@ import (
 	"gorm.io/gorm/logger"
 )
 
-var db *gorm.DB
-
 // GetPostgresConnectionString returns a PostgreSQL connection string.
 // It first checks for POSTGRES_URL and falls back to constructing the string.
 func GetPostgresConnectionString() string {
@@ -24,51 +22,57 @@ func GetPostgresConnectionString() string {
 		os.Getenv("DATABASE_NAME"))
 }
 
-func InitDB() error {
+func InitDB() (*gorm.DB, error) {
 	var err error
 	connectStr := GetPostgresConnectionString()
 	fmt.Println("Connecting to:", connectStr)
 
 	// Add more verbose logging and configuration
-	db, err = gorm.Open(postgres.Open(connectStr), &gorm.Config{
+	db, err := gorm.Open(postgres.Open(connectStr), &gorm.Config{
 		// Add additional configurations
 		Logger: logger.Default.LogMode(logger.Info), // Enable detailed logging
 	})
 	if err != nil {
-		return fmt.Errorf("failed to connect to database: %v", err)
+		return nil, fmt.Errorf("failed to connect to database: %v", err)
 	}
 
 	// Test the connection
 	sqlDB, err := db.DB()
 	if err != nil {
-		return fmt.Errorf("failed to get database: %v", err)
+		return nil, fmt.Errorf("failed to get database: %v", err)
 	}
 
 	// Ping the database
 	if err := sqlDB.Ping(); err != nil {
-		return fmt.Errorf("failed to ping database: %v", err)
+		return nil, fmt.Errorf("failed to ping database: %v", err)
 	}
 
 	// Auto migrate with more detailed error handling
-	if err := db.AutoMigrate(&model.UserDTO{}); err != nil {
+	if err := db.AutoMigrate(
+		&model.UserUlid{},
+		&model.UserCUID{},
+		&model.UserKSUID{},
+		&model.UserNanoID{},
+		&model.UserSnowflake{},
+		&model.UserUUID{}); err != nil {
 		// Log the error as a warning and continue
 		fmt.Printf("Warning: Failed to auto migrate: %v", err)
 	}
 
 	fmt.Println("Database connection successful")
-	return nil
+	return db, nil
 }
 
-func ServerlessInitDB() error {
+func ServerlessInitDB() (*gorm.DB, error) {
 	var err error
 	connectStr := os.Getenv("POSTGRES_URL")
 
-	db, err = gorm.Open(postgres.Open(connectStr), &gorm.Config{
+	db, err := gorm.Open(postgres.Open(connectStr), &gorm.Config{
 		Logger: logger.Default.LogMode(logger.Info),
 	})
 	if err != nil {
-		return fmt.Errorf("failed to connect to database: %v", err)
+		return nil, fmt.Errorf("failed to connect to database: %v", err)
 	}
 
-	return nil
+	return db, nil
 }

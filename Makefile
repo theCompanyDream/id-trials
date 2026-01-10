@@ -10,7 +10,6 @@ endif
 clean: down
 	@echo "Cleaning directory and volumes"
 	docker system prune -f --volumes
-	rm -rf ./apps/backend/.tmp ./apps/backend/tmp
 	pnpm --dir apps/frontend clean
 
 dev:

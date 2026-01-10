@@ -8,7 +8,7 @@ const UserTable = () => {
 
   // Function to fetch users with search and page parameters
   const fetchUsers = (page = 1, query = search) => {
-    fetch(`/api/users?search=${encodeURIComponent(query)}&page=${page}`)
+    fetch(`/api/uuid4?search=${encodeURIComponent(query)}&page=${page}`)
       .then((response) => response.json())
       .then((data) => {
         setUsers(data);
@@ -18,7 +18,7 @@ const UserTable = () => {
   };
 
   const onDelete = (userId) => {
-    fetch(`/api/user/${userId}`, {
+    fetch(`/api/uuid4/${userId}`, {
       method: "DELETE"
     })
     .then((data) => {
