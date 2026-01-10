@@ -30,6 +30,7 @@ var (
 )
 
 func RunServer() {
+	server = echo.New()
 	logger := lecho.New(
 		os.Stdout,
 		lecho.WithLevel(log.DEBUG),
