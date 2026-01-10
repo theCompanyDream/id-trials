@@ -24,8 +24,8 @@ func NewGormSnowRepository(repo *gorm.DB) *GormSnowRepository {
 // GetUser retrieves a user by its HASH column.
 func (uc *GormSnowRepository) GetUser(hashId string) (*model.UserSnowflake, error) {
 	var user model.UserSnowflake
-	// Ensure the table name is correctly referenced (if needed, use Table("users"))
-	if err := uc.DB.Table("users").Where("id = ?", hashId).First(&user).Error; err != nil {
+	// Ensure the table name is correctly referenced (if needed, use )
+	if err := uc.DB.Where("id = ?", hashId).First(&user).Error; err != nil {
 		return nil, err
 	}
 	return &user, nil
@@ -95,7 +95,7 @@ func (uc *GormSnowRepository) CreateUser(requestedUser model.UserSnowflake) (*mo
 	requestedUser.ID = id.Int64()
 
 	// Insert the record into the USERS table.
-	if err := uc.DB.Table("users").Create(&requestedUser).Error; err != nil {
+	if err := uc.DB.Create(&requestedUser).Error; err != nil {
 		return nil, err
 	}
 	return &requestedUser, nil
@@ -105,7 +105,7 @@ func (uc *GormSnowRepository) CreateUser(requestedUser model.UserSnowflake) (*mo
 func (uc *GormSnowRepository) UpdateUser(requestedUser model.UserSnowflake) (*model.UserSnowflake, error) {
 	var user model.UserSnowflake
 	// Retrieve the user to be updated by its HASH.
-	if err := uc.DB.Table("users").Where("id LIKE ?", requestedUser.ID).First(&user).Error; err != nil {
+	if err := uc.DB.Where("id LIKE ?", requestedUser.ID).First(&user).Error; err != nil {
 		return nil, err
 	}
 	if user.ID == 0 {
@@ -127,12 +127,12 @@ func (uc *GormSnowRepository) UpdateUser(requestedUser model.UserSnowflake) (*mo
 	}
 
 	// Update the record in the USERS table.
-	if err := uc.DB.Table("users").Where("id = ?", user.ID).Updates(user).Error; err != nil {
+	if err := uc.DB.Where("id = ?", user.ID).Updates(user).Error; err != nil {
 		return nil, err
 	}
 
 	// Optionally, re-fetch the updated record.
-	if err := uc.DB.Table("users").Where("id = ?", user.ID).First(&user).Error; err != nil {
+	if err := uc.DB.Where("id = ?", user.ID).First(&user).Error; err != nil {
 		return nil, err
 	}
 	return &user, nil
@@ -140,7 +140,7 @@ func (uc *GormSnowRepository) UpdateUser(requestedUser model.UserSnowflake) (*mo
 
 // DeleteUser removes a user record based on its HASH.
 func (uc *GormSnowRepository) DeleteUser(id string) error {
-	if err := uc.DB.Table("users").Where("id = ?", id).Delete(&model.UserSnowflake{}).Error; err != nil {
+	if err := uc.DB.Where("id = ?", id).Delete(&model.UserSnowflake{}).Error; err != nil {
 		return err
 	}
 	return nil

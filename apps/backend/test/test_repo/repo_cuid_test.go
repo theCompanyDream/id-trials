@@ -15,13 +15,13 @@ import (
 )
 
 // TestCreateAndGetUser tests creating a user and then retrieving it.
-func TestCreateAndGetUlidUser(t *testing.T) {
+func TestCreateAndGetUser(t *testing.T) {
 	db := setup.NewPostgresMockDB()
 
 	deparment := "Engineering"
 
 	// Create a new user.
-	user := models.UserUlid{
+	user := models.UserCUID{
 		UserBase: &models.UserBase{
 			UserName:   "testuser",
 			FirstName:  "Test",
@@ -30,30 +30,30 @@ func TestCreateAndGetUlidUser(t *testing.T) {
 		},
 	}
 
-	ulidRepository := repository.NewGormUlidRepository(db)
+	cuidRepository := repository.NewGormCuidRepository(db)
 
-	created, err := ulidRepository.CreateUser(user)
+	created, err := cuidRepository.CreateUser(user)
 	require.NoError(t, err, "failed to create user")
 	require.NotEmpty(t, created.ID, "user ID should not be empty after creation")
 
 	// Retrieve the user by the hash (since GetUser uses hash in this implementation).
-	retrieved, err := ulidRepository.GetUser(created.ID)
+	retrieved, err := cuidRepository.GetUser(created.ID)
 	require.NoError(t, err, "failed to retrieve user")
 	require.Equal(t, created.ID, retrieved.ID, "retrieved user ID should match created user ID")
 	require.Equal(t, created.UserName, retrieved.UserName, "user name should match")
 }
 
-func TestGetAllUlidUsers(t *testing.T) {
+func TestGetAllUsers(t *testing.T) {
 	db := setup.NewPostgresMockDB()
 
-	ulidRepository := repository.NewGormUlidRepository(db)
+	cuidRepository := repository.NewGormCuidRepository(db)
 
 	// Create multiple users
 	departments := []string{"Engineering", "Sales", "Marketing"}
-	var createdUsers []models.UserUlid
+	var createdUsers []models.UserCUID
 
 	for i, dept := range departments {
-		user := models.UserUlid{
+		user := models.UserCUID{
 			UserBase: &models.UserBase{
 				UserName:   fmt.Sprintf("testuser%d", i+1),
 				FirstName:  fmt.Sprintf("Test%d", i+1),
@@ -63,25 +63,25 @@ func TestGetAllUlidUsers(t *testing.T) {
 			},
 		}
 
-		created, err := ulidRepository.CreateUser(user)
+		created, err := cuidRepository.CreateUser(user)
 		require.NoError(t, err, "failed to create user %d", i+1)
 		createdUsers = append(createdUsers, *created)
 	}
 
 	// Get all users
-	allUsers, err := ulidRepository.GetUsers("", 1, 3)
+	allUsers, err := cuidRepository.GetUsers("", 1, 3)
 	require.NoError(t, err, "failed to get all users")
 	assert.GreaterOrEqual(t, len(allUsers.Users), len(createdUsers), "should have at least the created users")
 }
 
 // TestUpdateUser tests updating an existing user.
-func TestUpdateUlidUser(t *testing.T) {
+func TestUpdateUser(t *testing.T) {
 	db := setup.NewPostgresMockDB()
 
 	deparment := "Engineering"
 
 	// Create a new user.
-	user := models.UserUlid{
+	user := models.UserCUID{
 		UserBase: &models.UserBase{
 			UserName:   "testuser",
 			FirstName:  "Test",
@@ -90,27 +90,27 @@ func TestUpdateUlidUser(t *testing.T) {
 		},
 	}
 
-	ulidRepository := repository.NewGormUlidRepository(db)
+	cuidRepository := repository.NewGormCuidRepository(db)
 
-	created, err := ulidRepository.CreateUser(user)
+	created, err := cuidRepository.CreateUser(user)
 	require.NoError(t, err, "failed to create user for update")
 	require.NotEmpty(t, created.ID, "user ID should not be empty after creation")
 
 	// Update the first name.
 	created.FirstName = "UpdatedName"
-	updated, err := ulidRepository.UpdateUser(*created)
+	updated, err := cuidRepository.UpdateUser(*created)
 	require.NoError(t, err, "failed to update user")
 	require.Equal(t, "UpdatedName", updated.FirstName, "first name should be updated")
 }
 
 // TestDeleteUser tests deleting a user.
-func TestDeleteUlidUser(t *testing.T) {
+func TestDeleteUser(t *testing.T) {
 	db := setup.NewPostgresMockDB()
 
 	deparment := "Engineering"
 
 	// Create a user to delete.
-	user := models.UserUlid{
+	user := models.UserCUID{
 		UserBase: &models.UserBase{
 			UserName:   "testuser",
 			FirstName:  "Test",
@@ -118,7 +118,7 @@ func TestDeleteUlidUser(t *testing.T) {
 			Department: &deparment,
 		},
 	}
-	repository := repository.NewGormUlidRepository(db)
+	repository := repository.NewGormCuidRepository(db)
 
 	created, err := repository.CreateUser(user)
 	require.NoError(t, err, "failed to create user for deletion")

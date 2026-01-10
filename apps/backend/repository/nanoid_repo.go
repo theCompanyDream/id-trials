@@ -24,8 +24,8 @@ func NewGormNanoIdRepository(repo *gorm.DB) *GormNanoIdRepository {
 // GetUser retrieves a user by its HASH column.
 func (uc *GormNanoIdRepository) GetUser(hashId string) (*model.UserNanoID, error) {
 	var user model.UserNanoID
-	// Ensure the table name is correctly referenced (if needed, use Table("users"))
-	if err := uc.DB.Table("users").Where("id = ?", hashId).First(&user).Error; err != nil {
+	// Ensure the table name is correctly referenced (if needed, use )
+	if err := uc.DB.Where("id = ?", hashId).First(&user).Error; err != nil {
 		return nil, err
 	}
 	return &user, nil
@@ -94,7 +94,7 @@ func (uc *GormNanoIdRepository) CreateUser(requestedUser model.UserNanoID) (*mod
 	requestedUser.ID = id
 
 	// Insert the record into the USERS table.
-	if err := uc.DB.Table("users").Create(&requestedUser).Error; err != nil {
+	if err := uc.DB.Create(&requestedUser).Error; err != nil {
 		return nil, err
 	}
 	return &requestedUser, nil
@@ -104,7 +104,7 @@ func (uc *GormNanoIdRepository) CreateUser(requestedUser model.UserNanoID) (*mod
 func (uc *GormNanoIdRepository) UpdateUser(requestedUser model.UserNanoID) (*model.UserNanoID, error) {
 	var user model.UserNanoID
 	// Retrieve the user to be updated by its HASH.
-	if err := uc.DB.Table("users").Where("id LIKE ?", requestedUser.ID).First(&user).Error; err != nil {
+	if err := uc.DB.Where("id LIKE ?", requestedUser.ID).First(&user).Error; err != nil {
 		return nil, err
 	}
 	if user.ID == "" {
@@ -126,12 +126,12 @@ func (uc *GormNanoIdRepository) UpdateUser(requestedUser model.UserNanoID) (*mod
 	}
 
 	// Update the record in the USERS table.
-	if err := uc.DB.Table("users").Where("id = ?", user.ID).Updates(user).Error; err != nil {
+	if err := uc.DB.Where("id = ?", user.ID).Updates(user).Error; err != nil {
 		return nil, err
 	}
 
 	// Optionally, re-fetch the updated record.
-	if err := uc.DB.Table("users").Where("id = ?", user.ID).First(&user).Error; err != nil {
+	if err := uc.DB.Where("id = ?", user.ID).First(&user).Error; err != nil {
 		return nil, err
 	}
 	return &user, nil
@@ -139,7 +139,7 @@ func (uc *GormNanoIdRepository) UpdateUser(requestedUser model.UserNanoID) (*mod
 
 // DeleteUser removes a user record based on its HASH.
 func (uc *GormNanoIdRepository) DeleteUser(id string) error {
-	if err := uc.DB.Table("users").Where("id = ?", id).Delete(&model.UserNanoID{}).Error; err != nil {
+	if err := uc.DB.Where("id = ?", id).Delete(&model.UserNanoID{}).Error; err != nil {
 		return err
 	}
 	return nil

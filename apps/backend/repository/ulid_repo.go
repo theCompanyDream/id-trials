@@ -24,8 +24,8 @@ func NewGormUlidRepository(repo *gorm.DB) *GormUlidRepository {
 // GetUser retrieves a user by its HASH column.
 func (uc *GormUlidRepository) GetUser(hashId string) (*model.UserUlid, error) {
 	var user model.UserUlid
-	// Ensure the table name is correctly referenced (if needed, use Table("users"))
-	if err := uc.DB.Table("users").Where("id = ?", hashId).First(&user).Error; err != nil {
+	// Ensure the table name is correctly referenced (if needed, use )
+	if err := uc.DB.Where("id = ?", hashId).First(&user).Error; err != nil {
 		return nil, err
 	}
 	return &user, nil
@@ -90,7 +90,7 @@ func (uc *GormUlidRepository) CreateUser(requestedUser model.UserUlid) (*model.U
 	requestedUser.ID = id.String()
 
 	// Insert the record into the USERS table.
-	if err := uc.DB.Table("users").Create(&requestedUser).Error; err != nil {
+	if err := uc.DB.Create(&requestedUser).Error; err != nil {
 		return nil, err
 	}
 	return &requestedUser, nil
@@ -100,7 +100,7 @@ func (uc *GormUlidRepository) CreateUser(requestedUser model.UserUlid) (*model.U
 func (uc *GormUlidRepository) UpdateUser(requestedUser model.UserUlid) (*model.UserUlid, error) {
 	var user model.UserUlid
 	// Retrieve the user to be updated by its HASH.
-	if err := uc.DB.Table("users").Where("ID LIKE ?", requestedUser.ID).First(&user).Error; err != nil {
+	if err := uc.DB.Where("ID LIKE ?", requestedUser.ID).First(&user).Error; err != nil {
 		return nil, err
 	}
 	if user.ID == "" {
@@ -122,12 +122,12 @@ func (uc *GormUlidRepository) UpdateUser(requestedUser model.UserUlid) (*model.U
 	}
 
 	// Update the record in the USERS table.
-	if err := uc.DB.Table("users").Where("id = ?", user.ID).Updates(user).Error; err != nil {
+	if err := uc.DB.Where("id = ?", user.ID).Updates(user).Error; err != nil {
 		return nil, err
 	}
 
 	// Optionally, re-fetch the updated record.
-	if err := uc.DB.Table("users").Where("id = ?", user.ID).First(&user).Error; err != nil {
+	if err := uc.DB.Where("id = ?", user.ID).First(&user).Error; err != nil {
 		return nil, err
 	}
 	return &user, nil
@@ -135,7 +135,7 @@ func (uc *GormUlidRepository) UpdateUser(requestedUser model.UserUlid) (*model.U
 
 // DeleteUser removes a user record based on its HASH.
 func (uc *GormUlidRepository) DeleteUser(id string) error {
-	if err := uc.DB.Table("users").Where("id = ?", id).Delete(&model.UserUlid{}).Error; err != nil {
+	if err := uc.DB.Where("id = ?", id).Delete(&model.UserUlid{}).Error; err != nil {
 		return err
 	}
 	return nil

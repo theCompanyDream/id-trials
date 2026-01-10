@@ -8,17 +8,40 @@ import (
 	"gorm.io/gorm"
 )
 
-// NewPostgresMockDB returns a GORM DB instance backed by sqlmock and the sqlmock instance for further expectations.
 func NewPostgresMockDB() *gorm.DB {
 	db, err := gorm.Open(sqlite.Open(":memory:"), &gorm.Config{})
 	if err != nil {
 		log.Fatalf("failed to connect to test database: %v", err)
 	}
 
-	// Auto-migrate your models
-	err = db.AutoMigrate(&models.UserUlid{}, &models.UserCUID{}, &models.UserUUID{}, &models.UserKSUID{}, &models.UserSnowflake{}, &models.UserNanoID{})
+	// Verify connection
+	sqlDB, err := db.DB()
 	if err != nil {
-		log.Fatalf("failed to migrate test database: %v", err)
+		log.Fatalf("failed to get underlying DB: %v", err)
+	}
+
+	if err := sqlDB.Ping(); err != nil {
+		log.Fatalf("failed to ping database: %v", err)
+	}
+
+	// Auto-migrate with explicit table names
+	models := []interface{}{
+		&models.UserUlid{},
+		&models.UserCUID{},
+		&models.UserUUID{},
+		&models.UserKSUID{},
+		&models.UserSnowflake{},
+		&models.UserNanoID{},
+	}
+
+	for _, model := range models {
+		if err := db.AutoMigrate(model); err != nil {
+			log.Fatalf("failed to migrate %T: %v", model, err)
+		}
+
+		// Verify table was created
+		tableName := db.NamingStrategy.TableName(db.Statement.Table)
+		log.Printf("✅ Created table: %s", tableName)
 	}
 
 	return db
