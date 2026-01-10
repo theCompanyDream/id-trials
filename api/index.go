@@ -37,7 +37,6 @@ func RunServer() {
 		lecho.WithTimestamp(),
 		lecho.WithCaller(),
 	)
-
 	server.HTTPErrorHandler = controller.HttpErrorHandler
 
 	ulidController := controller.NewUlidController(db)
@@ -53,44 +52,55 @@ func RunServer() {
 	server.Use(middleware.RequestID())
 	server.Use(middleware.Gzip())
 	server.Use(middleware.RateLimiter(middleware.NewRateLimiterMemoryStore(rate.Limit(10))))
-	// Define main routes
-	server.GET("/swagger/*", echoSwagger.WrapHandler)
-	server.GET("/", controller.Home)
-	server.GET("/ulids", ulidController.GetUsers)
-	server.GET("/ulid/:id", ulidController.GetUser)
-	server.POST("/ulid", ulidController.CreateUser)
-	server.PUT("/ulid/:id", ulidController.UpdateUser)
-	server.DELETE("/ulid/:id", ulidController.DeleteUser)
-	//uuid
-	server.GET("/uuid4", uuid4Controller.GetUsers)
-	server.GET("/uuid4/:id", uuid4Controller.GetUser)
-	server.POST("/uuid4", uuid4Controller.CreateUser)
-	server.PUT("/uuid4/:id", uuid4Controller.UpdateUser)
-	server.DELETE("/uuid4/:id", uuid4Controller.DeleteUser)
-	//nanoId
-	server.GET("/nano", nanoIdController.GetUsers)
-	server.GET("/nano/:id", nanoIdController.GetUser)
-	server.POST("/nano", nanoIdController.CreateUser)
-	server.PUT("/nano/:id", nanoIdController.UpdateUser)
-	server.DELETE("/nano/:id", nanoIdController.DeleteUser)
-	//ksuid
-	server.GET("/ksuid", ksuidController.GetUsers)
-	server.GET("/ksuid/:id", ksuidController.GetUser)
-	server.POST("/ksuid", ksuidController.CreateUser)
-	server.PUT("/ksuid/:id", ksuidController.UpdateUser)
-	server.DELETE("/ksuid/:id", ksuidController.DeleteUser)
-	//cuid
-	server.GET("/cuid", cuidController.GetUsers)
-	server.GET("/cuid/:id", cuidController.GetUser)
-	server.POST("/cuid", cuidController.CreateUser)
-	server.PUT("/cuid/:id", cuidController.UpdateUser)
-	server.DELETE("/cuid/:id", cuidController.DeleteUser)
 
-	server.GET("/snow", snowController.GetUsers)
-	server.GET("/snow/:id", snowController.GetUser)
-	server.POST("/snow", snowController.CreateUser)
-	server.PUT("/snow/:id", snowController.UpdateUser)
-	server.DELETE("/snow/:id", snowController.DeleteUser)
+	// Create API group with /api prefix
+	api := server.Group("/api")
+
+	// Define routes under /api
+	api.GET("/swagger/*", echoSwagger.WrapHandler)
+	api.GET("/", controller.Home)
+
+	// ULID routes
+	api.GET("/ulids", ulidController.GetUsers)
+	api.GET("/ulid/:id", ulidController.GetUser)
+	api.POST("/ulid", ulidController.CreateUser)
+	api.PUT("/ulid/:id", ulidController.UpdateUser)
+	api.DELETE("/ulid/:id", ulidController.DeleteUser)
+
+	// UUID routes
+	api.GET("/uuid4", uuid4Controller.GetUsers)
+	api.GET("/uuid4/:id", uuid4Controller.GetUser)
+	api.POST("/uuid4", uuid4Controller.CreateUser)
+	api.PUT("/uuid4/:id", uuid4Controller.UpdateUser)
+	api.DELETE("/uuid4/:id", uuid4Controller.DeleteUser)
+
+	// NanoID routes
+	api.GET("/nano", nanoIdController.GetUsers)
+	api.GET("/nano/:id", nanoIdController.GetUser)
+	api.POST("/nano", nanoIdController.CreateUser)
+	api.PUT("/nano/:id", nanoIdController.UpdateUser)
+	api.DELETE("/nano/:id", nanoIdController.DeleteUser)
+
+	// KSUID routes
+	api.GET("/ksuid", ksuidController.GetUsers)
+	api.GET("/ksuid/:id", ksuidController.GetUser)
+	api.POST("/ksuid", ksuidController.CreateUser)
+	api.PUT("/ksuid/:id", ksuidController.UpdateUser)
+	api.DELETE("/ksuid/:id", ksuidController.DeleteUser)
+
+	// CUID routes
+	api.GET("/cuid", cuidController.GetUsers)
+	api.GET("/cuid/:id", cuidController.GetUser)
+	api.POST("/cuid", cuidController.CreateUser)
+	api.PUT("/cuid/:id", cuidController.UpdateUser)
+	api.DELETE("/cuid/:id", cuidController.DeleteUser)
+
+	// Snowflake routes
+	api.GET("/snow", snowController.GetUsers)
+	api.GET("/snow/:id", snowController.GetUser)
+	api.POST("/snow", snowController.CreateUser)
+	api.PUT("/snow/:id", snowController.UpdateUser)
+	api.DELETE("/snow/:id", snowController.DeleteUser)
 }
 
 func Handler(w http.ResponseWriter, r *http.Request) {
