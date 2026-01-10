@@ -4,7 +4,7 @@ go 1.24
 
 require (
 	github.com/labstack/echo/v4 v4.13.4
-	github.com/theCompanyDream/id-trials/apps/backend v0.1.4
+	github.com/theCompanyDream/id-trials/apps/backend v0.1.5
 	gorm.io/gorm v1.30.1
 )
 
