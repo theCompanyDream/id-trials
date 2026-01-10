@@ -41,7 +41,11 @@ func (uuc *SnowUsersController) GetUser(c echo.Context) error {
 	if id == "" {
 		return c.JSON(http.StatusNotFound, errors.New("id not applicable there"))
 	}
-	user, err := uuc.repo.GetUser(id)
+	parsedId, err := strconv.ParseInt(id, 10, 64)
+	if err != nil {
+		return errors.New("	invalid id format")
+	}
+	user, err := uuc.repo.GetUser(parsedId)
 	if err != nil {
 		return err
 	}
@@ -165,7 +169,11 @@ func (uuc *SnowUsersController) DeleteUser(c echo.Context) error {
 	if id == "" {
 		return errors.New("id must not be null")
 	}
-	err := uuc.repo.DeleteUser(id)
+	parsedId, err := strconv.ParseInt(id, 10, 64)
+	if err != nil {
+		return errors.New("	invalid id format")
+	}
+	err = uuc.repo.DeleteUser(parsedId)
 	if err != nil {
 		return err
 	}

@@ -118,17 +118,17 @@ func TestDeleteUlidUser(t *testing.T) {
 			Department: &deparment,
 		},
 	}
-	repository := repository.NewGormUlidRepository(db)
+	ulidRepository := repository.NewGormUlidRepository(db)
 
-	created, err := repository.CreateUser(user)
+	created, err := ulidRepository.CreateUser(user)
 	require.NoError(t, err, "failed to create user for deletion")
 	require.NotEmpty(t, created.ID, "user ID should not be empty after creation")
 
 	// Delete the user using its ID. (Your DeleteUser function uses the id field.)
-	err = repository.DeleteUser(created.ID)
+	err = ulidRepository.DeleteUser(created.ID)
 	require.NoError(t, err, "failed to delete user")
 
 	// Attempt to fetch the deleted user; expect an error.
-	_, err = repository.GetUser(created.ID)
+	_, err = ulidRepository.GetUser(created.ID)
 	require.Error(t, err, "expected error when fetching deleted user")
 }

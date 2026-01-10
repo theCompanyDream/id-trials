@@ -22,7 +22,7 @@ func NewGormSnowRepository(repo *gorm.DB) *GormSnowRepository {
 }
 
 // GetUser retrieves a user by its HASH column.
-func (uc *GormSnowRepository) GetUser(hashId string) (*model.UserSnowflake, error) {
+func (uc *GormSnowRepository) GetUser(hashId int64) (*model.UserSnowflake, error) {
 	var user model.UserSnowflake
 	// Ensure the table name is correctly referenced (if needed, use )
 	if err := uc.DB.Where("id = ?", hashId).First(&user).Error; err != nil {
@@ -139,7 +139,7 @@ func (uc *GormSnowRepository) UpdateUser(requestedUser model.UserSnowflake) (*mo
 }
 
 // DeleteUser removes a user record based on its HASH.
-func (uc *GormSnowRepository) DeleteUser(id string) error {
+func (uc *GormSnowRepository) DeleteUser(id int64) error {
 	if err := uc.DB.Where("id = ?", id).Delete(&model.UserSnowflake{}).Error; err != nil {
 		return err
 	}

@@ -15,13 +15,13 @@ import (
 )
 
 // TestCreateAndGetUser tests creating a user and then retrieving it.
-func TestCreateAndGetKsuid(t *testing.T) {
+func TestCreateAndGetSnowFlake(t *testing.T) {
 	db := setup.NewPostgresMockDB()
 
 	deparment := "Engineering"
 
 	// Create a new user.
-	user := models.UserKSUID{
+	user := models.UserSnowflake{
 		UserBase: &models.UserBase{
 			UserName:   "testuser",
 			FirstName:  "Test",
@@ -30,30 +30,30 @@ func TestCreateAndGetKsuid(t *testing.T) {
 		},
 	}
 
-	ksuidRepository := repository.NewGormKsuidRepository(db)
+	snowRepository := repository.NewGormSnowRepository(db)
 
-	created, err := ksuidRepository.CreateUser(user)
+	created, err := snowRepository.CreateUser(user)
 	require.NoError(t, err, "failed to create user")
 	require.NotEmpty(t, created.ID, "user ID should not be empty after creation")
 
 	// Retrieve the user by the hash (since GetUser uses hash in this implementation).
-	retrieved, err := ksuidRepository.GetUser(created.ID)
+	retrieved, err := snowRepository.GetUser(created.ID)
 	require.NoError(t, err, "failed to retrieve user")
 	require.Equal(t, created.ID, retrieved.ID, "retrieved user ID should match created user ID")
 	require.Equal(t, created.UserName, retrieved.UserName, "user name should match")
 }
 
-func TestGetAllKsuids(t *testing.T) {
+func TestGetAllSnowFlake(t *testing.T) {
 	db := setup.NewPostgresMockDB()
 
-	ksuidRepository := repository.NewGormKsuidRepository(db)
+	snowRepository := repository.NewGormSnowRepository(db)
 
 	// Create multiple users
 	departments := []string{"Engineering", "Sales", "Marketing"}
-	var createdUsers []models.UserKSUID
+	var createdUsers []models.UserSnowflake
 
 	for i, dept := range departments {
-		user := models.UserKSUID{
+		user := models.UserSnowflake{
 			UserBase: &models.UserBase{
 				UserName:   fmt.Sprintf("testuser%d", i+1),
 				FirstName:  fmt.Sprintf("Test%d", i+1),
@@ -63,25 +63,25 @@ func TestGetAllKsuids(t *testing.T) {
 			},
 		}
 
-		created, err := ksuidRepository.CreateUser(user)
+		created, err := snowRepository.CreateUser(user)
 		require.NoError(t, err, "failed to create user %d", i+1)
 		createdUsers = append(createdUsers, *created)
 	}
 
 	// Get all users
-	allUsers, err := ksuidRepository.GetUsers("", 1, 3)
+	allUsers, err := snowRepository.GetUsers("", 1, 3)
 	require.NoError(t, err, "failed to get all users")
 	assert.GreaterOrEqual(t, len(allUsers.Users), len(createdUsers), "should have at least the created users")
 }
 
 // TestUpdateUser tests updating an existing user.
-func TestUpdateKsuid(t *testing.T) {
+func TestUpdateSnowFlake(t *testing.T) {
 	db := setup.NewPostgresMockDB()
 
 	deparment := "Engineering"
 
 	// Create a new user.
-	user := models.UserKSUID{
+	user := models.UserSnowflake{
 		UserBase: &models.UserBase{
 			UserName:   "testuser",
 			FirstName:  "Test",
@@ -90,27 +90,27 @@ func TestUpdateKsuid(t *testing.T) {
 		},
 	}
 
-	ksuidRepository := repository.NewGormKsuidRepository(db)
+	snowRepository := repository.NewGormSnowRepository(db)
 
-	created, err := ksuidRepository.CreateUser(user)
+	created, err := snowRepository.CreateUser(user)
 	require.NoError(t, err, "failed to create user for update")
 	require.NotEmpty(t, created.ID, "user ID should not be empty after creation")
 
 	// Update the first name.
 	created.FirstName = "UpdatedName"
-	updated, err := ksuidRepository.UpdateUser(*created)
+	updated, err := snowRepository.UpdateUser(*created)
 	require.NoError(t, err, "failed to update user")
 	require.Equal(t, "UpdatedName", updated.FirstName, "first name should be updated")
 }
 
 // TestDeleteUser tests deleting a user.
-func TestDeleteKsuid(t *testing.T) {
+func TestDeleteSnowFlake(t *testing.T) {
 	db := setup.NewPostgresMockDB()
 
 	deparment := "Engineering"
 
 	// Create a user to delete.
-	user := models.UserKSUID{
+	user := models.UserSnowflake{
 		UserBase: &models.UserBase{
 			UserName:   "testuser",
 			FirstName:  "Test",
@@ -118,17 +118,17 @@ func TestDeleteKsuid(t *testing.T) {
 			Department: &deparment,
 		},
 	}
-	ksuidRepository := repository.NewGormKsuidRepository(db)
+	snowRepository := repository.NewGormSnowRepository(db)
 
-	created, err := ksuidRepository.CreateUser(user)
+	created, err := snowRepository.CreateUser(user)
 	require.NoError(t, err, "failed to create user for deletion")
 	require.NotEmpty(t, created.ID, "user ID should not be empty after creation")
 
 	// Delete the user using its ID. (Your DeleteUser function uses the id field.)
-	err = ksuidRepository.DeleteUser(created.ID)
+	err = snowRepository.DeleteUser(created.ID)
 	require.NoError(t, err, "failed to delete user")
 
 	// Attempt to fetch the deleted user; expect an error.
-	_, err = ksuidRepository.GetUser(created.ID)
+	_, err = snowRepository.GetUser(created.ID)
 	require.Error(t, err, "expected error when fetching deleted user")
 }
