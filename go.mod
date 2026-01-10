@@ -2,8 +2,6 @@ module github.com/theCompanyDream/id-trials
 
 go 1.25
 
-// replace github.com/theCompanyDream/id-trials/apps/backend => ./apps/backend
-
 require (
 	github.com/labstack/echo/v4 v4.13.4
 	github.com/theCompanyDream/id-trials/apps/backend v0.1.0

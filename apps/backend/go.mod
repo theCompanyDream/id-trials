@@ -1,6 +1,6 @@
 module github.com/theCompanyDream/id-trials/apps/backend
 
-go 1.25
+go 1.24
 
 require (
 	github.com/brianvoe/gofakeit/v6 v6.28.0
