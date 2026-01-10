@@ -13,6 +13,7 @@ const Navigation = memo(() => {
         {/* Desktop Navigation */}
         <nav className="hidden md:flex space-x-4">
           <Link to="/detail" className="hover:text-gray-300">Create</Link>
+          <Link to="/about" className="hover:text-gray-300">About</Link>
           <Link to="https://user.tbrantleyii.dev/api/swagger/index.html" className="hover:text-gray-300">Docs</Link>
           <Link to="https://github.com/theCompanyDream/id-trials" className="hover:text-gray-300">
             <img src={github} alt="github logo" class="w-7 -c-7" />
@@ -61,6 +62,9 @@ const Navigation = memo(() => {
             </Link>
             <Link to="/services" className="block px-3 py-2 rounded-md text-base font-medium hover:bg-gray-600">
               Docs
+            </Link>
+            <Link to="/about" className="block px-3 py-2 rounded-md text-base font-medium hover:bg-gray-600">
+              About
             </Link>
             <Link to="https://github.com/theCompanyDream/id-trials" className="block px-3 py-2 rounded-md text-base font-medium hover:bg-gray-600">
               <img src={github} alt="github logo" />

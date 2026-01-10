@@ -22,7 +22,7 @@ const UserDetail = () => {
   // If editing, fetch the existing user data.
   useMemo(() => {
     if (id) {
-      fetch(`/api/user/${id}`)
+      fetch(`/api/uuid4/${id}`)
         .then((res) => {
           if (!res.ok) throw new Error('Error fetching user data');
           return res.json();
@@ -66,7 +66,7 @@ const UserDetail = () => {
     setIsSubmitting(true);
     setErrors({}); // Clear previous errors
 
-    const url = id ? `/api/user/${id}` : `/api/user`;
+    const url = id ? `/api/uuid4/${id}` : `/api/uuid4`;
     const method = id ? 'PUT' : 'POST';
 
     fetch(url, {
