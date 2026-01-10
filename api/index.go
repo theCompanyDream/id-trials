@@ -91,15 +91,6 @@ func RunServer() {
 	server.POST("/snow", snowController.CreateUser)
 	server.PUT("/snow/:id", snowController.UpdateUser)
 	server.DELETE("/snow/:id", snowController.DeleteUser)
-	// Start the server
-	server.Logger.Info("Server is running...")
-	port := os.Getenv("BACKEND_PORT")
-	if port != "" {
-		serverStartCode := fmt.Sprintf(":%s", port)
-		server.Logger.Fatal(server.Start(serverStartCode))
-	} else {
-		server.Logger.Fatal(server.Start(":3000"))
-	}
 }
 
 func Handler(w http.ResponseWriter, r *http.Request) {
