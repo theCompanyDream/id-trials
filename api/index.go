@@ -23,14 +23,13 @@ import (
 
 // Echo instance
 var (
-	e          *echo.Echo
+	server     *echo.Echo
 	echoOnce   sync.Once
 	initDBOnce sync.Once
 	db         *gorm.DB
 )
 
 func RunServer() {
-	server := echo.New()
 	logger := lecho.New(
 		os.Stdout,
 		lecho.WithLevel(log.DEBUG),
@@ -115,5 +114,5 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 	echoOnce.Do(RunServer)
 
 	// Pass the request to Echo's HTTP handler.
-	e.ServeHTTP(w, r)
+	server.ServeHTTP(w, r)
 }
