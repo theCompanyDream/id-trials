@@ -69,6 +69,8 @@ func ServerlessInitDB() (*gorm.DB, error) {
 
 	db, err := gorm.Open(postgres.Open(connectStr), &gorm.Config{
 		Logger: logger.Default.LogMode(logger.Info),
+	}, &gorm.Config{
+		PrepareStmt: false,
 	})
 	if err != nil {
 		return nil, fmt.Errorf("failed to connect to database: %v", err)
