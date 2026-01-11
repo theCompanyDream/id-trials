@@ -8,12 +8,26 @@ import (
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/labstack/gommon/log"
 	echoSwagger "github.com/swaggo/echo-swagger"
+	appMiddleware "github.com/theCompanyDream/id-trials/apps/backend/middleware"
 	"github.com/ziflex/lecho"
 	"golang.org/x/time/rate"
 	"gorm.io/gorm"
 )
 
 func RunServer(db *gorm.DB) {
+	server := NewEchoServer(db)
+	// Start the server
+	server.Logger.Info("Server is running...")
+	port := os.Getenv("BACKEND_PORT")
+	if port != "" {
+		serverStartCode := fmt.Sprintf(":%s", port)
+		server.Logger.Fatal(server.Start(serverStartCode))
+	} else {
+		server.Logger.Fatal(server.Start(":3000"))
+	}
+}
+
+func NewEchoServer(db *gorm.DB) *echo.Echo {
 	server := echo.New()
 	logger := lecho.New(
 		os.Stdout,
@@ -22,8 +36,11 @@ func RunServer(db *gorm.DB) {
 		lecho.WithCaller(),
 	)
 
-	server.HTTPErrorHandler = HttpErrorHandler
+	server.HTTPErrorHandler = appMiddleware.HttpErrorHandler
+	metricsMiddleware := appMiddleware.NewMetricsMiddleware(db)
+	server.Use(metricsMiddleware.CaptureMetrics())
 
+	analyticsController := NewAnalyticsController(db)
 	ulidController := NewUlidController(db)
 	uuid4Controller := NewGormUuidController(db)
 	nanoIdController := NewGormNanoController(db)
@@ -37,6 +54,12 @@ func RunServer(db *gorm.DB) {
 	server.Use(middleware.RequestID())
 	server.Use(middleware.Gzip())
 	server.Use(middleware.RateLimiter(middleware.NewRateLimiterMemoryStore(rate.Limit(10))))
+
+	server.GET("/analytics/comparison", analyticsController.GetIDTypeComparison)
+	server.GET("/analytics/:type/details", analyticsController.GetIDTypeDetails)
+	server.GET("/analytics/:type/percentiles", analyticsController.GetPercentiles)
+	server.GET("/analytics/errors", analyticsController.GetErrorRates)
+	server.GET("/analytics/:type/timeseries", analyticsController.GetTimeSeries)
 	// Define main routes
 	server.GET("/swagger/*", echoSwagger.WrapHandler)
 	server.GET("/", Home)
@@ -75,13 +98,6 @@ func RunServer(db *gorm.DB) {
 	server.POST("/snow", snowController.CreateUser)
 	server.PUT("/snow/:id", snowController.UpdateUser)
 	server.DELETE("/snow/:id", snowController.DeleteUser)
-	// Start the server
-	server.Logger.Info("Server is running...")
-	port := os.Getenv("BACKEND_PORT")
-	if port != "" {
-		serverStartCode := fmt.Sprintf(":%s", port)
-		server.Logger.Fatal(server.Start(serverStartCode))
-	} else {
-		server.Logger.Fatal(server.Start(":3000"))
-	}
+
+	return server
 }
