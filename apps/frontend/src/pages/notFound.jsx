@@ -3,11 +3,11 @@ import { Link } from 'react-router-dom'; // Optional: if you're using react-rout
 
 const NotFoundPage = memo(() => (
 	<main className="min-h-screen flex flex-col items-center justify-center bg-gray-100 p-4">
-		<h1 className="text-9xl font-extrabold text-gray-800">404</h1>
-		<p className="mt-4 text-3xl font-bold text-gray-600">
+		<h1 className="text-9xl font-extrabold">404</h1>
+		<p className="mt-4 text-3xl font-bold">
 		Oops! Page not found.
 		</p>
-		<p className="mt-2 text-gray-500 text-center max-w-md">
+		<p className="mt-2 text-center max-w-md">
 		The page you are looking for might have been removed, had its name changed, or is temporarily unavailable.
 		</p>
 		<Link

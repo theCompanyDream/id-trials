@@ -63,7 +63,7 @@ export default function About() {
 
         <section className="rounded-2xl bg-gradient-to-br from-indigo-500/20 to-cyan-500/20 p-6 shadow-lg">
           <h2 className="text-xl font-semibold mb-3">Who This Is For</h2>
-          <p className="text-slate-200 leading-relaxed">
+          <p className="leading-relaxed">
             This site is built for backend engineers, system designers, and
             anyone curious about how a single design decision can ripple through
             performance, scalability, and reliability. If you’ve ever wondered
