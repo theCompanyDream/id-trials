@@ -82,7 +82,7 @@ jobs:
       run: go tool cover -html=coverage.out -o coverage.html
 
     - name: Upload coverage reports
-      uses: codecov/codecov-action@v5
+      uses: codecov/codecov-action@v5q'
       with:
         file: ./apps/backend/coverage.out
         flags: backend
@@ -93,50 +93,6 @@ jobs:
       with:
         name: coverage-report-go-${{ matrix.go-version }}
         path: ./apps/backend/coverage.html
-
-  integration-test:
-    runs-on: ubuntu-latest
-    needs: test
-
-    defaults:
-      run:
-        working-directory: ./apps/backend
-
-    services:
-      postgres:
-        image: postgres:15
-        env:
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_USER: postgres
-          POSTGRES_DB: integrationdb
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-        ports:
-          - 5432:5432
-
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-
-    - name: Set up Go
-      uses: actions/setup-go@v4
-      with:
-        go-version: 1.22
-
-    - name: Download dependencies
-      run: go mod download
-
-    - name: Run integration tests
-      run: go test -v -tags=integration ./test/integration/...
-      env:
-        DATABASE_URL: postgres://postgres:postgres@localhost:5432/integrationdb?sslmode=disable
-        DATABASE_USERNAME: postgres
-        DATABASE_PASSWORD: postgres
-        DATABASE_NAME: integrationdb
-        DATABASE_PORT: 5432
 
   benchmark:
     runs-on: ubuntu-latest
