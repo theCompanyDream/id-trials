@@ -6,7 +6,7 @@ require (
 	github.com/labstack/echo/v4 v4.15.0
 	github.com/labstack/gommon v0.4.2
 	github.com/swaggo/echo-swagger v1.4.1
-	github.com/theCompanyDream/id-trials/apps/backend v0.1.6
+	github.com/theCompanyDream/id-trials/apps/backend v0.1.7
 	github.com/ziflex/lecho v1.2.0
 	golang.org/x/time v0.14.0
 	gorm.io/gorm v1.31.1
