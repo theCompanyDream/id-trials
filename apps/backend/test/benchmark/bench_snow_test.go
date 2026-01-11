@@ -112,7 +112,7 @@ func BenchmarkDeleteSnowFlake(b *testing.B) {
 	repo := repository.NewGormSnowRepository(db)
 
 	// Pre-create users to delete
-	userIDs := make([]string, b.N)
+	userIDs := make([]int64, b.N)
 	for i := 0; i < b.N; i++ {
 		user := model.UserSnowflake{
 			UserBase: &model.UserBase{
