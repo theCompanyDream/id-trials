@@ -22,7 +22,7 @@ func InputToSnowFlake(userCreate UserInput) *UserSnowflake {
 	copier.Copy(&user, &userCreate)
 	user.ID = 0
 
-	if userCreate.Id != nil {
+	if userCreate.Id == nil {
 		return &user
 	}
 

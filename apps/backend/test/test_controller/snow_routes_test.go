@@ -72,13 +72,13 @@ func TestGetSnowFlake_NotFound(t *testing.T) {
 	e := echo.New()
 	mockRepo := new(setup.MockRepository[models.UserSnowflake])
 
-	mockRepo.On("GetUser", "invalid-id").Return(nil, gorm.ErrRecordNotFound)
+	mockRepo.On("GetUser", "1234567890123456789").Return(nil, gorm.ErrRecordNotFound)
 
-	req := httptest.NewRequest(http.MethodGet, "/snow/invalid-id", nil)
+	req := httptest.NewRequest(http.MethodGet, "/snow/1234567890123456789", nil)
 	rec := httptest.NewRecorder()
 	c := e.NewContext(req, rec)
 	c.SetParamNames("id")
-	c.SetParamValues("invalid-id")
+	c.SetParamValues("1234567890123456789")
 
 	controller := &controller.SnowUsersController{
 		Repo: mockRepo, // Set the repo field directly
@@ -259,8 +259,8 @@ func TestCreateSnowFlake_Success(t *testing.T) {
 	mockRepo := new(setup.MockRepository[models.UserSnowflake])
 
 	userName := "newuser"
-	firstName := "New"
-	lastName := "User"
+	firstName := "Newoeu"
+	lastName := "Useor"
 	email := "new@example.com"
 	department := "Engineering"
 
@@ -430,16 +430,15 @@ func TestDeleteSnowFlake_Success(t *testing.T) {
 	e := echo.New()
 	mockRepo := new(setup.MockRepository[models.UserSnowflake])
 
-	userID := int64(1234567890123456789)
+	userID := "1234567890123456789"
 
 	mockRepo.On("DeleteUser", userID).Return(nil)
-	route := fmt.Sprintf("/snow/%d", userID)
+	route := fmt.Sprintf("/snow/%s", userID)
 	req := httptest.NewRequest(http.MethodDelete, route, nil)
 	rec := httptest.NewRecorder()
 	c := e.NewContext(req, rec)
 	c.SetParamNames("id")
-	stringUserId := strconv.FormatInt(userID, 10)
-	c.SetParamValues(stringUserId)
+	c.SetParamValues(userID)
 
 	controller := &controller.SnowUsersController{
 		Repo: mockRepo, // Set the repo field directly
@@ -480,16 +479,15 @@ func TestDeleteSnowFlake_RepositoryError(t *testing.T) {
 	e := echo.New()
 	mockRepo := new(setup.MockRepository[models.UserSnowflake])
 
-	userID := int64(1234567890123456789)
+	userID := "1234567890123456789"
 
 	mockRepo.On("DeleteUser", userID).Return(gorm.ErrRecordNotFound)
-	route := fmt.Sprintf("/snow/%d", userID)
+	route := fmt.Sprintf("/snow/%s", userID)
 	req := httptest.NewRequest(http.MethodDelete, route, nil)
 	rec := httptest.NewRecorder()
 	c := e.NewContext(req, rec)
-	stringUserId := strconv.FormatInt(userID, 10)
 	c.SetParamNames("id")
-	c.SetParamValues(stringUserId)
+	c.SetParamValues(userID)
 
 	controller := &controller.SnowUsersController{
 		Repo: mockRepo, // Set the repo field directly
