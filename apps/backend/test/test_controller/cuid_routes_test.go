@@ -12,56 +12,15 @@ import (
 	"github.com/stretchr/testify/mock"
 	"github.com/theCompanyDream/id-trials/apps/backend/controller"
 	"github.com/theCompanyDream/id-trials/apps/backend/models"
+	"github.com/theCompanyDream/id-trials/apps/backend/test/setup"
 	"gorm.io/gorm"
 )
-
-// MockCuidRepository is a mock for the repository
-type MockCuidRepository struct {
-	mock.Mock
-}
-
-func (m *MockCuidRepository) GetUser(id string) (*models.UserCUID, error) {
-	args := m.Called(id)
-	if args.Get(0) == nil {
-		return nil, args.Error(1)
-	}
-	return args.Get(0).(*models.UserCUID), args.Error(1)
-}
-
-func (m *MockCuidRepository) GetUsers(search string, page, limit int) (*models.UserPaging, error) {
-	args := m.Called(search, page, limit)
-	if args.Get(0) == nil {
-		return nil, args.Error(1)
-	}
-	return args.Get(0).(*models.UserPaging), args.Error(1)
-}
-
-func (m *MockCuidRepository) CreateUser(user models.UserCUID) (*models.UserCUID, error) {
-	args := m.Called(user)
-	if args.Get(0) == nil {
-		return nil, args.Error(1)
-	}
-	return args.Get(0).(*models.UserCUID), args.Error(1)
-}
-
-func (m *MockCuidRepository) UpdateUser(user models.UserCUID) (*models.UserCUID, error) {
-	args := m.Called(user)
-	if args.Get(0) == nil {
-		return nil, args.Error(1)
-	}
-	return args.Get(0).(*models.UserCUID), args.Error(1)
-}
-
-func (m *MockCuidRepository) DeleteUser(id string) error {
-	args := m.Called(id)
-	return args.Error(0)
-}
 
 // TestGetUser tests the GetUser endpoint
 func TestGetUser_Success(t *testing.T) {
 	// Arrange
 	e := echo.New()
-	mockRepo := new(MockCuidRepository)
+	mockRepo := new(setup.MockRepository[models.UserCUID])
 	department := "Engineering"
 
 	expectedUser := &models.UserCUID{
@@ -83,9 +42,13 @@ func TestGetUser_Success(t *testing.T) {
 	c.SetParamNames("id")
 	c.SetParamValues("cmk7nncf000054hz3gxgka8v9")
 
-	controller := &controller.CuidUsersController{}
 	// Note: You'll need to expose the repo field or use dependency injection
 	// For now, this shows the pattern
+
+	// ✅ Inject the mock into the controller
+	controller := &controller.CuidUsersController{
+		Repo: mockRepo, // Set the repo field directly
+	}
 
 	// Act
 	err := controller.GetUser(c)
@@ -105,7 +68,7 @@ func TestGetUser_Success(t *testing.T) {
 func TestGetUser_NotFound(t *testing.T) {
 	// Arrange
 	e := echo.New()
-	mockRepo := new(MockCuidRepository)
+	mockRepo := new(setup.MockRepository[models.UserCUID])
 
 	mockRepo.On("GetUser", "invalid-id").Return(nil, gorm.ErrRecordNotFound)
 
@@ -115,7 +78,9 @@ func TestGetUser_NotFound(t *testing.T) {
 	c.SetParamNames("id")
 	c.SetParamValues("invalid-id")
 
-	controller := &controller.CuidUsersController{}
+	controller := &controller.CuidUsersController{
+		Repo: mockRepo, // Set the repo field directly
+	}
 
 	// Act
 	err := controller.GetUser(c)
@@ -128,12 +93,15 @@ func TestGetUser_NotFound(t *testing.T) {
 func TestGetUser_MissingID(t *testing.T) {
 	// Arrange
 	e := echo.New()
+	mockRepo := new(setup.MockRepository[models.UserCUID])
 	req := httptest.NewRequest(http.MethodGet, "/cuid/", nil)
 	rec := httptest.NewRecorder()
 	c := e.NewContext(req, rec)
 	// No param set
 
-	controller := &controller.CuidUsersController{}
+	controller := &controller.CuidUsersController{
+		Repo: mockRepo, // Set the repo field directly
+	}
 
 	// Act
 	err := controller.GetUser(c)
@@ -147,7 +115,7 @@ func TestGetUser_MissingID(t *testing.T) {
 func TestGetUsers_Success(t *testing.T) {
 	// Arrange
 	e := echo.New()
-	mockRepo := new(MockCuidRepository)
+	mockRepo := new(setup.MockRepository[models.UserCUID])
 	departments := []string{"Sales", "Hr Department"}
 	page := 1
 	limit := 25
@@ -185,7 +153,9 @@ func TestGetUsers_Success(t *testing.T) {
 	rec := httptest.NewRecorder()
 	c := e.NewContext(req, rec)
 
-	controller := &controller.CuidUsersController{}
+	controller := &controller.CuidUsersController{
+		Repo: mockRepo, // Set the repo field directly
+	}
 
 	// Act
 	err := controller.GetUsers(c)
@@ -197,8 +167,8 @@ func TestGetUsers_Success(t *testing.T) {
 	var response models.UserPaging
 	json.Unmarshal(rec.Body.Bytes(), &response)
 	assert.Equal(t, 2, len(response.Users))
-	assert.Equal(t, page, response.Page)
-	assert.Equal(t, 25, response.PageSize)
+	assert.Equal(t, page, *response.Page)
+	assert.Equal(t, 25, *response.PageSize)
 
 	mockRepo.AssertExpectations(t)
 }
@@ -206,7 +176,7 @@ func TestGetUsers_Success(t *testing.T) {
 func TestGetUsers_WithPagination(t *testing.T) {
 	// Arrange
 	e := echo.New()
-	mockRepo := new(MockCuidRepository)
+	mockRepo := new(setup.MockRepository[models.UserCUID])
 	page := 2
 	limit := 10
 	total := 0
@@ -226,7 +196,9 @@ func TestGetUsers_WithPagination(t *testing.T) {
 	rec := httptest.NewRecorder()
 	c := e.NewContext(req, rec)
 
-	controller := &controller.CuidUsersController{}
+	controller := &controller.CuidUsersController{
+		Repo: mockRepo, // Set the repo field directly
+	}
 
 	// Act
 	err := controller.GetUsers(c)
@@ -237,8 +209,8 @@ func TestGetUsers_WithPagination(t *testing.T) {
 
 	var response models.UserPaging
 	json.Unmarshal(rec.Body.Bytes(), &response)
-	assert.Equal(t, page, response.Page)
-	assert.Equal(t, limit, response.PageSize)
+	assert.Equal(t, page, *response.Page)
+	assert.Equal(t, limit, *response.PageSize)
 
 	mockRepo.AssertExpectations(t)
 }
@@ -246,7 +218,7 @@ func TestGetUsers_WithPagination(t *testing.T) {
 func TestGetUsers_WithSearch(t *testing.T) {
 	// Arrange
 	e := echo.New()
-	mockRepo := new(MockCuidRepository)
+	mockRepo := new(setup.MockRepository[models.UserCUID])
 	page := 2
 	limit := 10
 	total := 0
@@ -266,7 +238,9 @@ func TestGetUsers_WithSearch(t *testing.T) {
 	rec := httptest.NewRecorder()
 	c := e.NewContext(req, rec)
 
-	controller := &controller.CuidUsersController{}
+	controller := &controller.CuidUsersController{
+		Repo: mockRepo, // Set the repo field directly
+	}
 
 	// Act
 	err := controller.GetUsers(c)
@@ -280,7 +254,7 @@ func TestGetUsers_WithSearch(t *testing.T) {
 func TestCreateUser_Success(t *testing.T) {
 	// Arrange
 	e := echo.New()
-	mockRepo := new(MockCuidRepository)
+	mockRepo := new(setup.MockRepository[models.UserCUID])
 
 	userName := "newuser"
 	firstName := "New"
@@ -315,7 +289,9 @@ func TestCreateUser_Success(t *testing.T) {
 	rec := httptest.NewRecorder()
 	c := e.NewContext(req, rec)
 
-	controller := &controller.CuidUsersController{}
+	controller := &controller.CuidUsersController{
+		Repo: mockRepo, // Set the repo field directly
+	}
 
 	// Act
 	err := controller.CreateUser(c)
@@ -327,7 +303,7 @@ func TestCreateUser_Success(t *testing.T) {
 	var response models.UserCUID
 	json.Unmarshal(rec.Body.Bytes(), &response)
 	assert.Equal(t, createdUser.ID, response.ID)
-	assert.Equal(t, userInput.UserName, response.UserName)
+	assert.Equal(t, *userInput.UserName, response.UserName)
 
 	mockRepo.AssertExpectations(t)
 }
@@ -335,6 +311,7 @@ func TestCreateUser_Success(t *testing.T) {
 func TestCreateUser_ValidationError(t *testing.T) {
 	// Arrange
 	e := echo.New()
+	mockRepo := new(setup.MockRepository[models.UserCUID])
 
 	userName := "aang"
 	// Invalid user - missing required fields
@@ -349,7 +326,9 @@ func TestCreateUser_ValidationError(t *testing.T) {
 	rec := httptest.NewRecorder()
 	c := e.NewContext(req, rec)
 
-	controller := &controller.CuidUsersController{}
+	controller := &controller.CuidUsersController{
+		Repo: mockRepo, // Set the repo field directly
+	}
 
 	// Act
 	err := controller.CreateUser(c)
@@ -362,13 +341,16 @@ func TestCreateUser_ValidationError(t *testing.T) {
 func TestCreateUser_InvalidJSON(t *testing.T) {
 	// Arrange
 	e := echo.New()
+	mockRepo := new(setup.MockRepository[models.UserCUID])
 
 	req := httptest.NewRequest(http.MethodPost, "/cuid", strings.NewReader("invalid json"))
 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
 	rec := httptest.NewRecorder()
 	c := e.NewContext(req, rec)
 
-	controller := &controller.CuidUsersController{}
+	controller := &controller.CuidUsersController{
+		Repo: mockRepo, // Set the repo field directly
+	}
 
 	// Act
 	err := controller.CreateUser(c)
@@ -381,7 +363,7 @@ func TestCreateUser_InvalidJSON(t *testing.T) {
 func TestUpdateUser_Success(t *testing.T) {
 	// Arrange
 	e := echo.New()
-	mockRepo := new(MockCuidRepository)
+	mockRepo := new(setup.MockRepository[models.UserCUID])
 
 	userID := "cmk7nncf000054hz3gxgka8v9"
 	userName := "updateduser"
@@ -419,7 +401,9 @@ func TestUpdateUser_Success(t *testing.T) {
 	c.SetParamNames("id")
 	c.SetParamValues(userID)
 
-	controller := &controller.CuidUsersController{}
+	controller := &controller.CuidUsersController{
+		Repo: mockRepo, // Set the repo field directly
+	}
 
 	// Act
 	err := controller.UpdateUser(c)
@@ -431,7 +415,7 @@ func TestUpdateUser_Success(t *testing.T) {
 	var response models.UserCUID
 	json.Unmarshal(rec.Body.Bytes(), &response)
 	assert.Equal(t, userID, response.ID)
-	assert.Equal(t, userInput.UserName, response.UserName)
+	assert.Equal(t, *userInput.UserName, response.UserName)
 
 	mockRepo.AssertExpectations(t)
 }
@@ -440,7 +424,7 @@ func TestUpdateUser_Success(t *testing.T) {
 func TestDeleteUser_Success(t *testing.T) {
 	// Arrange
 	e := echo.New()
-	mockRepo := new(MockCuidRepository)
+	mockRepo := new(setup.MockRepository[models.UserCUID])
 
 	userID := "cmk7nncf000054hz3gxgka8v9"
 
@@ -452,7 +436,9 @@ func TestDeleteUser_Success(t *testing.T) {
 	c.SetParamNames("id")
 	c.SetParamValues(userID)
 
-	controller := &controller.CuidUsersController{}
+	controller := &controller.CuidUsersController{
+		Repo: mockRepo, // Set the repo field directly
+	}
 
 	// Act
 	err := controller.DeleteUser(c)
@@ -465,13 +451,16 @@ func TestDeleteUser_Success(t *testing.T) {
 func TestDeleteUser_MissingID(t *testing.T) {
 	// Arrange
 	e := echo.New()
+	mockRepo := new(setup.MockRepository[models.UserCUID])
 
 	req := httptest.NewRequest(http.MethodDelete, "/cuid/", nil)
 	rec := httptest.NewRecorder()
 	c := e.NewContext(req, rec)
 	// No param set
 
-	controller := &controller.CuidUsersController{}
+	controller := &controller.CuidUsersController{
+		Repo: mockRepo, // Set the repo field directly
+	}
 
 	// Act
 	err := controller.DeleteUser(c)
@@ -484,7 +473,7 @@ func TestDeleteUser_MissingID(t *testing.T) {
 func TestDeleteUser_RepositoryError(t *testing.T) {
 	// Arrange
 	e := echo.New()
-	mockRepo := new(MockCuidRepository)
+	mockRepo := new(setup.MockRepository[models.UserCUID])
 
 	userID := "cmk7nncf000054hz3gxgka8v9"
 
@@ -496,7 +485,9 @@ func TestDeleteUser_RepositoryError(t *testing.T) {
 	c.SetParamNames("id")
 	c.SetParamValues(userID)
 
-	controller := &controller.CuidUsersController{}
+	controller := &controller.CuidUsersController{
+		Repo: mockRepo, // Set the repo field directly
+	}
 
 	// Act
 	err := controller.DeleteUser(c)
