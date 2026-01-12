@@ -36,7 +36,7 @@ func TestGetSnowFlake_Success(t *testing.T) {
 
 	mockRepo.On("GetUser", "1234567890123456789").Return(expectedUser, nil)
 
-	req := httptest.NewRequest(http.MethodGet, "/cuid/1234567890123456789", nil)
+	req := httptest.NewRequest(http.MethodGet, "/snow/1234567890123456789", nil)
 	rec := httptest.NewRecorder()
 	c := e.NewContext(req, rec)
 	c.SetParamNames("id")
@@ -72,7 +72,7 @@ func TestGetSnowFlake_NotFound(t *testing.T) {
 
 	mockRepo.On("GetUser", "invalid-id").Return(nil, gorm.ErrRecordNotFound)
 
-	req := httptest.NewRequest(http.MethodGet, "/cuid/invalid-id", nil)
+	req := httptest.NewRequest(http.MethodGet, "/snow/invalid-id", nil)
 	rec := httptest.NewRecorder()
 	c := e.NewContext(req, rec)
 	c.SetParamNames("id")
@@ -94,7 +94,7 @@ func TestGetSnowFlake_MissingID(t *testing.T) {
 	// Arrange
 	e := echo.New()
 	mockRepo := new(setup.MockRepository[models.UserSnowflake])
-	req := httptest.NewRequest(http.MethodGet, "/cuid/", nil)
+	req := httptest.NewRequest(http.MethodGet, "/snow/", nil)
 	rec := httptest.NewRecorder()
 	c := e.NewContext(req, rec)
 	// No param set
@@ -149,7 +149,7 @@ func TestGetSnowFlakes_Success(t *testing.T) {
 
 	mockRepo.On("GetUsers", "", 1, 25).Return(expectedUsers, nil)
 
-	req := httptest.NewRequest(http.MethodGet, "/cuids", nil)
+	req := httptest.NewRequest(http.MethodGet, "/snows", nil)
 	rec := httptest.NewRecorder()
 	c := e.NewContext(req, rec)
 
@@ -192,7 +192,7 @@ func TestGetSnowFlakes_WithPagination(t *testing.T) {
 
 	mockRepo.On("GetUsers", "", 2, 10).Return(expectedUsers, nil)
 
-	req := httptest.NewRequest(http.MethodGet, "/cuids?page=2&limit=10", nil)
+	req := httptest.NewRequest(http.MethodGet, "/snows?page=2&limit=10", nil)
 	rec := httptest.NewRecorder()
 	c := e.NewContext(req, rec)
 
@@ -234,7 +234,7 @@ func TestGetSnowFlakes_WithSearch(t *testing.T) {
 
 	mockRepo.On("GetUsers", "john", 1, 25).Return(expectedUsers, nil)
 
-	req := httptest.NewRequest(http.MethodGet, "/cuids?search=john", nil)
+	req := httptest.NewRequest(http.MethodGet, "/snows?search=john", nil)
 	rec := httptest.NewRecorder()
 	c := e.NewContext(req, rec)
 
@@ -284,7 +284,7 @@ func TestCreateSnowFlake_Success(t *testing.T) {
 	mockRepo.On("CreateUser", mock.AnythingOfType("models.UserSnowflake")).Return(createdUser, nil)
 
 	body, _ := json.Marshal(userInput)
-	req := httptest.NewRequest(http.MethodPost, "/cuid", strings.NewReader(string(body)))
+	req := httptest.NewRequest(http.MethodPost, "/snow", strings.NewReader(string(body)))
 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
 	rec := httptest.NewRecorder()
 	c := e.NewContext(req, rec)
@@ -321,7 +321,7 @@ func TestCreateSnowFlake_ValidationError(t *testing.T) {
 	}
 
 	body, _ := json.Marshal(userInput)
-	req := httptest.NewRequest(http.MethodPost, "/cuid", strings.NewReader(string(body)))
+	req := httptest.NewRequest(http.MethodPost, "/snow", strings.NewReader(string(body)))
 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
 	rec := httptest.NewRecorder()
 	c := e.NewContext(req, rec)
@@ -343,7 +343,7 @@ func TestCreateSnowFlake_InvalidJSON(t *testing.T) {
 	e := echo.New()
 	mockRepo := new(setup.MockRepository[models.UserSnowflake])
 
-	req := httptest.NewRequest(http.MethodPost, "/cuid", strings.NewReader("invalid json"))
+	req := httptest.NewRequest(http.MethodPost, "/snow", strings.NewReader("invalid json"))
 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
 	rec := httptest.NewRecorder()
 	c := e.NewContext(req, rec)
@@ -394,7 +394,7 @@ func TestUpdateSnowFlake_Success(t *testing.T) {
 	mockRepo.On("UpdateUser", mock.AnythingOfType("models.UserSnowflake")).Return(updatedUser, nil)
 
 	body, _ := json.Marshal(userInput)
-	req := httptest.NewRequest(http.MethodPut, "/cuid/"+userID, strings.NewReader(string(body)))
+	req := httptest.NewRequest(http.MethodPut, "/snow/"+userID, strings.NewReader(string(body)))
 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
 	rec := httptest.NewRecorder()
 	c := e.NewContext(req, rec)
@@ -430,7 +430,7 @@ func TestDeleteSnowFlake_Success(t *testing.T) {
 
 	mockRepo.On("DeleteUser", userID).Return(nil)
 
-	req := httptest.NewRequest(http.MethodDelete, "/cuid/"+userID, nil)
+	req := httptest.NewRequest(http.MethodDelete, "/snow/"+userID, nil)
 	rec := httptest.NewRecorder()
 	c := e.NewContext(req, rec)
 	c.SetParamNames("id")
@@ -453,7 +453,7 @@ func TestDeleteSnowFlake_MissingID(t *testing.T) {
 	e := echo.New()
 	mockRepo := new(setup.MockRepository[models.UserSnowflake])
 
-	req := httptest.NewRequest(http.MethodDelete, "/cuid/", nil)
+	req := httptest.NewRequest(http.MethodDelete, "/snow/", nil)
 	rec := httptest.NewRecorder()
 	c := e.NewContext(req, rec)
 	// No param set
@@ -479,7 +479,7 @@ func TestDeleteSnowFlake_RepositoryError(t *testing.T) {
 
 	mockRepo.On("DeleteUser", userID).Return(gorm.ErrRecordNotFound)
 
-	req := httptest.NewRequest(http.MethodDelete, "/cuid/"+userID, nil)
+	req := httptest.NewRequest(http.MethodDelete, "/snow/"+userID, nil)
 	rec := httptest.NewRecorder()
 	c := e.NewContext(req, rec)
 	c.SetParamNames("id")

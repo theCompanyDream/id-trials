@@ -36,7 +36,7 @@ func TestGetUlid_Success(t *testing.T) {
 
 	mockRepo.On("GetUser", "cmk7nncf000054hz3gxgka8v9").Return(expectedUser, nil)
 
-	req := httptest.NewRequest(http.MethodGet, "/cuid/cmk7nncf000054hz3gxgka8v9", nil)
+	req := httptest.NewRequest(http.MethodGet, "/ulid/cmk7nncf000054hz3gxgka8v9", nil)
 	rec := httptest.NewRecorder()
 	c := e.NewContext(req, rec)
 	c.SetParamNames("id")
@@ -72,7 +72,7 @@ func TestGetUlid_NotFound(t *testing.T) {
 
 	mockRepo.On("GetUser", "invalid-id").Return(nil, gorm.ErrRecordNotFound)
 
-	req := httptest.NewRequest(http.MethodGet, "/cuid/invalid-id", nil)
+	req := httptest.NewRequest(http.MethodGet, "/ulid/invalid-id", nil)
 	rec := httptest.NewRecorder()
 	c := e.NewContext(req, rec)
 	c.SetParamNames("id")
@@ -94,7 +94,7 @@ func TestGetUlid_MissingID(t *testing.T) {
 	// Arrange
 	e := echo.New()
 	mockRepo := new(setup.MockRepository[models.UserUlid])
-	req := httptest.NewRequest(http.MethodGet, "/cuid/", nil)
+	req := httptest.NewRequest(http.MethodGet, "/ulid/", nil)
 	rec := httptest.NewRecorder()
 	c := e.NewContext(req, rec)
 	// No param set
@@ -149,7 +149,7 @@ func TestGetUlids_Success(t *testing.T) {
 
 	mockRepo.On("GetUsers", "", 1, 25).Return(expectedUsers, nil)
 
-	req := httptest.NewRequest(http.MethodGet, "/cuids", nil)
+	req := httptest.NewRequest(http.MethodGet, "/ulids", nil)
 	rec := httptest.NewRecorder()
 	c := e.NewContext(req, rec)
 
@@ -192,7 +192,7 @@ func TestGetUlids_WithPagination(t *testing.T) {
 
 	mockRepo.On("GetUsers", "", 2, 10).Return(expectedUsers, nil)
 
-	req := httptest.NewRequest(http.MethodGet, "/cuids?page=2&limit=10", nil)
+	req := httptest.NewRequest(http.MethodGet, "/ulids?page=2&limit=10", nil)
 	rec := httptest.NewRecorder()
 	c := e.NewContext(req, rec)
 
@@ -234,7 +234,7 @@ func TestGetUlids_WithSearch(t *testing.T) {
 
 	mockRepo.On("GetUsers", "john", 1, 25).Return(expectedUsers, nil)
 
-	req := httptest.NewRequest(http.MethodGet, "/cuids?search=john", nil)
+	req := httptest.NewRequest(http.MethodGet, "/ulids?search=john", nil)
 	rec := httptest.NewRecorder()
 	c := e.NewContext(req, rec)
 
@@ -284,7 +284,7 @@ func TestCreateUlid_Success(t *testing.T) {
 	mockRepo.On("CreateUser", mock.AnythingOfType("models.UserUlid")).Return(createdUser, nil)
 
 	body, _ := json.Marshal(userInput)
-	req := httptest.NewRequest(http.MethodPost, "/cuid", strings.NewReader(string(body)))
+	req := httptest.NewRequest(http.MethodPost, "/ulid", strings.NewReader(string(body)))
 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
 	rec := httptest.NewRecorder()
 	c := e.NewContext(req, rec)
@@ -321,7 +321,7 @@ func TestCreateUlid_ValidationError(t *testing.T) {
 	}
 
 	body, _ := json.Marshal(userInput)
-	req := httptest.NewRequest(http.MethodPost, "/cuid", strings.NewReader(string(body)))
+	req := httptest.NewRequest(http.MethodPost, "/ulid", strings.NewReader(string(body)))
 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
 	rec := httptest.NewRecorder()
 	c := e.NewContext(req, rec)
@@ -343,7 +343,7 @@ func TestCreateUlid_InvalidJSON(t *testing.T) {
 	e := echo.New()
 	mockRepo := new(setup.MockRepository[models.UserUlid])
 
-	req := httptest.NewRequest(http.MethodPost, "/cuid", strings.NewReader("invalid json"))
+	req := httptest.NewRequest(http.MethodPost, "/ulid", strings.NewReader("invalid json"))
 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
 	rec := httptest.NewRecorder()
 	c := e.NewContext(req, rec)
@@ -394,7 +394,7 @@ func TestUpdateUlid_Success(t *testing.T) {
 	mockRepo.On("UpdateUser", mock.AnythingOfType("models.UserUlid")).Return(updatedUser, nil)
 
 	body, _ := json.Marshal(userInput)
-	req := httptest.NewRequest(http.MethodPut, "/cuid/"+userID, strings.NewReader(string(body)))
+	req := httptest.NewRequest(http.MethodPut, "/ulid/"+userID, strings.NewReader(string(body)))
 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
 	rec := httptest.NewRecorder()
 	c := e.NewContext(req, rec)
@@ -430,7 +430,7 @@ func TestDeleteUlid_Success(t *testing.T) {
 
 	mockRepo.On("DeleteUser", userID).Return(nil)
 
-	req := httptest.NewRequest(http.MethodDelete, "/cuid/"+userID, nil)
+	req := httptest.NewRequest(http.MethodDelete, "/ulid/"+userID, nil)
 	rec := httptest.NewRecorder()
 	c := e.NewContext(req, rec)
 	c.SetParamNames("id")
@@ -453,7 +453,7 @@ func TestDeleteUlid_MissingID(t *testing.T) {
 	e := echo.New()
 	mockRepo := new(setup.MockRepository[models.UserUlid])
 
-	req := httptest.NewRequest(http.MethodDelete, "/cuid/", nil)
+	req := httptest.NewRequest(http.MethodDelete, "/ulid/", nil)
 	rec := httptest.NewRecorder()
 	c := e.NewContext(req, rec)
 	// No param set
@@ -479,7 +479,7 @@ func TestDeleteUlid_RepositoryError(t *testing.T) {
 
 	mockRepo.On("DeleteUser", userID).Return(gorm.ErrRecordNotFound)
 
-	req := httptest.NewRequest(http.MethodDelete, "/cuid/"+userID, nil)
+	req := httptest.NewRequest(http.MethodDelete, "/ulid/"+userID, nil)
 	rec := httptest.NewRecorder()
 	c := e.NewContext(req, rec)
 	c.SetParamNames("id")
