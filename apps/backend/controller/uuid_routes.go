@@ -13,14 +13,14 @@ import (
 )
 
 type UuidUsersController struct {
-	repo repo.IRepository[model.UserUUID]
+	Repo repo.IRepository[model.UserUUID]
 }
 
 func NewGormUuidController(db *gorm.DB) IUserController {
 	repository := repo.NewGormUuidRepository(db)
 
 	return &UuidUsersController{
-		repo: repository,
+		Repo: repository,
 	}
 }
 
@@ -41,7 +41,7 @@ func (uuc *UuidUsersController) GetUser(c echo.Context) error {
 	if id == "" {
 		return c.JSON(http.StatusNotFound, errors.New("id not applicable there"))
 	}
-	user, err := uuc.repo.GetUser(id)
+	user, err := uuc.Repo.GetUser(id)
 	if err != nil {
 		return err
 	}
@@ -76,7 +76,7 @@ func (uuc *UuidUsersController) GetUsers(c echo.Context) error {
 	} else {
 		page = 1
 	}
-	users, error := uuc.repo.GetUsers(search, page, limit)
+	users, error := uuc.Repo.GetUsers(search, page, limit)
 	if error != nil {
 		return error
 	}
@@ -107,7 +107,7 @@ func (uuc *UuidUsersController) CreateUser(c echo.Context) error {
 		return c.JSON(http.StatusUnprocessableEntity, validationErrorsToMap(validationErrors))
 	}
 	dto := model.InputToUUID(request)
-	user, error := uuc.repo.CreateUser(*dto)
+	user, error := uuc.Repo.CreateUser(*dto)
 	if error != nil {
 		return error
 	}
@@ -142,7 +142,7 @@ func (uuc *UuidUsersController) UpdateUser(c echo.Context) error {
 		request.Id = &id
 	}
 	dto := model.InputToUUID(request)
-	user, error := uuc.repo.UpdateUser(*dto)
+	user, error := uuc.Repo.UpdateUser(*dto)
 	if error != nil {
 		return error
 	}
@@ -165,7 +165,7 @@ func (uuc *UuidUsersController) DeleteUser(c echo.Context) error {
 	if id == "" {
 		return errors.New("id must not be null")
 	}
-	err := uuc.repo.DeleteUser(id)
+	err := uuc.Repo.DeleteUser(id)
 	if err != nil {
 		return err
 	}

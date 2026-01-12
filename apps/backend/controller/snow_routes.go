@@ -13,14 +13,14 @@ import (
 )
 
 type SnowUsersController struct {
-	repo repo.IRepository[model.UserSnowflake]
+	Repo repo.IRepository[model.UserSnowflake]
 }
 
 func NewSnowCuidController(db *gorm.DB) IUserController {
 	repository := repo.NewGormSnowRepository(db)
 
 	return &SnowUsersController{
-		repo: repository,
+		Repo: repository,
 	}
 }
 
@@ -45,7 +45,7 @@ func (uuc *SnowUsersController) GetUser(c echo.Context) error {
 	if err != nil {
 		return errors.New("	invalid id format")
 	}
-	user, err := uuc.repo.GetUser(id)
+	user, err := uuc.Repo.GetUser(id)
 	if err != nil {
 		return err
 	}
@@ -80,7 +80,7 @@ func (uuc *SnowUsersController) GetUsers(c echo.Context) error {
 	} else {
 		page = 1
 	}
-	users, error := uuc.repo.GetUsers(search, page, limit)
+	users, error := uuc.Repo.GetUsers(search, page, limit)
 	if error != nil {
 		return error
 	}
@@ -111,7 +111,7 @@ func (uuc *SnowUsersController) CreateUser(c echo.Context) error {
 		return c.JSON(http.StatusUnprocessableEntity, validationErrorsToMap(validationErrors))
 	}
 	dto := model.InputToSnowFlake(request)
-	user, error := uuc.repo.CreateUser(*dto)
+	user, error := uuc.Repo.CreateUser(*dto)
 	if error != nil {
 		return error
 	}
@@ -146,7 +146,7 @@ func (uuc *SnowUsersController) UpdateUser(c echo.Context) error {
 		request.Id = &id
 	}
 	dto := model.InputToSnowFlake(request)
-	user, error := uuc.repo.UpdateUser(*dto)
+	user, error := uuc.Repo.UpdateUser(*dto)
 	if error != nil {
 		return error
 	}
@@ -173,7 +173,7 @@ func (uuc *SnowUsersController) DeleteUser(c echo.Context) error {
 	if err != nil {
 		return errors.New("	invalid id format")
 	}
-	err = uuc.repo.DeleteUser(id)
+	err = uuc.Repo.DeleteUser(id)
 	if err != nil {
 		return err
 	}

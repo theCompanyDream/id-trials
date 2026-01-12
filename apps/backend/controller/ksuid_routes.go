@@ -13,14 +13,14 @@ import (
 )
 
 type KsuidUsersController struct {
-	repo repo.IRepository[model.UserKSUID]
+	Repo repo.IRepository[model.UserKSUID]
 }
 
 func NewGormKsuidController(db *gorm.DB) IUserController {
 	repository := repo.NewGormKsuidRepository(db)
 
 	return &KsuidUsersController{
-		repo: repository,
+		Repo: repository,
 	}
 }
 
@@ -41,7 +41,7 @@ func (uuc *KsuidUsersController) GetUser(c echo.Context) error {
 	if id == "" {
 		return c.JSON(http.StatusNotFound, errors.New("id not applicable there"))
 	}
-	user, err := uuc.repo.GetUser(id)
+	user, err := uuc.Repo.GetUser(id)
 	if err != nil {
 		return err
 	}
@@ -76,7 +76,7 @@ func (uuc *KsuidUsersController) GetUsers(c echo.Context) error {
 	} else {
 		page = 1
 	}
-	users, error := uuc.repo.GetUsers(search, page, limit)
+	users, error := uuc.Repo.GetUsers(search, page, limit)
 	if error != nil {
 		return error
 	}
@@ -107,7 +107,7 @@ func (uuc *KsuidUsersController) CreateUser(c echo.Context) error {
 		return c.JSON(http.StatusUnprocessableEntity, validationErrorsToMap(validationErrors))
 	}
 	dto := model.InputToKSUID(request)
-	user, error := uuc.repo.CreateUser(*dto)
+	user, error := uuc.Repo.CreateUser(*dto)
 	if error != nil {
 		return error
 	}
@@ -142,7 +142,7 @@ func (uuc *KsuidUsersController) UpdateUser(c echo.Context) error {
 		request.Id = &id
 	}
 	dto := model.InputToKSUID(request)
-	user, error := uuc.repo.UpdateUser(*dto)
+	user, error := uuc.Repo.UpdateUser(*dto)
 	if error != nil {
 		return error
 	}
@@ -165,7 +165,7 @@ func (uuc *KsuidUsersController) DeleteUser(c echo.Context) error {
 	if id == "" {
 		return errors.New("id must not be null")
 	}
-	err := uuc.repo.DeleteUser(id)
+	err := uuc.Repo.DeleteUser(id)
 	if err != nil {
 		return err
 	}
