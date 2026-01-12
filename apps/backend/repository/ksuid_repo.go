@@ -7,6 +7,7 @@ import (
 	"github.com/segmentio/ksuid"
 	"gorm.io/gorm"
 
+	"github.com/theCompanyDream/id-trials/apps/backend/models"
 	model "github.com/theCompanyDream/id-trials/apps/backend/models"
 )
 
@@ -15,7 +16,7 @@ type GormKsuidRepository struct {
 }
 
 // NewGormKsuidRepository creates a new instance of GormKsuidRepository.
-func NewGormKsuidRepository(repo *gorm.DB) *GormKsuidRepository {
+func NewGormKsuidRepository(repo *gorm.DB) IRepository[models.UserKSUID] {
 	return &GormKsuidRepository{
 		DB: repo,
 	}

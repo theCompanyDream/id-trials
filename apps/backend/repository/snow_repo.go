@@ -7,6 +7,7 @@ import (
 	"github.com/bwmarrin/snowflake"
 	"gorm.io/gorm"
 
+	"github.com/theCompanyDream/id-trials/apps/backend/models"
 	model "github.com/theCompanyDream/id-trials/apps/backend/models"
 )
 
@@ -16,7 +17,7 @@ type GormSnowRepository struct {
 }
 
 // NewGormCuidRepository creates a new instance of GormCuidRepository.
-func NewGormSnowRepository(repo *gorm.DB) *GormSnowRepository {
+func NewGormSnowRepository(repo *gorm.DB) IRepository[models.UserSnowflake] {
 	node, _ := snowflake.NewNode(1)
 	return &GormSnowRepository{
 		DB:   repo,
@@ -25,7 +26,7 @@ func NewGormSnowRepository(repo *gorm.DB) *GormSnowRepository {
 }
 
 // GetUser retrieves a user by its HASH column.
-func (uc *GormSnowRepository) GetUser(hashId int64) (*model.UserSnowflake, error) {
+func (uc *GormSnowRepository) GetUser(hashId string) (*model.UserSnowflake, error) {
 	var user model.UserSnowflake
 	// Ensure the table name is correctly referenced (if needed, use )
 	if err := uc.DB.Where("id = ?", hashId).First(&user).Error; err != nil {
@@ -138,7 +139,7 @@ func (uc *GormSnowRepository) UpdateUser(requestedUser model.UserSnowflake) (*mo
 }
 
 // DeleteUser removes a user record based on its HASH.
-func (uc *GormSnowRepository) DeleteUser(id int64) error {
+func (uc *GormSnowRepository) DeleteUser(id string) error {
 	if err := uc.DB.Where("id = ?", id).Delete(&model.UserSnowflake{}).Error; err != nil {
 		return err
 	}

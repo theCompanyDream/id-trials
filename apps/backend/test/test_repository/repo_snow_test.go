@@ -2,6 +2,7 @@ package repository
 
 import (
 	"fmt"
+	"strconv"
 	"testing"
 
 	"github.com/theCompanyDream/id-trials/apps/backend/test/setup"
@@ -37,7 +38,8 @@ func TestCreateAndGetSnowFlake(t *testing.T) {
 	require.NotEmpty(t, created.ID, "user ID should not be empty after creation")
 
 	// Retrieve the user by the hash (since GetUser uses hash in this implementation).
-	retrieved, err := snowRepository.GetUser(created.ID)
+	id := strconv.FormatInt(created.ID, 10)
+	retrieved, err := snowRepository.GetUser(id)
 	require.NoError(t, err, "failed to retrieve user")
 	require.Equal(t, created.ID, retrieved.ID, "retrieved user ID should match created user ID")
 	require.Equal(t, created.UserName, retrieved.UserName, "user name should match")
@@ -125,10 +127,12 @@ func TestDeleteSnowFlake(t *testing.T) {
 	require.NotEmpty(t, created.ID, "user ID should not be empty after creation")
 
 	// Delete the user using its ID. (Your DeleteUser function uses the id field.)
-	err = snowRepository.DeleteUser(created.ID)
+	id := strconv.FormatInt(created.ID, 10)
+	err = snowRepository.DeleteUser(id)
 	require.NoError(t, err, "failed to delete user")
 
 	// Attempt to fetch the deleted user; expect an error.
-	_, err = snowRepository.GetUser(created.ID)
+	id = strconv.FormatInt(created.ID, 10)
+	_, err = snowRepository.GetUser(id)
 	require.Error(t, err, "expected error when fetching deleted user")
 }

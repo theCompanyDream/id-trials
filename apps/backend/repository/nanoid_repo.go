@@ -7,6 +7,7 @@ import (
 	gonanoid "github.com/matoous/go-nanoid/v2"
 	"gorm.io/gorm"
 
+	"github.com/theCompanyDream/id-trials/apps/backend/models"
 	model "github.com/theCompanyDream/id-trials/apps/backend/models"
 )
 
@@ -15,7 +16,7 @@ type GormNanoIdRepository struct {
 }
 
 // NewGormNanoIdRepository creates a new instance of GormNanoIdRepository.
-func NewGormNanoIdRepository(repo *gorm.DB) *GormNanoIdRepository {
+func NewGormNanoIdRepository(repo *gorm.DB) IRepository[models.UserNanoID] {
 	return &GormNanoIdRepository{
 		DB: repo,
 	}

@@ -7,6 +7,7 @@ import (
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 
+	"github.com/theCompanyDream/id-trials/apps/backend/models"
 	model "github.com/theCompanyDream/id-trials/apps/backend/models"
 )
 
@@ -15,7 +16,7 @@ type GormUuidRepository struct {
 }
 
 // NewGormUuidRepository creates a new instance of GormUuidRepository.
-func NewGormUuidRepository(repo *gorm.DB) *GormUuidRepository {
+func NewGormUuidRepository(repo *gorm.DB) IRepository[models.UserUUID] {
 	return &GormUuidRepository{
 		DB: repo,
 	}

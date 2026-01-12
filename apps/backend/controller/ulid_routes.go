@@ -7,20 +7,21 @@ import (
 
 	"github.com/go-playground/validator/v10"
 	"github.com/labstack/echo/v4"
+	"github.com/theCompanyDream/id-trials/apps/backend/models"
 	model "github.com/theCompanyDream/id-trials/apps/backend/models"
-	db "github.com/theCompanyDream/id-trials/apps/backend/repository"
+	repo "github.com/theCompanyDream/id-trials/apps/backend/repository"
 	"gorm.io/gorm"
 )
 
 type UsersUlidControllers struct {
-	repo db.GormUlidRepository
+	repo repo.IRepository[models.UserUlid]
 }
 
-func NewUlidController(repo *gorm.DB) UsersUlidControllers {
-	repository := db.NewGormUlidRepository(repo)
+func NewUlidController(db *gorm.DB) UsersUlidControllers {
+	repository := repo.NewGormUlidRepository(db)
 
 	return UsersUlidControllers{
-		repo: *repository,
+		repo: repository,
 	}
 }
 

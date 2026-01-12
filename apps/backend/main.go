@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"time"
 
 	"github.com/spf13/cobra"
 	"github.com/theCompanyDream/id-trials/apps/backend/cmd"
@@ -60,8 +61,8 @@ var loadTestCmd = &cobra.Command{
 		records, _ := command.Flags().GetInt("records")
 		batch, _ := command.Flags().GetInt("batch")
 		concurrent, _ := command.Flags().GetInt("concurrent")
-		requestTimeout, _ := command.Flags().GetTime("timeout")
-		delay, _ := command.Flags().GetTime()
+		requestTimeout, _ := command.Flags().GetDuration("timeout")
+		delay, _ := command.Flags().GetDuration("delay")
 
 		config := &models.CmdConfig{
 			RecordsPerTable:  records,
@@ -85,9 +86,16 @@ func init() {
 	generateCmd.Flags().IntP("batch", "b", 1000, "Batch size for inserts")
 	generateCmd.Flags().StringP("database", "d", "", "Database connection string")
 
+	loadTestCmd.Flags().IntP("records", "r", 10, "Number of requests * 6")
+	loadTestCmd.Flags().IntP("batch", "b", 10, "how many inserts between requests")
+	loadTestCmd.Flags().IntP("concurrent", "c", 3, "how many concurrent requets")
+	loadTestCmd.Flags().DurationP("timeout", "t", 10*time.Second, "request timeout")
+	loadTestCmd.Flags().DurationP("delay", "d", 10*time.Second, "seconds delayed between requests")
+
 	// Add commands to root
 	rootCmd.AddCommand(serverCmd)
 	rootCmd.AddCommand(generateCmd)
+	rootCmd.AddCommand(loadTestCmd)
 }
 
 func main() {
