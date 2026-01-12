@@ -16,10 +16,10 @@ type NanoUsersController struct {
 	repo repo.IRepository[model.UserNanoID]
 }
 
-func NewGormNanoController(db *gorm.DB) NanoUsersController {
+func NewGormNanoController(db *gorm.DB) IUserController {
 	repository := repo.NewGormNanoIdRepository(db)
 
-	return NanoUsersController{
+	return &NanoUsersController{
 		repo: repository,
 	}
 }

@@ -16,10 +16,10 @@ type KsuidUsersController struct {
 	repo repo.IRepository[model.UserKSUID]
 }
 
-func NewGormKsuidController(db *gorm.DB) KsuidUsersController {
+func NewGormKsuidController(db *gorm.DB) IUserController {
 	repository := repo.NewGormKsuidRepository(db)
 
-	return KsuidUsersController{
+	return &KsuidUsersController{
 		repo: repository,
 	}
 }

@@ -16,10 +16,10 @@ type SnowUsersController struct {
 	repo repo.IRepository[model.UserSnowflake]
 }
 
-func NewSnowCuidController(db *gorm.DB) SnowUsersController {
+func NewSnowCuidController(db *gorm.DB) IUserController {
 	repository := repo.NewGormSnowRepository(db)
 
-	return SnowUsersController{
+	return &SnowUsersController{
 		repo: repository,
 	}
 }

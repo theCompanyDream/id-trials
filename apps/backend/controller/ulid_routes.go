@@ -16,10 +16,10 @@ type UsersUlidControllers struct {
 	repo repo.IRepository[model.UserUlid]
 }
 
-func NewUlidController(db *gorm.DB) UsersUlidControllers {
+func NewUlidController(db *gorm.DB) IUserController {
 	repository := repo.NewGormUlidRepository(db)
 
-	return UsersUlidControllers{
+	return &UsersUlidControllers{
 		repo: repository,
 	}
 }
