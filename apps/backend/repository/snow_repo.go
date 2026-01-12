@@ -7,7 +7,6 @@ import (
 	"github.com/bwmarrin/snowflake"
 	"gorm.io/gorm"
 
-	"github.com/theCompanyDream/id-trials/apps/backend/models"
 	model "github.com/theCompanyDream/id-trials/apps/backend/models"
 )
 
@@ -17,7 +16,7 @@ type GormSnowRepository struct {
 }
 
 // NewGormCuidRepository creates a new instance of GormCuidRepository.
-func NewGormSnowRepository(repo *gorm.DB) IRepository[models.UserSnowflake] {
+func NewGormSnowRepository(repo *gorm.DB) IRepository[model.UserSnowflake] {
 	node, _ := snowflake.NewNode(1)
 	return &GormSnowRepository{
 		DB:   repo,

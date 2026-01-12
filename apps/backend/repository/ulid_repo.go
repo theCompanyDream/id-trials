@@ -7,7 +7,6 @@ import (
 	"github.com/oklog/ulid/v2"
 	"gorm.io/gorm"
 
-	"github.com/theCompanyDream/id-trials/apps/backend/models"
 	model "github.com/theCompanyDream/id-trials/apps/backend/models"
 )
 
@@ -16,7 +15,7 @@ type GormUlidRepository struct {
 }
 
 // NewGormUlidRepository creates a new instance of GormUlidRepository.
-func NewGormUlidRepository(repo *gorm.DB) IRepository[models.UserUlid] {
+func NewGormUlidRepository(repo *gorm.DB) IRepository[model.UserUlid] {
 	return &GormUlidRepository{
 		DB: repo,
 	}
