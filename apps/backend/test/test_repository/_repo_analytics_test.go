@@ -5,23 +5,24 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/theCompanyDream/id-trials/apps/backend/models"
 )
 
 func TestCalculatePercentiles(t *testing.T) {
 	tests := []struct {
 		name     string
 		input    []float64
-		expected PercentileStats
+		expected models.PercentileStats
 	}{
 		{
 			name:     "empty slice",
 			input:    []float64{},
-			expected: PercentileStats{},
+			expected: models.PercentileStats{},
 		},
 		{
 			name:  "single value",
 			input: []float64{100},
-			expected: PercentileStats{
+			expected: models.PercentileStats{
 				P50: 100,
 				P75: 100,
 				P90: 100,
