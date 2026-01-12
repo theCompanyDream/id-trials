@@ -39,7 +39,7 @@ var generateCmd = &cobra.Command{
 		records, _ := command.Flags().GetInt("records")
 		batch, _ := command.Flags().GetInt("batch")
 
-		config := &models.Config{
+		config := &models.CmdConfig{
 			RecordsPerTable: records,
 			BatchSize:       batch,
 		}
@@ -50,6 +50,28 @@ var generateCmd = &cobra.Command{
 		}
 
 		cmd.GenerateData(config, db)
+	},
+}
+
+var loadTestCmd = &cobra.Command{
+	Use:   "load",
+	Short: "generate test data through controllers",
+	Run: func(command *cobra.Command, args []string) {
+		records, _ := command.Flags().GetInt("records")
+		batch, _ := command.Flags().GetInt("batch")
+		concurrent, _ := command.Flags().GetInt("concurrent")
+		requestTimeout, _ := command.Flags().GetTime("timeout")
+		delay, _ := command.Flags().GetTime()
+
+		config := &models.CmdConfig{
+			RecordsPerTable:  records,
+			BatchSize:        batch,
+			ConcurrentReqs:   concurrent,
+			RequestTimeout:   requestTimeout,
+			DelayBetweenReqs: delay,
+		}
+
+		cmd.TestApi(config)
 	},
 }
 

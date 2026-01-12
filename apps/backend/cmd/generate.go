@@ -18,7 +18,7 @@ import (
 	"github.com/theCompanyDream/id-trials/apps/backend/models"
 )
 
-func GenerateData(config *models.Config, db *gorm.DB) {
+func GenerateData(config *models.CmdConfig, db *gorm.DB) {
 	var wg sync.WaitGroup
 
 	generators := []struct {
