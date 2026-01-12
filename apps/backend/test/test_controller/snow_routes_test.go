@@ -24,7 +24,7 @@ func TestGetSnowFlake_Success(t *testing.T) {
 	department := "Engineering"
 
 	expectedUser := &models.UserSnowflake{
-		ID: "cmk7nncf000054hz3gxgka8v9",
+		ID: int64(1234567890123456789),
 		UserBase: &models.UserBase{
 			UserName:   "testuser",
 			FirstName:  "Test",
@@ -34,13 +34,13 @@ func TestGetSnowFlake_Success(t *testing.T) {
 		},
 	}
 
-	mockRepo.On("GetUser", "cmk7nncf000054hz3gxgka8v9").Return(expectedUser, nil)
+	mockRepo.On("GetUser", "1234567890123456789").Return(expectedUser, nil)
 
-	req := httptest.NewRequest(http.MethodGet, "/cuid/cmk7nncf000054hz3gxgka8v9", nil)
+	req := httptest.NewRequest(http.MethodGet, "/cuid/1234567890123456789", nil)
 	rec := httptest.NewRecorder()
 	c := e.NewContext(req, rec)
 	c.SetParamNames("id")
-	c.SetParamValues("cmk7nncf000054hz3gxgka8v9")
+	c.SetParamValues("1234567890123456789")
 
 	// Note: You'll need to expose the repo field or use dependency injection
 	// For now, this shows the pattern
@@ -271,7 +271,7 @@ func TestCreateSnowFlake_Success(t *testing.T) {
 	}
 
 	createdUser := &models.UserSnowflake{
-		ID: "cmk7nncf000054hz3gxgka8v9",
+		ID: int64(1234567890123456789),
 		UserBase: &models.UserBase{
 			UserName:   userName,
 			FirstName:  firstName,
@@ -365,7 +365,7 @@ func TestUpdateSnowFlake_Success(t *testing.T) {
 	e := echo.New()
 	mockRepo := new(setup.MockRepository[models.UserSnowflake])
 
-	userID := "cmk7nncf000054hz3gxgka8v9"
+	userID := int64(1234567890123456789)
 	userName := "updateduser"
 	firstName := "Updated"
 	lastName := "User"
@@ -426,7 +426,7 @@ func TestDeleteSnowFlake_Success(t *testing.T) {
 	e := echo.New()
 	mockRepo := new(setup.MockRepository[models.UserSnowflake])
 
-	userID := "cmk7nncf000054hz3gxgka8v9"
+	userID := int64(1234567890123456789)
 
 	mockRepo.On("DeleteUser", userID).Return(nil)
 
@@ -475,7 +475,7 @@ func TestDeleteSnowFlake_RepositoryError(t *testing.T) {
 	e := echo.New()
 	mockRepo := new(setup.MockRepository[models.UserSnowflake])
 
-	userID := "cmk7nncf000054hz3gxgka8v9"
+	userID := int64(1234567890123456789)
 
 	mockRepo.On("DeleteUser", userID).Return(gorm.ErrRecordNotFound)
 
