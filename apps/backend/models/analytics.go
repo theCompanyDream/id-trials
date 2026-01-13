@@ -40,3 +40,8 @@ type TimeSeriesPoint struct {
 	AvgDuration  float64   `json:"avg_duration"`
 	RequestCount int       `json:"request_count"`
 }
+
+type TableSize struct {
+	TableName string `json:"table_name"`
+	Size      string `json:"size"`
+}

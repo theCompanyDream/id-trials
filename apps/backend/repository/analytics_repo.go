@@ -126,3 +126,19 @@ func percentile(sorted []float64, p float64) float64 {
 	index := int(float64(len(sorted)-1) * p)
 	return sorted[index]
 }
+
+func (r *MetricsRepository) GetSpecificTableSizes(db *gorm.DB, tableNames []string) ([]models.TableSize, error) {
+	var sizes []models.TableSize
+
+	err := db.Raw(`
+        SELECT
+            tablename as table_name,
+            pg_size_pretty(pg_total_relation_size(schemaname||'.'||tablename)) AS size
+        FROM pg_tables
+        WHERE schemaname = 'public'
+            AND tablename like 'users%'
+        ORDER BY pg_total_relation_size(schemaname||'.'||tablename) DESC
+    `, tableNames).Scan(&sizes).Error
+
+	return sizes, err
+}
