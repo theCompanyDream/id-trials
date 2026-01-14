@@ -40,7 +40,7 @@ const Table = ({ users, currentPage, totalPages, onPageChange, onDelete }) => (
           {users && users.length > 0 ? (
             users.map((user, index) => (
               <tr key={index}>
-                <td className="px-6 py-4 whitespace-nowrap">{user.id}</td>
+                <td className="px-6 py-4 whitespace-nowrap">{String(user.id)}</td>
                 <td className="px-6 py-4 whitespace-nowrap">{user.user_name}</td>
                 <td className="px-6 py-4 whitespace-nowrap">{[user.first_name, user.last_name].join(" ")}</td>
                 <td className="px-6 py-4 whitespace-nowrap">{user.email}</td>
