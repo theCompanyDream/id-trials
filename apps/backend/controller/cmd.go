@@ -3,6 +3,7 @@ package controller
 import (
 	"fmt"
 	"os"
+	"strings"
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
@@ -57,7 +58,7 @@ func NewEchoServer(db *gorm.DB) *echo.Echo {
 	server.Use(middleware.BodyLimit("20k"))
 	server.Use(middleware.RateLimiter(middleware.NewRateLimiterMemoryStore(rate.Limit(10))))
 	server.Use(middleware.CORSWithConfig(middleware.CORSConfig{
-		AllowOrigins: []string{os.Getenv("ALLOWED_HOSTS")},
+		AllowOrigins: strings.Split(os.Getenv("ALLOWED_HOSTS"), ","),
 		AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept},
 	}))
 	server.Use(middleware.CORS())
