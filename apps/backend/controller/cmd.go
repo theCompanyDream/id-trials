@@ -49,11 +49,19 @@ func NewEchoServer(db *gorm.DB) *echo.Echo {
 	snowController := NewSnowCuidController(db)
 
 	// Middleware
-	server.Use(middleware.Recover())
 	server.Logger = logger
+	server.Use(middleware.Recover())
 	server.Use(middleware.RequestID())
+	server.Use(middleware.RequestLogger()) // Add request logging for security auditing
 	server.Use(middleware.Gzip())
+	server.Use(middleware.BodyLimit("20k"))
 	server.Use(middleware.RateLimiter(middleware.NewRateLimiterMemoryStore(rate.Limit(10))))
+	server.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+		AllowOrigins: []string{os.Getenv("ALLOWED_HOSTS")},
+		AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept},
+	}))
+	server.Use(middleware.CORS())
+	server.Use(middleware.Secure())
 
 	server.GET("/analytics/comparison", analyticsController.GetIDTypeComparison)
 	server.GET("/analytics/:type/details", analyticsController.GetIDTypeDetails)

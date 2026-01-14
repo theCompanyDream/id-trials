@@ -2,6 +2,7 @@ package setup
 
 import (
 	"log"
+	"testing"
 
 	"github.com/theCompanyDream/id-trials/apps/backend/models"
 	"gorm.io/driver/sqlite"
@@ -45,4 +46,22 @@ func NewPostgresMockDB() *gorm.DB {
 	}
 
 	return db
+}
+
+func CleanupDB(t *testing.T, db *gorm.DB) {
+	t.Helper()
+
+	tables := []string{
+		"route_metrics",
+		"user_ulids",
+		"user_cuids",
+		"user_uuids",
+		"user_ksuids",
+		"user_snowflakes",
+		"user_nanoids",
+	}
+
+	for _, table := range tables {
+		db.Exec("DELETE FROM " + table)
+	}
 }
