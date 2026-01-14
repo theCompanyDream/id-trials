@@ -21,12 +21,12 @@ const UserTable = () => {
       .catch((err) => console.error("Error fetching users:", err));
   };
 
-  const onDelete = (userId) => {
-    fetch(`/api/${usedId}/${userId}`, {
+  const onDelete = (id) => {
+    fetch(`/api/${usedId}/${id}`, {
       method: "DELETE"
     })
     .then((data) => {
-      const newUsers = users.users.filter(user => userId != user.id);
+      const newUsers = users.users.filter(user => id != user.id);
       setUsers({...users, users: newUsers})
     })
   }
