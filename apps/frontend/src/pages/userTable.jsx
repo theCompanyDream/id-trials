@@ -1,24 +1,28 @@
 import React, { useContext, useState, useMemo } from 'react';
-import { UserContext, Table } from '../components';
+import { useUserStore, Table } from '../components';
 
 const UserTable = () => {
-  const { users, setUsers } = useContext(UserContext);
+  const users = useUserStore((state) => state.users)
+  const page = useUserStore((state) => state.page)
+  const page_count = useUserStore((state) => state.page_count)
+  const userId = useUserStore((state) => state.userId)
+  const updateStore = useUserStore((state) => state.updateStore)
   const [isfetch, setFetched] = useState(false);
   const [search, setSearch] = useState("");
 
   // Function to fetch users with search and page parameters
   const fetchUsers = (page = 1, query = search) => {
-    fetch(`/api/uuid4?search=${encodeURIComponent(query)}&page=${page}`)
+    fetch(`/api/${usedId}?search=${encodeURIComponent(query)}&page=${page}`)
       .then((response) => response.json())
       .then((data) => {
-        setUsers(data);
+        updateStore({...data})
         setFetched(true);
       })
       .catch((err) => console.error("Error fetching users:", err));
   };
 
   const onDelete = (userId) => {
-    fetch(`/api/uuid4/${userId}`, {
+    fetch(`/api/${usedId}/${userId}`, {
       method: "DELETE"
     })
     .then((data) => {
@@ -38,7 +42,11 @@ const UserTable = () => {
     fetchUsers(1, search);
   };
 
-  public
+  const handleSelect = (e) => {
+    updateStore({
+      userId: e.target.value
+    })
+  }
 
   // Trigger initial data fetch if no users yet
   useMemo(() => {
@@ -53,13 +61,13 @@ const UserTable = () => {
       <header className="flex justify-between items-center p-4 bg-gray-100">
         <h2 className="text-2xl font-bold">User List</h2>
         <div className="flex items-center">
-          <select onSelect={}>
-            <option>Uuid</option>
-            <option>Cuid</option>
-            <option>SnowFlake</option>
-            <option>Ksuid</option>
-            <option>Ulid</option>
-            <option>NanoId</option>
+          <select onChange={handleSelect} value={user_id}>
+            <option value="uuid4">Uuid</option>
+            <option value="cuid">Cuid Id</option>
+            <option value="snow">SnowFlake ID</option>
+            <option value="ksuid">Ksuid</option>
+            <option value="ulid">Ulid</option>
+            <option value="nano">NanoId</option>
           </select>
           <input
             type="text"
@@ -78,9 +86,9 @@ const UserTable = () => {
       </header>
       {users && (
         <Table
-          users={users.users}
-          currentPage={users.page}
-          totalPages={users.page_count}
+          users={users}
+          currentPage={page}
+          totalPages={page_count}
           onPageChange={onPageChange}
           onDelete={onDelete}
         />

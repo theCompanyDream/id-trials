@@ -5,7 +5,7 @@ const useUserStore = create((set, get) => ({
     page: 1,
     page_count: 10,
     page_size: 20,
-    user_id: "uuid",
+    userId: "uuid",
     updateStore: (filters) => set({ ...filters }),
 }))
 
