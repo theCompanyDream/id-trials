@@ -13,31 +13,25 @@ const Table = ({ users, currentPage, totalPages, onPageChange, onDelete }) => (
               scope="col"
               className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider"
             >
+              Id
+            </th>
+            <th
+              scope="col"
+              className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider"
+            >
               Username
             </th>
             <th
               scope="col"
               className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider"
             >
-              First Name
-            </th>
-            <th
-              scope="col"
-              className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider"
-            >
-              Last Name
+              Name
             </th>
             <th
               scope="col"
               className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider"
             >
               Email
-            </th>
-            <th
-              scope="col"
-              className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider"
-            >
-              Department
             </th>
             <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">Actions</th>
           </tr>
@@ -46,11 +40,10 @@ const Table = ({ users, currentPage, totalPages, onPageChange, onDelete }) => (
           {users && users.length > 0 ? (
             users.map((user, index) => (
               <tr key={index}>
+                <td className="px-6 py-4 whitespace-nowrap">{user.id}</td>
                 <td className="px-6 py-4 whitespace-nowrap">{user.user_name}</td>
-                <td className="px-6 py-4 whitespace-nowrap">{user.first_name}</td>
-                <td className="px-6 py-4 whitespace-nowrap">{user.last_name}</td>
+                <td className="px-6 py-4 whitespace-nowrap">{[user.first_name, user.last_name].join(" ")}</td>
                 <td className="px-6 py-4 whitespace-nowrap">{user.email}</td>
-                <td className="px-6 py-4 whitespace-nowrap">{user.department || 'N/A'}</td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <Link to={`/detail/${user.id}`} className='bg-blue-500 text-white px-4 py-2 border rounded'>Edit</Link>
                   <button onClick={() => onDelete(user.id)} className='bg-red-500 text-white px-4 py-2 border rounded'>Delete</button>
