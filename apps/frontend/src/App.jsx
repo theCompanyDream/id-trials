@@ -11,34 +11,19 @@ const Table = React.lazy(() => import('./pages/userTable'));
 const Detail = React.lazy(() => import('./pages/detail'));
 const About = React.lazy(() => import('./pages/about'));
 
-const App = () => {
-  const defaultBookContext = {
-    users: [],
-    page: 1,
-    page_count: 10,
-    page_size: 20
-  };
-
-  const [users, setUsers] = useState(defaultBookContext);
-  const contextMemo = useMemo(
-    () => ({ users, setUsers }),
-    [users]
-  );
-
-  return (
-    <UserContext.Provider value={contextMemo}>
-      <Layout>
-        <Suspense fallback={<ClockLoader  color="#FFF200" size={50} />}>
-          <Routes>
-            <Route index path="/" element={<Table />} />
-            <Route path="/detail/:id?" element={<Detail />} />
-            <Route path="*" element={<Page404 />} />
-            <Route path="/about" element={<About />} />
-          </Routes>
-        </Suspense>
-      </Layout>
-    </UserContext.Provider>
-  );
-};
+const App = () =>  (
+  <UserContext.Provider value={contextMemo}>
+    <Layout>
+      <Suspense fallback={<ClockLoader  color="#FFF200" size={50} />}>
+        <Routes>
+          <Route index path="/" element={<Table />} />
+          <Route path="/detail/:id?" element={<Detail />} />
+          <Route path="*" element={<Page404 />} />
+          <Route path="/about" element={<About />} />
+        </Routes>
+      </Suspense>
+    </Layout>
+  </UserContext.Provider>
+);
 
 export default App;

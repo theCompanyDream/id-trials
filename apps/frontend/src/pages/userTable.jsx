@@ -38,6 +38,8 @@ const UserTable = () => {
     fetchUsers(1, search);
   };
 
+  public
+
   // Trigger initial data fetch if no users yet
   useMemo(() => {
     if (!isfetch) {
@@ -51,6 +53,14 @@ const UserTable = () => {
       <header className="flex justify-between items-center p-4 bg-gray-100">
         <h2 className="text-2xl font-bold">User List</h2>
         <div className="flex items-center">
+          <select onSelect={}>
+            <option>Uuid</option>
+            <option>Cuid</option>
+            <option>SnowFlake</option>
+            <option>Ksuid</option>
+            <option>Ulid</option>
+            <option>NanoId</option>
+          </select>
           <input
             type="text"
             value={search}
