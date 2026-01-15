@@ -55,7 +55,6 @@ func InitDB() (*gorm.DB, error) {
 		&model.UserNanoID{},
 		&model.UserSnowflake{},
 		&model.RouteMetric{},
-		&model.RouteStatistics{},
 		&model.UserUUID{}); err != nil {
 		// Log the error as a warning and continue
 		fmt.Printf("Warning: Failed to auto migrate: %v", err)
