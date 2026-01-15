@@ -12,7 +12,7 @@ const UserTable = () => {
 
   // Function to fetch users with search and page parameters
   const fetchUsers = (page = 1, query = search) => {
-    fetch(`/api/${userId}?search=${encodeURIComponent(query)}&page=${page}`)
+    fetch(`/api/${userId}s?search=${encodeURIComponent(query)}&page=${page}`)
       .then((response) => response.json())
       .then((data) => {
         updateStore({...data})
@@ -67,11 +67,11 @@ const UserTable = () => {
             className="px-4 py-2 border border-gray-300 rounded-lg bg-white text-gray-800 font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition hover:border-blue-400 cursor-pointer"
           >
             <option value="uuid4">UUID</option>
-            <option value="cuid">CUID</option>
-            <option value="snow">Snowflake</option>
-            <option value="ksuid">KSUID</option>
-            <option value="ulid">ULID</option>
-            <option value="nano">NanoID</option>
+            <option value="cuidId">CUID</option>
+            <option value="snowId">Snowflake</option>
+            <option value="ksuidId">KSUID</option>
+            <option value="ulidId">ULID</option>
+            <option value="nanoId">NanoID</option>
           </select>
 
           <input

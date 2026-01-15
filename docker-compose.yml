@@ -40,12 +40,10 @@ services:
 
   user_api:
     container_name: ${BACKEND_NAME}
-    command: ["go", "run", "main.go"]
+    command: ["air"]
     restart: always
     networks:
       - app-nework
-    depends_on:
-      - ${DATABASE_HOST}
     ports:
       - ${BACKEND_PORT}:${BACKEND_PORT}
     env_file:

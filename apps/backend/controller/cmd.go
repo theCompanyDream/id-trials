@@ -7,10 +7,8 @@ import (
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
-	"github.com/labstack/gommon/log"
 	echoSwagger "github.com/swaggo/echo-swagger"
 	appMiddleware "github.com/theCompanyDream/id-trials/apps/backend/middleware"
-	"github.com/ziflex/lecho"
 	"golang.org/x/time/rate"
 	"gorm.io/gorm"
 )
@@ -30,15 +28,10 @@ func RunServer(db *gorm.DB) {
 
 func NewEchoServer(db *gorm.DB) *echo.Echo {
 	server := echo.New()
-	logger := lecho.New(
-		os.Stdout,
-		lecho.WithLevel(log.DEBUG),
-		lecho.WithTimestamp(),
-		lecho.WithCaller(),
-	)
 
 	server.HTTPErrorHandler = appMiddleware.HttpErrorHandler
 	metricsMiddleware := appMiddleware.NewMetricsMiddleware(db)
+	appMiddleware.NewLogger()
 
 	analyticsController := NewAnalyticsController(db)
 	ulidController := NewUlidController(db)
@@ -49,7 +42,7 @@ func NewEchoServer(db *gorm.DB) *echo.Echo {
 	snowController := NewSnowCuidController(db)
 
 	// Middleware
-	server.Logger = logger
+	server.Use(appMiddleware.LoggingMiddleware)
 	server.Use(middleware.Recover())
 	server.Use(middleware.RequestID())
 	server.Use(middleware.RequestLogger()) // Add request logging for security auditing
@@ -71,41 +64,41 @@ func NewEchoServer(db *gorm.DB) *echo.Echo {
 	// Define main routes
 	server.GET("/swagger/*", echoSwagger.WrapHandler)
 	server.GET("/", Home)
-	server.GET("/ulids", ulidController.GetUsers)
-	server.GET("/ulid/:id", ulidController.GetUser)
-	server.POST("/ulid", ulidController.CreateUser)
-	server.PUT("/ulid/:id", ulidController.UpdateUser)
-	server.DELETE("/ulid/:id", ulidController.DeleteUser)
+	server.GET("/ulidIds", ulidController.GetUsers)
+	server.GET("/ulidId/:id", ulidController.GetUser)
+	server.POST("/ulidId", ulidController.CreateUser)
+	server.PUT("/ulidId/:id", ulidController.UpdateUser)
+	server.DELETE("/ulidId/:id", ulidController.DeleteUser)
 	//uuid
-	server.GET("/uuid4", uuid4Controller.GetUsers)
+	server.GET("/uuid4s", uuid4Controller.GetUsers)
 	server.GET("/uuid4/:id", uuid4Controller.GetUser)
 	server.POST("/uuid4", uuid4Controller.CreateUser)
 	server.PUT("/uuid4/:id", uuid4Controller.UpdateUser)
 	server.DELETE("/uuid4/:id", uuid4Controller.DeleteUser)
 	//nanoId
-	server.GET("/nano", nanoIdController.GetUsers)
-	server.GET("/nano/:id", nanoIdController.GetUser)
-	server.POST("/nano", nanoIdController.CreateUser)
-	server.PUT("/nano/:id", nanoIdController.UpdateUser)
-	server.DELETE("/nano/:id", nanoIdController.DeleteUser)
-	//ksuid
-	server.GET("/ksuid", ksuidController.GetUsers)
-	server.GET("/ksuid/:id", ksuidController.GetUser)
-	server.POST("/ksuid", ksuidController.CreateUser)
-	server.PUT("/ksuid/:id", ksuidController.UpdateUser)
-	server.DELETE("/ksuid/:id", ksuidController.DeleteUser)
+	server.GET("/nanoIds", nanoIdController.GetUsers)
+	server.GET("/nanoId/:id", nanoIdController.GetUser)
+	server.POST("/nanoId", nanoIdController.CreateUser)
+	server.PUT("/nanoId/:id", nanoIdController.UpdateUser)
+	server.DELETE("/nanoId/:id", nanoIdController.DeleteUser)
+	//ksuidId
+	server.GET("/ksuidIds", ksuidController.GetUsers)
+	server.GET("/ksuidId/:id", ksuidController.GetUser)
+	server.POST("/ksuidId", ksuidController.CreateUser)
+	server.PUT("/ksuidId/:id", ksuidController.UpdateUser)
+	server.DELETE("/ksuidId/:id", ksuidController.DeleteUser)
 	//cuid
-	server.GET("/cuid", cuidController.GetUsers)
-	server.GET("/cuid/:id", cuidController.GetUser)
-	server.POST("/cuid", cuidController.CreateUser)
-	server.PUT("/cuid/:id", cuidController.UpdateUser)
-	server.DELETE("/cuid/:id", cuidController.DeleteUser)
+	server.GET("/cuidIds", cuidController.GetUsers)
+	server.GET("/cuidId/:id", cuidController.GetUser)
+	server.POST("/cuidId", cuidController.CreateUser)
+	server.PUT("/cuidId/:id", cuidController.UpdateUser)
+	server.DELETE("/cuidId/:id", cuidController.DeleteUser)
 
-	server.GET("/snow", snowController.GetUsers)
-	server.GET("/snow/:id", snowController.GetUser)
-	server.POST("/snow", snowController.CreateUser)
-	server.PUT("/snow/:id", snowController.UpdateUser)
-	server.DELETE("/snow/:id", snowController.DeleteUser)
+	server.GET("/snowIds", snowController.GetUsers)
+	server.GET("/snowId/:id", snowController.GetUser)
+	server.POST("/snowId", snowController.CreateUser)
+	server.PUT("/snowId/:id", snowController.UpdateUser)
+	server.DELETE("/snowId/:id", snowController.DeleteUser)
 
 	return server
 }
