@@ -36,5 +36,6 @@ func InputToSnowFlake(userCreate UserInput) *UserSnowflake {
 func (snowflake *UserSnowflake) SnowflakeToDTO() *UserDTO {
 	var userDTO UserDTO
 	copier.Copy(&userDTO, &snowflake)
+	userDTO.ID = strconv.FormatInt(snowflake.ID, 10)
 	return &userDTO
 }
