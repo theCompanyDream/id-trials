@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"strings"
 	"time"
 
 	"github.com/labstack/echo/v4"
@@ -77,24 +78,19 @@ func (m *MetricsMiddleware) saveMetric(metric models.RouteMetric) {
 
 func extractIDType(path string) string {
 	switch {
-	case contains(path, "ulid"):
+	case strings.Contains(path, "ulid"):
 		return "ULID"
-	case contains(path, "uuid"):
+	case strings.Contains(path, "uuid"):
 		return "UUID"
-	case contains(path, "ksuid"):
+	case strings.Contains(path, "ksuid"):
 		return "KSUID"
-	case contains(path, "cuid"):
+	case strings.Contains(path, "cuid"):
 		return "CUID"
-	case contains(path, "nano"):
+	case strings.Contains(path, "nano"):
 		return "NanoID"
-	case contains(path, "snow"):
+	case strings.Contains(path, "snow"):
 		return "Snowflake"
 	default:
 		return "Unknown"
 	}
-}
-
-func contains(s, substr string) bool {
-	return len(s) >= len(substr) && s[:len(substr)] == substr ||
-		len(s) > len(substr) && s[len(s)-len(substr):] == substr
 }
