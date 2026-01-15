@@ -25,5 +25,5 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.REPO_TOKEN }}
         run:
-          chmod +x scripts/tag.sh
+          chmod +x ./configs/scripts/tag.sh
           ./configs/scripts/tag.sh
