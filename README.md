@@ -100,14 +100,3 @@ The Makefile includes several commands to manage the development environment:
    ```
 
 Thank you for using the User Test repository! If you encounter any issues or have suggestions for improvements, feel free to open an issue or submit a pull request.
-
-## Future
-
-if I come back to this I might create multiple user tables and compare
-
-- uuid
-- ulid
-- cuid
-- nanoid
-- snowflakeId
-- ksuid
