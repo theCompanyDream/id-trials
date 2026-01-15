@@ -26,4 +26,4 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run:
           chmod +x scripts/tag.sh
-          ./scripts/tag.sh
+          ./configs/scripts/tag.sh
