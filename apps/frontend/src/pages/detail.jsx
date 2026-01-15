@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useUserStore } from '../components';
 
 const UserDetail = () => {
   const { id } = useParams(); // If there's an ID, we're editing an existing user.

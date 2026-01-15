@@ -95,8 +95,8 @@ func loadTestEndpoint(client *http.Client, config *models.CmdConfig, name, endpo
 			userName := gofakeit.Username()
 			firstName := gofakeit.FirstName()
 			lastName := gofakeit.LastName()
-			email := gofakeit.Email()
-			department := randomDepartment()
+			email := fmt.Sprintf("%c%s@%s.com", firstName[0], lastName, gofakeit.Company())
+			department := &gofakeit.Job().Title
 
 			// Generate fake user data
 			user := models.UserInput{
