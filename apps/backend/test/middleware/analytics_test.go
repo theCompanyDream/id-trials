@@ -1,6 +1,7 @@
-package repository
+package middleware
 
 import (
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -98,5 +99,18 @@ func TestMiddlewareIDTypeExtraction(t *testing.T) {
 			db.Last(&metric)
 			assert.Equal(t, route.expected, metric.IDType)
 		})
+	}
+}
+
+func TestExtractIDType(t *testing.T) {
+	ids := []string{"/ulidIds", "/nanoIds", "/ksuidIds", "/cuidIds", "/snowIds", "/uuid4"}
+	idTypes := []string{"ULID", "NanoID", "KSUID", "CUID", "Snowflake", "UUID"}
+
+	for idx, url := range ids {
+		idType := middleware.ExtractIDType(url)
+		withID := fmt.Sprintf("%s/234234", url)
+		assert.Equal(t, idType, idTypes[idx])
+		idType = middleware.ExtractIDType(withID)
+		assert.Equal(t, idType, idTypes[idx])
 	}
 }

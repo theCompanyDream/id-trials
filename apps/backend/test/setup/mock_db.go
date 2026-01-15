@@ -33,6 +33,7 @@ func NewPostgresMockDB() *gorm.DB {
 		&models.UserKSUID{},
 		&models.UserSnowflake{},
 		&models.UserNanoID{},
+		&models.RouteMetric{},
 	}
 
 	for _, model := range models {

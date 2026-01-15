@@ -38,7 +38,7 @@ func (m *MetricsMiddleware) CaptureMetrics() echo.MiddlewareFunc {
 			}
 
 			// Extract ID type from route
-			idType := extractIDType(c.Path())
+			idType := ExtractIDType(c.Path())
 
 			// Create metric record
 			metric := models.RouteMetric{
@@ -76,7 +76,7 @@ func (m *MetricsMiddleware) saveMetric(metric models.RouteMetric) {
 	}
 }
 
-func extractIDType(path string) string {
+func ExtractIDType(path string) string {
 	switch {
 	case strings.Contains(path, "ulid"):
 		return "ULID"
