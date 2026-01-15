@@ -1,4 +1,4 @@
-import React, { useContext, useState, useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useUserStore, Table } from '../components';
 
 const UserTable = () => {
@@ -49,7 +49,7 @@ const UserTable = () => {
   }
 
   // Trigger initial data fetch if no users yet
-  useMemo(() => {
+  useEffect(() => {
     if (!isfetch) {
       fetchUsers();
       setFetched(true);
