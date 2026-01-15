@@ -61,7 +61,7 @@ func RunServer() {
 	api.GET("/", controller.Home)
 
 	// ULID routes
-	api.GET("/ulids", ulidController.GetUsers)
+	api.GET("/ulid", ulidController.GetUsers)
 	api.GET("/ulid/:id", ulidController.GetUser)
 	api.POST("/ulid", ulidController.CreateUser)
 	api.PUT("/ulid/:id", ulidController.UpdateUser)
