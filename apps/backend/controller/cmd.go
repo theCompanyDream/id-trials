@@ -39,7 +39,6 @@ func NewEchoServer(db *gorm.DB) *echo.Echo {
 
 	server.HTTPErrorHandler = appMiddleware.HttpErrorHandler
 	metricsMiddleware := appMiddleware.NewMetricsMiddleware(db)
-	server.Use(metricsMiddleware.CaptureMetrics())
 
 	analyticsController := NewAnalyticsController(db)
 	ulidController := NewUlidController(db)
@@ -61,8 +60,8 @@ func NewEchoServer(db *gorm.DB) *echo.Echo {
 		AllowOrigins: strings.Split(os.Getenv("ALLOWED_HOSTS"), ","),
 		AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept},
 	}))
-	server.Use(middleware.CORS())
 	server.Use(middleware.Secure())
+	server.Use(metricsMiddleware.CaptureMetrics())
 
 	server.GET("/analytics/comparison", analyticsController.GetIDTypeComparison)
 	server.GET("/analytics/:type/details", analyticsController.GetIDTypeDetails)
