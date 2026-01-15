@@ -24,7 +24,7 @@ var (
 )
 
 func RunServer() {
-	server = controller.NewEchoServer(db)
+	server = controller.NewServerlessEchoServer(db)
 }
 
 func Handler(w http.ResponseWriter, r *http.Request) {
