@@ -23,7 +23,7 @@ jobs:
 
       - name: Auto tag if changes in /api or /apps/backend
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.REPO_TOKEN }}
         run:
           chmod +x scripts/tag.sh
           ./configs/scripts/tag.sh

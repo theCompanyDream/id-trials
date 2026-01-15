@@ -102,3 +102,82 @@ func NewEchoServer(db *gorm.DB) *echo.Echo {
 
 	return server
 }
+
+func NewServerlessEchoServer(db *gorm.DB) *echo.Echo {
+	server := echo.New()
+
+	server.HTTPErrorHandler = appMiddleware.HttpErrorHandler
+	metricsMiddleware := appMiddleware.NewMetricsMiddleware(db)
+	appMiddleware.NewLogger()
+
+	analyticsController := NewAnalyticsController(db)
+	ulidController := NewUlidController(db)
+	uuid4Controller := NewGormUuidController(db)
+	nanoIdController := NewGormNanoController(db)
+	ksuidController := NewGormKsuidController(db)
+	cuidController := NewGormCuidController(db)
+	snowController := NewSnowCuidController(db)
+
+	// Middleware
+	server.Use(appMiddleware.LoggingMiddleware)
+	server.Use(middleware.Recover())
+	server.Use(middleware.RequestID())
+	server.Use(middleware.RequestLogger()) // Add request logging for security auditing
+	server.Use(middleware.Gzip())
+	server.Use(middleware.BodyLimit("20k"))
+	server.Use(middleware.RateLimiter(middleware.NewRateLimiterMemoryStore(rate.Limit(10))))
+	server.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+		AllowOrigins: strings.Split(os.Getenv("ALLOWED_HOSTS"), ","),
+		AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept},
+	}))
+	server.Use(middleware.Secure())
+	server.Use(metricsMiddleware.CaptureMetrics())
+
+	api := server.Group("/api")
+
+	api.GET("/analytics/comparison", analyticsController.GetIDTypeComparison)
+	api.GET("/analytics/:type/details", analyticsController.GetIDTypeDetails)
+	api.GET("/analytics/:type/percentiles", analyticsController.GetPercentiles)
+	api.GET("/analytics/errors", analyticsController.GetErrorRates)
+	api.GET("/analytics/:type/timeseries", analyticsController.GetTimeSeries)
+	// Define main routes
+	api.GET("/swagger/*", echoSwagger.WrapHandler)
+	api.GET("/", Home)
+	api.GET("/ulidIds", ulidController.GetUsers)
+	api.GET("/ulidId/:id", ulidController.GetUser)
+	api.POST("/ulidId", ulidController.CreateUser)
+	api.PUT("/ulidId/:id", ulidController.UpdateUser)
+	api.DELETE("/ulidId/:id", ulidController.DeleteUser)
+	//uuid
+	api.GET("/uuid4s", uuid4Controller.GetUsers)
+	api.GET("/uuid4/:id", uuid4Controller.GetUser)
+	api.POST("/uuid4", uuid4Controller.CreateUser)
+	api.PUT("/uuid4/:id", uuid4Controller.UpdateUser)
+	api.DELETE("/uuid4/:id", uuid4Controller.DeleteUser)
+	//nanoId
+	api.GET("/nanoIds", nanoIdController.GetUsers)
+	api.GET("/nanoId/:id", nanoIdController.GetUser)
+	api.POST("/nanoId", nanoIdController.CreateUser)
+	api.PUT("/nanoId/:id", nanoIdController.UpdateUser)
+	api.DELETE("/nanoId/:id", nanoIdController.DeleteUser)
+	//ksuidId
+	api.GET("/ksuidIds", ksuidController.GetUsers)
+	api.GET("/ksuidId/:id", ksuidController.GetUser)
+	api.POST("/ksuidId", ksuidController.CreateUser)
+	api.PUT("/ksuidId/:id", ksuidController.UpdateUser)
+	api.DELETE("/ksuidId/:id", ksuidController.DeleteUser)
+	//cuid
+	api.GET("/cuidIds", cuidController.GetUsers)
+	api.GET("/cuidId/:id", cuidController.GetUser)
+	api.POST("/cuidId", cuidController.CreateUser)
+	api.PUT("/cuidId/:id", cuidController.UpdateUser)
+	api.DELETE("/cuidId/:id", cuidController.DeleteUser)
+
+	api.GET("/snowIds", snowController.GetUsers)
+	api.GET("/snowId/:id", snowController.GetUser)
+	api.POST("/snowId", snowController.CreateUser)
+	api.PUT("/snowId/:id", snowController.UpdateUser)
+	api.DELETE("/snowId/:id", snowController.DeleteUser)
+
+	return server
+}
