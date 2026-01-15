@@ -35,12 +35,21 @@ func TestCreateAndGetUuid(t *testing.T) {
 	created, err := uuidRepository.CreateUser(user)
 	require.NoError(t, err, "failed to create user")
 	require.NotEmpty(t, created.ID, "user ID should not be empty after creation")
+	assert.Equal(t, created.UserName, user.UserName, "user name should match")
+	assert.Equal(t, created.FirstName, user.FirstName, "first should match")
+	assert.Equal(t, created.LastName, user.LastName, "last name should match")
+	assert.Equal(t, created.Email, user.Email, "email should match")
+	assert.Equal(t, created.Department, user.Department, "department should match")
 
 	// Retrieve the user by the hash (since GetUser uses hash in this implementation).
 	retrieved, err := uuidRepository.GetUser(created.ID)
 	require.NoError(t, err, "failed to retrieve user")
 	require.Equal(t, created.ID, retrieved.ID, "retrieved user ID should match created user ID")
-	require.Equal(t, created.UserName, retrieved.UserName, "user name should match")
+	assert.Equal(t, created.UserName, retrieved.UserName, "user name should match")
+	assert.Equal(t, created.FirstName, retrieved.FirstName, "first should match")
+	assert.Equal(t, created.LastName, retrieved.LastName, "last name should match")
+	assert.Equal(t, created.Email, retrieved.Email, "email should match")
+	assert.Equal(t, created.Department, retrieved.Department, "department should match")
 }
 
 func TestGetAllUuid(t *testing.T) {
@@ -72,6 +81,15 @@ func TestGetAllUuid(t *testing.T) {
 	allUsers, err := uuidRepository.GetUsers("", 1, 3)
 	require.NoError(t, err, "failed to get all users")
 	assert.GreaterOrEqual(t, len(allUsers.Users), len(createdUsers), "should have at least the created users")
+
+	for idx, user := range allUsers.Users {
+		require.NotNil(t, user.ID)
+		assert.Equal(t, createdUsers[idx].FirstName, user.FirstName, "First Name should be equal")
+		assert.Equal(t, createdUsers[idx].LastName, user.LastName, "Last Name should be equal")
+		assert.Equal(t, createdUsers[idx].Email, user.Email, "Email should be equal")
+		assert.Equal(t, createdUsers[idx].Department, user.Department, "Department should be equal")
+		assert.Equal(t, createdUsers[idx].Department, user.Department, "Department should be equal")
+	}
 }
 
 // TestUpdateUser tests updating an existing user.
@@ -97,10 +115,46 @@ func TestUpdateUuid(t *testing.T) {
 	require.NotEmpty(t, created.ID, "user ID should not be empty after creation")
 
 	// Update the first name.
-	created.FirstName = "UpdatedName"
+	created.FirstName = "Diana"
 	updated, err := uuidRepository.UpdateUser(*created)
 	require.NoError(t, err, "failed to update user")
-	require.Equal(t, "UpdatedName", updated.FirstName, "first name should be updated")
+	assert.Equal(t, created.FirstName, updated.FirstName, "first name should be updated")
+	assert.Equal(t, created.UserName, user.UserName, "user name should match")
+	assert.Equal(t, created.FirstName, user.FirstName, "first should match")
+	assert.Equal(t, created.LastName, user.LastName, "last name should match")
+	assert.Equal(t, created.Email, user.Email, "email should match")
+	assert.Equal(t, created.Department, user.Department, "department should match")
+
+	created.LastName = "Prince"
+	updated, err = uuidRepository.UpdateUser(*created)
+	require.NoError(t, err, "failed to update user")
+	assert.Equal(t, created.FirstName, updated.FirstName, "first name should be updated")
+	assert.Equal(t, created.UserName, user.UserName, "user name should match")
+	assert.Equal(t, created.FirstName, user.FirstName, "first should match")
+	assert.Equal(t, created.LastName, user.LastName, "last name should match")
+	assert.Equal(t, created.Email, user.Email, "email should match")
+	assert.Equal(t, created.Department, user.Department, "department should match")
+
+	created.Email = "wonderwoman@amazon.com"
+	updated, err = uuidRepository.UpdateUser(*created)
+	require.NoError(t, err, "failed to update user")
+	assert.Equal(t, created.FirstName, updated.FirstName, "first name should be updated")
+	assert.Equal(t, created.UserName, user.UserName, "user name should match")
+	assert.Equal(t, created.FirstName, user.FirstName, "first should match")
+	assert.Equal(t, created.LastName, user.LastName, "last name should match")
+	assert.Equal(t, created.Email, user.Email, "email should match")
+	assert.Equal(t, created.Department, user.Department, "department should match")
+
+	deparment = "JusticeLeague"
+	created.Department = &deparment
+	updated, err = uuidRepository.UpdateUser(*created)
+	require.NoError(t, err, "failed to update user")
+	assert.Equal(t, created.FirstName, updated.FirstName, "first name should be updated")
+	assert.Equal(t, created.UserName, user.UserName, "user name should match")
+	assert.Equal(t, created.FirstName, user.FirstName, "first should match")
+	assert.Equal(t, created.LastName, user.LastName, "last name should match")
+	assert.Equal(t, created.Email, user.Email, "email should match")
+	assert.Equal(t, created.Department, user.Department, "department should match")
 }
 
 // TestDeleteUser tests deleting a user.

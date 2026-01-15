@@ -1,0 +1,29 @@
+name: Auto Tagger
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - 'apps/backend/**'
+
+jobs:
+  auto-tag:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0  # fetch full history to get all tags
+
+      - name: Set up Git config
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+
+      - name: Auto tag if changes in /api or /apps/backend
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run:
+          chmod +x scripts/tag.sh
+          ./scripts/tag.sh

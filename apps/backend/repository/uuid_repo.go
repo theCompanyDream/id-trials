@@ -15,7 +15,7 @@ type GormUuidRepository struct {
 }
 
 // NewGormUuidRepository creates a new instance of GormUuidRepository.
-func NewGormUuidRepository(repo *gorm.DB) *GormUuidRepository {
+func NewGormUuidRepository(repo *gorm.DB) IRepository[model.UserUUID] {
 	return &GormUuidRepository{
 		DB: repo,
 	}

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"time"
 
 	"github.com/spf13/cobra"
 	"github.com/theCompanyDream/id-trials/apps/backend/cmd"
@@ -39,7 +40,7 @@ var generateCmd = &cobra.Command{
 		records, _ := command.Flags().GetInt("records")
 		batch, _ := command.Flags().GetInt("batch")
 
-		config := &models.Config{
+		config := &models.CmdConfig{
 			RecordsPerTable: records,
 			BatchSize:       batch,
 		}
@@ -53,6 +54,28 @@ var generateCmd = &cobra.Command{
 	},
 }
 
+var loadTestCmd = &cobra.Command{
+	Use:   "load",
+	Short: "generate test data through controllers",
+	Run: func(command *cobra.Command, args []string) {
+		records, _ := command.Flags().GetInt("records")
+		batch, _ := command.Flags().GetInt("batch")
+		concurrent, _ := command.Flags().GetInt("concurrent")
+		requestTimeout, _ := command.Flags().GetDuration("timeout")
+		delay, _ := command.Flags().GetDuration("delay")
+
+		config := &models.CmdConfig{
+			RecordsPerTable:  records,
+			BatchSize:        batch,
+			ConcurrentReqs:   concurrent,
+			RequestTimeout:   requestTimeout,
+			DelayBetweenReqs: delay,
+		}
+
+		cmd.TestApi(config)
+	},
+}
+
 func init() {
 	// Server command flags
 	serverCmd.Flags().StringP("port", "p", os.Getenv("BACKEND_PORT"), "Port to run server on")
@@ -63,9 +86,16 @@ func init() {
 	generateCmd.Flags().IntP("batch", "b", 1000, "Batch size for inserts")
 	generateCmd.Flags().StringP("database", "d", "", "Database connection string")
 
+	loadTestCmd.Flags().IntP("records", "r", 10, "Number of requests * 6")
+	loadTestCmd.Flags().IntP("batch", "b", 10, "how many inserts between requests")
+	loadTestCmd.Flags().IntP("concurrent", "c", 3, "how many concurrent requets")
+	loadTestCmd.Flags().DurationP("timeout", "t", 10*time.Second, "request timeout")
+	loadTestCmd.Flags().DurationP("delay", "d", 10*time.Second, "seconds delayed between requests")
+
 	// Add commands to root
 	rootCmd.AddCommand(serverCmd)
 	rootCmd.AddCommand(generateCmd)
+	rootCmd.AddCommand(loadTestCmd)
 }
 
 func main() {

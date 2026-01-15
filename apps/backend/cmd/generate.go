@@ -18,7 +18,7 @@ import (
 	"github.com/theCompanyDream/id-trials/apps/backend/models"
 )
 
-func GenerateData(config *models.Config, db *gorm.DB) {
+func GenerateData(config *models.CmdConfig, db *gorm.DB) {
 	var wg sync.WaitGroup
 
 	generators := []struct {
@@ -68,14 +68,16 @@ func generateULIDData(db *gorm.DB, totalRecords, batchSize int) {
 
 		var users []models.UserUlid
 		for j := 0; j < remaining; j++ {
+			firstName := gofakeit.FirstName()
+			lastName := gofakeit.LastName()
 			users = append(users, models.UserUlid{
 				ID: ulid.Make().String(),
 				UserBase: &models.UserBase{
-					UserName:   gofakeit.Username(),
-					FirstName:  gofakeit.FirstName(),
+					UserName:   firstName,
+					FirstName:  lastName,
 					LastName:   gofakeit.LastName(),
-					Email:      gofakeit.Email(),
-					Department: randomDepartment(),
+					Email:      fmt.Sprintf("%s%s@example.com", firstName, lastName),
+					Department: &gofakeit.Job().Title,
 				},
 			})
 		}
@@ -95,14 +97,16 @@ func generateKSUIDData(db *gorm.DB, totalRecords, batchSize int) {
 
 		var users []models.UserKSUID
 		for j := 0; j < remaining; j++ {
+			firstName := gofakeit.FirstName()
+			lastName := gofakeit.LastName()
 			users = append(users, models.UserKSUID{
 				ID: ksuid.New().String(),
 				UserBase: &models.UserBase{
 					UserName:   gofakeit.Username(),
-					FirstName:  gofakeit.FirstName(),
-					LastName:   gofakeit.LastName(),
-					Email:      gofakeit.Email(),
-					Department: randomDepartment(),
+					FirstName:  firstName,
+					LastName:   lastName,
+					Email:      fmt.Sprintf("%c%s@gmail.com", firstName[0], lastName),
+					Department: &gofakeit.Job().Title,
 				},
 			})
 		}
@@ -122,14 +126,16 @@ func generateUUID4Data(db *gorm.DB, totalRecords, batchSize int) {
 
 		var users []models.UserUUID
 		for j := 0; j < remaining; j++ {
+			firstName := gofakeit.FirstName()
+			lastName := gofakeit.LastName()
 			users = append(users, models.UserUUID{
 				ID: uuid.New().String(),
 				UserBase: &models.UserBase{
 					UserName:   gofakeit.Username(),
-					FirstName:  gofakeit.FirstName(),
-					LastName:   gofakeit.LastName(),
-					Email:      gofakeit.Email(),
-					Department: randomDepartment(),
+					FirstName:  firstName,
+					LastName:   lastName,
+					Email:      fmt.Sprintf("%c%s@%s.com", firstName[0], lastName, gofakeit.Company()),
+					Department: &gofakeit.Job().Title,
 				},
 			})
 		}
@@ -154,14 +160,16 @@ func generateSnowflakeData(db *gorm.DB, totalRecords, batchSize int) {
 
 		var users []models.UserSnowflake
 		for j := 0; j < remaining; j++ {
+			firstName := gofakeit.FirstName()
+			lastName := gofakeit.LastName()
 			users = append(users, models.UserSnowflake{
 				ID: node.Generate().Int64(),
 				UserBase: &models.UserBase{
 					UserName:   gofakeit.Username(),
-					FirstName:  gofakeit.FirstName(),
-					LastName:   gofakeit.LastName(),
-					Email:      gofakeit.Email(),
-					Department: randomDepartment(),
+					FirstName:  firstName,
+					LastName:   lastName,
+					Email:      fmt.Sprintf("%s%c@hotmail.com", firstName, lastName[0]),
+					Department: &gofakeit.Job().Title,
 				},
 			})
 		}
@@ -182,6 +190,8 @@ func generateNanoIDData(db *gorm.DB, totalRecords, batchSize int) {
 		var users []models.UserNanoID
 		for j := 0; j < remaining; j++ {
 			id, err := gonanoid.New()
+			firstName := gofakeit.FirstName()
+			lastName := gofakeit.LastName()
 
 			if err != nil {
 				log.Fatalf("Failed to generate NanoID: %v", err)
@@ -191,10 +201,10 @@ func generateNanoIDData(db *gorm.DB, totalRecords, batchSize int) {
 				ID: id,
 				UserBase: &models.UserBase{
 					UserName:   gofakeit.Username(),
-					FirstName:  gofakeit.FirstName(),
-					LastName:   gofakeit.LastName(),
-					Email:      gofakeit.Email(),
-					Department: randomDepartment(),
+					FirstName:  firstName,
+					LastName:   lastName,
+					Email:      fmt.Sprintf("%s%s@%s.net", firstName[0:2], lastName, gofakeit.Company()),
+					Department: &gofakeit.Job().Title,
 				},
 			})
 		}
@@ -215,15 +225,17 @@ func generateKuidData(db *gorm.DB, totalRecords, batchSize int) {
 		var users []models.UserKSUID
 		for j := 0; j < remaining; j++ {
 			id := ksuid.New()
+			firstName := gofakeit.FirstName()
+			lastName := gofakeit.LastName()
 
 			users = append(users, models.UserKSUID{
 				ID: id.String(),
 				UserBase: &models.UserBase{
 					UserName:   gofakeit.Username(),
-					FirstName:  gofakeit.FirstName(),
-					LastName:   gofakeit.LastName(),
-					Email:      gofakeit.Email(),
-					Department: randomDepartment(),
+					FirstName:  firstName,
+					LastName:   lastName,
+					Email:      fmt.Sprintf("%s.%s@%s.co", firstName[0:3], lastName, gofakeit.Company()),
+					Department: &gofakeit.Job().Title,
 				},
 			})
 		}
@@ -243,14 +255,16 @@ func generateCUIDData(db *gorm.DB, totalRecords, batchSize int) {
 
 		var users []models.UserCUID
 		for j := 0; j < remaining; j++ {
+			firstName := gofakeit.FirstName()
+			lastName := gofakeit.LastName()
 			users = append(users, models.UserCUID{
 				ID: cuid.New(),
 				UserBase: &models.UserBase{
 					UserName:   gofakeit.Username(),
-					FirstName:  gofakeit.FirstName(),
-					LastName:   gofakeit.LastName(),
-					Email:      gofakeit.Email(),
-					Department: randomDepartment(),
+					FirstName:  firstName,
+					LastName:   lastName,
+					Email:      fmt.Sprintf("%s%s@%s.app", firstName, lastName, gofakeit.Company()),
+					Department: &gofakeit.Job().Title,
 				},
 			})
 		}

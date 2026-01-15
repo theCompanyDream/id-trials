@@ -8,19 +8,19 @@ import (
 	"github.com/go-playground/validator/v10"
 	"github.com/labstack/echo/v4"
 	model "github.com/theCompanyDream/id-trials/apps/backend/models"
-	db "github.com/theCompanyDream/id-trials/apps/backend/repository"
+	repo "github.com/theCompanyDream/id-trials/apps/backend/repository"
 	"gorm.io/gorm"
 )
 
 type UsersUlidControllers struct {
-	repo db.GormUlidRepository
+	Repo repo.IRepository[model.UserUlid]
 }
 
-func NewUlidController(repo *gorm.DB) UsersUlidControllers {
-	repository := db.NewGormUlidRepository(repo)
+func NewUlidController(db *gorm.DB) IUserController {
+	repository := repo.NewGormUlidRepository(db)
 
-	return UsersUlidControllers{
-		repo: *repository,
+	return &UsersUlidControllers{
+		Repo: repository,
 	}
 }
 
@@ -41,7 +41,7 @@ func (uuc *UsersUlidControllers) GetUser(c echo.Context) error {
 	if id == "" {
 		return c.JSON(http.StatusNotFound, errors.New("id not applicable there"))
 	}
-	user, err := uuc.repo.GetUser(id)
+	user, err := uuc.Repo.GetUser(id)
 	if err != nil {
 		return err
 	}
@@ -76,7 +76,7 @@ func (uuc *UsersUlidControllers) GetUsers(c echo.Context) error {
 	} else {
 		page = 1
 	}
-	users, error := uuc.repo.GetUsers(search, page, limit)
+	users, error := uuc.Repo.GetUsers(search, page, limit)
 	if error != nil {
 		return error
 	}
@@ -107,7 +107,7 @@ func (uuc *UsersUlidControllers) CreateUser(c echo.Context) error {
 		return c.JSON(http.StatusUnprocessableEntity, validationErrorsToMap(validationErrors))
 	}
 	dto := model.InputToUlid(request)
-	user, error := uuc.repo.CreateUser(*dto)
+	user, error := uuc.Repo.CreateUser(*dto)
 	if error != nil {
 		return error
 	}
@@ -142,7 +142,7 @@ func (uuc *UsersUlidControllers) UpdateUser(c echo.Context) error {
 		request.Id = &id
 	}
 	dto := model.InputToUlid(request)
-	user, error := uuc.repo.UpdateUser(*dto)
+	user, error := uuc.Repo.UpdateUser(*dto)
 	if error != nil {
 		return error
 	}
@@ -165,7 +165,7 @@ func (uuc *UsersUlidControllers) DeleteUser(c echo.Context) error {
 	if id == "" {
 		return errors.New("id must not be null")
 	}
-	err := uuc.repo.DeleteUser(id)
+	err := uuc.Repo.DeleteUser(id)
 	if err != nil {
 		return err
 	}

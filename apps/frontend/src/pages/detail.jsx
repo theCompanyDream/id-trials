@@ -1,9 +1,11 @@
 import React, { useState, useMemo } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useUserStore } from '../components';
 
 const UserDetail = () => {
   const { id } = useParams(); // If there's an ID, we're editing an existing user.
   const navigate = useNavigate(); // For programmatic navigation
+  const userId = useUserStore((state) => state.userId)
 
   // Initialize form data with empty strings.
   const [formData, setFormData] = useState({
@@ -22,7 +24,7 @@ const UserDetail = () => {
   // If editing, fetch the existing user data.
   useMemo(() => {
     if (id) {
-      fetch(`/api/uuid4/${id}`)
+      fetch(`/api/${userId}/${id}`)
         .then((res) => {
           if (!res.ok) throw new Error('Error fetching user data');
           return res.json();
@@ -66,7 +68,7 @@ const UserDetail = () => {
     setIsSubmitting(true);
     setErrors({}); // Clear previous errors
 
-    const url = id ? `/api/uuid4/${id}` : `/api/uuid4`;
+    const url = id ? `/api/${userId}/${id}` : `/api/${userId}`;
     const method = id ? 'PUT' : 'POST';
 
     fetch(url, {
@@ -76,8 +78,6 @@ const UserDetail = () => {
     })
       .then(async (res) => {
         const data = await res.json();
-
-        console.log('Response data:', res.ok, res.status);
 
         if (!res.ok) {
           // Handle validation errors from Echo (status 422)

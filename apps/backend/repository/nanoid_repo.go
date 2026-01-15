@@ -15,7 +15,7 @@ type GormNanoIdRepository struct {
 }
 
 // NewGormNanoIdRepository creates a new instance of GormNanoIdRepository.
-func NewGormNanoIdRepository(repo *gorm.DB) *GormNanoIdRepository {
+func NewGormNanoIdRepository(repo *gorm.DB) IRepository[model.UserNanoID] {
 	return &GormNanoIdRepository{
 		DB: repo,
 	}

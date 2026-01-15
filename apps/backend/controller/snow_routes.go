@@ -13,14 +13,14 @@ import (
 )
 
 type SnowUsersController struct {
-	repo repo.GormSnowRepository
+	Repo repo.IRepository[model.UserSnowflake]
 }
 
-func NewSnowCuidController(db *gorm.DB) SnowUsersController {
+func NewSnowCuidController(db *gorm.DB) IUserController {
 	repository := repo.NewGormSnowRepository(db)
 
-	return SnowUsersController{
-		repo: *repository,
+	return &SnowUsersController{
+		Repo: repository,
 	}
 }
 
@@ -41,11 +41,11 @@ func (uuc *SnowUsersController) GetUser(c echo.Context) error {
 	if id == "" {
 		return c.JSON(http.StatusNotFound, errors.New("id not applicable there"))
 	}
-	parsedId, err := strconv.ParseInt(id, 10, 64)
+	_, err := strconv.ParseInt(id, 10, 64)
 	if err != nil {
 		return errors.New("	invalid id format")
 	}
-	user, err := uuc.repo.GetUser(parsedId)
+	user, err := uuc.Repo.GetUser(id)
 	if err != nil {
 		return err
 	}
@@ -80,7 +80,7 @@ func (uuc *SnowUsersController) GetUsers(c echo.Context) error {
 	} else {
 		page = 1
 	}
-	users, error := uuc.repo.GetUsers(search, page, limit)
+	users, error := uuc.Repo.GetUsers(search, page, limit)
 	if error != nil {
 		return error
 	}
@@ -111,7 +111,7 @@ func (uuc *SnowUsersController) CreateUser(c echo.Context) error {
 		return c.JSON(http.StatusUnprocessableEntity, validationErrorsToMap(validationErrors))
 	}
 	dto := model.InputToSnowFlake(request)
-	user, error := uuc.repo.CreateUser(*dto)
+	user, error := uuc.Repo.CreateUser(*dto)
 	if error != nil {
 		return error
 	}
@@ -146,7 +146,7 @@ func (uuc *SnowUsersController) UpdateUser(c echo.Context) error {
 		request.Id = &id
 	}
 	dto := model.InputToSnowFlake(request)
-	user, error := uuc.repo.UpdateUser(*dto)
+	user, error := uuc.Repo.UpdateUser(*dto)
 	if error != nil {
 		return error
 	}
@@ -169,11 +169,11 @@ func (uuc *SnowUsersController) DeleteUser(c echo.Context) error {
 	if id == "" {
 		return errors.New("id must not be null")
 	}
-	parsedId, err := strconv.ParseInt(id, 10, 64)
+	_, err := strconv.ParseInt(id, 10, 64)
 	if err != nil {
 		return errors.New("	invalid id format")
 	}
-	err = uuc.repo.DeleteUser(parsedId)
+	err = uuc.Repo.DeleteUser(id)
 	if err != nil {
 		return err
 	}
