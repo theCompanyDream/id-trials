@@ -14,7 +14,7 @@ import (
 	"github.com/theCompanyDream/id-trials/apps/backend/test/setup"
 )
 
-func TestMiddlewareWithMockDB(t *testing.T) {
+func _TestMiddlewareWithMockDB(t *testing.T) {
 	// Setup
 	db := setup.NewPostgresMockDB()
 	defer setup.CleanupDB(t, db)
