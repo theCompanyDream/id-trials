@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { PacmanLoader } from "react-spinners";
+
 import { useUserStore, Table } from '../components';
 
 const UserTable = () => {
@@ -12,6 +14,7 @@ const UserTable = () => {
 
   // Function to fetch users with search and page parameters
   const fetchUsers = (page = 1, query = search) => {
+    setFetched(false)
     fetch(`/api/${userId}s?search=${encodeURIComponent(query)}&page=${page}`)
       .then((response) => response.json())
       .then((data) => {
@@ -52,9 +55,14 @@ const UserTable = () => {
   useEffect(() => {
     if (!isfetch) {
       fetchUsers();
-      setFetched(true);
     }
   }, [isfetch, fetchUsers, setFetched]);
+
+  if (!isfetch) {
+    return (
+      <PacmanLoader />
+    )
+  }
 
   return (
     <main>
