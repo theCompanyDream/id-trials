@@ -10,7 +10,6 @@ const UserDetail = () => {
 
   // Initialize form data with empty strings.
   const [formData, setFormData] = useState({
-    hash: '',
     user_name: '',
     first_name: '',
     last_name: '',
@@ -45,8 +44,16 @@ const UserDetail = () => {
           console.error('Error:', err);
           setErrors({ general: 'Failed to load user data' });
         });
+    } else {
+      setFormData({
+        user_name: '',
+        first_name: '',
+        last_name: '',
+        email: '',
+        department: '',
+      })
     }
-  }, [id]);
+  }, [id, userId, setFormData]);
 
   const handleSelect = (e) => {
     updateStore({
