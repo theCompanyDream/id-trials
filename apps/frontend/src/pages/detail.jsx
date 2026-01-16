@@ -6,6 +6,7 @@ const UserDetail = () => {
   const { id } = useParams(); // If there's an ID, we're editing an existing user.
   const navigate = useNavigate(); // For programmatic navigation
   const userId = useUserStore((state) => state.userId)
+  const updateStore = useUserStore((state) => state.updateStore)
 
   // Initialize form data with empty strings.
   const [formData, setFormData] = useState({
