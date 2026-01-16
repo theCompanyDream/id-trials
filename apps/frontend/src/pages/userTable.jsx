@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { PacmanLoader } from "react-spinners";
 
-import { useUserStore, Table } from '../components';
+import { useUserStore, Table, Loading } from '../components';
 
 const UserTable = () => {
   const users = useUserStore((state) => state.users)
@@ -60,9 +59,7 @@ const UserTable = () => {
 
   if (!isfetch) {
     return (
-      <main className="flex justify-center items-center min-h-screen">
-        <PacmanLoader color="#FFF200" size={75} />
-      </main>
+       <Loading />
     )
   }
 
