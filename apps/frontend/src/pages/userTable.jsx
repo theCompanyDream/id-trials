@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { PacmanLoader } from "react-spinners";
 
-import { useUserStore, Table } from '../components';
+import { useUserStore, Table, Loading } from '../components';
 
 const UserTable = () => {
   const users = useUserStore((state) => state.users)
@@ -13,19 +12,22 @@ const UserTable = () => {
   const [search, setSearch] = useState("");
 
   // Function to fetch users with search and page parameters
-  const fetchUsers = (page = 1, query = search) => {
+  const fetchUsers = async (page = 1, query = search) => {
     setFetched(false)
-    fetch(`/api/${userId}s?search=${encodeURIComponent(query)}&page=${page}`)
+    await fetch(`/api/${userId}s?search=${encodeURIComponent(query)}&page=${page}`)
       .then((response) => response.json())
       .then((data) => {
         updateStore({...data})
         setFetched(true);
       })
-      .catch((err) => console.error("Error fetching users:", err));
+      .catch((err) => {
+        console.error("Error fetching users:", err)
+        setFetched(false)
+      });
   };
 
-  const onDelete = (id) => {
-    fetch(`/api/${userId}/${id}`, {
+  const onDelete = async (id) => {
+    await fetch(`/api/${userId}/${id}`, {
       method: "DELETE"
     })
     .then((data) => {
@@ -60,9 +62,7 @@ const UserTable = () => {
 
   if (!isfetch) {
     return (
-      <main className="flex justify-center items-center min-h-screen">
-        <PacmanLoader color="#FFF200" size={75} />
-      </main>
+       <Loading />
     )
   }
 

@@ -1,9 +1,7 @@
 import React, { Suspense } from "react";
 import { Route, Routes } from "react-router-dom";
 
-import { PacmanLoader } from "react-spinners";
-
-import { Layout} from "./components";
+import { Layout, Loading } from "./components";
 
 // Error Page
 const Page404 = React.lazy(() => import('./pages/notFound'));
@@ -13,12 +11,12 @@ const About = React.lazy(() => import('./pages/about'));
 
 const App = () =>  (
   <Layout>
-    <Suspense fallback={<PacmanLoader color="#FFF200" size={50} />}>
+    <Suspense fallback={<Loading />}>
       <Routes>
         <Route index path="/" element={<Table />} />
+        <Route path="/about" element={<About />} />
         <Route path="/detail/:id?" element={<Detail />} />
         <Route path="*" element={<Page404 />} />
-        <Route path="/about" element={<About />} />
       </Routes>
     </Suspense>
   </Layout>
