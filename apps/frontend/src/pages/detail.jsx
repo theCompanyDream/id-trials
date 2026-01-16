@@ -47,6 +47,12 @@ const UserDetail = () => {
     }
   }, [id]);
 
+  const handleSelect = (e) => {
+    updateStore({
+      userId: e.target.value
+    })
+  }
+
   // Handle input changes.
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -134,6 +140,25 @@ const UserDetail = () => {
       )}
 
       <form onSubmit={handleSubmit} className="space-y-4">
+      {!id && (<div>
+          <label className="block mb-1 font-semibold">Id</label>
+          <select
+            onChange={handleSelect}
+            value={userId}
+            className="px-4 py-2 border rounded-lg bg-white w-full font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition hover:border-blue-400 cursor-pointer"
+          >
+            <option value="uuid4">UUID</option>
+            <option value="cuidId">CUID</option>
+            <option value="snowId">Snowflake</option>
+            <option value="ksuidId">KSUID</option>
+            <option value="ulidId">ULID</option>
+            <option value="nanoId">NanoID</option>
+          </select>
+          {errors.user_name && (
+            <p className="text-red-600 text-sm mt-1">{errors.user_name}</p>
+          )}
+        </div>)}
+
         <div>
           <label className="block mb-1 font-semibold">Username</label>
           <input
