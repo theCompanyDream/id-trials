@@ -16,10 +16,6 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
     "baseUrl": "src",  // Add this too
-    "paths": {
-      "@backpack": ["components/index"],
-      "@backpack/*": ["components/*", "assets/*", "pages/*"]
-    }
   },
   "include": ["src"]
 }
