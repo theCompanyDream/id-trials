@@ -4,10 +4,10 @@ import { Route, Routes } from "react-router-dom";
 import { Layout, Loading } from "@backpack";
 
 // Error Page
-const Page404 = React.lazy(() => import('@backpack/pages/notFound'));
-const Table = React.lazy(() => import('@backpack/pages/userTable'));
-const Detail = React.lazy(() => import('@backpack/pages/detail'));
-const About = React.lazy(() => import('@backpack/pages/about'));
+const Page404 = React.lazy(() => import('@pages/notFound'));
+const Table = React.lazy(() => import('@pages/userTable'));
+const Detail = React.lazy(() => import('@pages/detail'));
+const About = React.lazy(() => import('@pages/about'));
 
 const App = () =>  (
   <Layout>

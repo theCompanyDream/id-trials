@@ -15,7 +15,7 @@ export default defineConfig({
   resolve: {
     alias: {
       '@backpack': path.resolve(__dirname, './src/components/index'),
-      '@backpack/*': path.resolve(__dirname, './src/*'),
+      '@pages': path.resolve(__dirname, './src/pages'),
     }
   }
 })
