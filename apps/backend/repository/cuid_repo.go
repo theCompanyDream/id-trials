@@ -4,7 +4,7 @@ import (
 	"errors"
 	"math"
 
-	"github.com/lucsky/cuid"
+	"github.com/nrednav/cuid2"
 	"gorm.io/gorm"
 
 	model "github.com/theCompanyDream/id-trials/apps/backend/models"
@@ -87,7 +87,7 @@ func (uc *GormCuidRepository) GetUsers(search string, page, limit int) (*model.U
 // CreateUser creates a new user record.
 func (uc *GormCuidRepository) CreateUser(requestedUser model.UserCUID) (*model.UserCUID, error) {
 	// Generate a new UUID for the user.
-	id := cuid.New()
+	id := cuid2.Generate()
 	requestedUser.ID = id
 
 	// Insert the record into the USERS table.

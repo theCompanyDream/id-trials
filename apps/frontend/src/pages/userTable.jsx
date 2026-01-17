@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-import { useUserStore, Table, Loading } from '../components';
+import { useUserStore, Table, Loading } from '@backpack';
 
 const UserTable = () => {
   const users = useUserStore((state) => state.users)

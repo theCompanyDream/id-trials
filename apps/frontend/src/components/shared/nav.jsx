@@ -1,6 +1,6 @@
 import React, { useState, memo } from 'react';
 import { Link } from "react-router-dom";
-import github from "../assets/github.svg"
+import github from "../../assets/github.svg"
 
 const Navigation = memo(() => {
   const [isOpen, setIsOpen] = useState(false);
