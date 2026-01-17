@@ -15,11 +15,7 @@ export default defineConfig({
   resolve: {
     alias: {
       '@backpack': path.resolve(__dirname, './src/components/index'),
-      '@backpack/*': path.resolve(__dirname, './src/components/*'),
-      // If you need the wildcards to work for assets/pages too:
-      '@components': path.resolve(__dirname, './src/components'),
-      '@assets': path.resolve(__dirname, './src/assets'),
-      '@pages': path.resolve(__dirname, './src/pages'),
+      '@backpack/*': path.resolve(__dirname, './src/*'),
     }
   }
 })
