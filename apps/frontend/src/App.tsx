@@ -1,7 +1,7 @@
 import React, { Suspense } from "react";
 import { Route, Routes } from "react-router-dom";
 
-import { Layout, Loading } from "./components";
+import { Layout, Loading } from "@backpack";
 
 // Error Page
 const Page404 = React.lazy(() => import('./pages/notFound'));
