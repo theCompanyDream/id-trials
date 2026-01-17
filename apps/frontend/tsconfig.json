@@ -14,17 +14,12 @@
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "noFallthroughCasesInSwitch": true
-  },
-  "include": ["src"],
-   "paths": {
-      "@backpack": [
-        "components/index"
-      ],
-      "@backpack/*": [
-        "components/*",
-        "assets/*",
-        "pages/*"
-      ],
+    "noFallthroughCasesInSwitch": true,
+    "baseUrl": "src",  // Add this too
+    "paths": {
+      "@backpack": ["components/index"],
+      "@backpack/*": ["components/*", "assets/*", "pages/*"]
     }
+  },
+  "include": ["src"]
 }
