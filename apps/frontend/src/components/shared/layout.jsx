@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Navigation } from '.';
+import { Navigation } from '..';
 
 const Layout = ({ children }) => (
 	<article className='w-full h-full'>
