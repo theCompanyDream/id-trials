@@ -1,6 +1,12 @@
 import { useEffect, useState } from "react";
 
-const Pagination = ({ currentPage, totalPages, onPageChange }) => {
+interface PaginationProps {
+  currentPage: number
+  totalPages: number
+  onPageChange: Function
+}
+
+const Pagination = ({ currentPage, totalPages, onPageChange }: PaginationProps) => {
   const [pages, setPages] = useState([]);
 
   useEffect(() => {
