@@ -49,11 +49,12 @@ const Navigation = memo(({links}: NavigationProps) => {
   return (
     <header className="bg-gray-800 text-white shadow w-full">
       <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
-        {/* Logo or Title */}
         <Link to="/" className="text-xl font-bold">User Administrator</Link>
-        {/* Desktop Navigation */}
-        {links && (links.map((link: LinkProp) => isImageDesktop(link)))}
-        {/* Mobile Menu Button */}
+
+        <nav className="hidden md:flex space-x4">
+          {links && (links.map((link: LinkProp) => isImageDesktop(link)))}
+        </nav>
+
         <div className="md:hidden">
           <button
             onClick={() => setIsOpen(!isOpen)}
