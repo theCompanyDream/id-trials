@@ -2,13 +2,13 @@ import React, { useState, memo } from 'react';
 import { Link } from "react-router-dom";
 
 interface LinkProp {
-  link: String
-  name: String
-  img?: ImageBitmap
+  link: String;
+  name: String;
+  img?: ImageBitmap;
 }
 
 interface NavigationProps {
-  links: LinkProp[]
+  links: LinkProp[];
 }
 
 const Navigation = memo(({links}: NavigationProps) => {
