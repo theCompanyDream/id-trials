@@ -9,6 +9,10 @@
 		"src": "apps/frontend/package.json",
 		"use": "@vercel/static-build",
 		"config": { "distDir": "dist/frontend" }
+	  },
+	 {
+		"src": "api/python/index.py",
+		"use": "@vercel/python"
 	  }
 	],
 	"routes": [
