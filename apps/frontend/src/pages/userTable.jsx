@@ -17,7 +17,7 @@ const UserTable = () => {
     await fetch(`/api/${userId}s?search=${encodeURIComponent(query)}&page=${page}`)
       .then((response) => response.json())
       .then((data) => {
-        updateStore({...data})
+        updateStore(data)
         setFetched(true);
       })
       .catch((err) => {
@@ -31,7 +31,7 @@ const UserTable = () => {
       method: "DELETE"
     })
     .then((data) => {
-      const newUsers = users.users.filter(user => id != user.id);
+      const newUsers = users.users.filter(user => id !== user.id);
       setUsers({...users, users: newUsers})
     })
   }
