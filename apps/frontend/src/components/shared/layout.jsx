@@ -1,10 +1,16 @@
-import React from 'react';
-
+import github from "../../assets/github.svg"
 import { Navigation } from '@backpack';
 
 const Layout = ({ children }) => (
 	<article className='w-full h-full'>
-		<Navigation />
+		<Navigation
+			links={[
+				{link: "/about", name: "About"},
+				{link: "/detail", name: "Detail"},
+				{link: "https://user.tbrantleyii.dev/api/swagger/index.html", name: "Docs"},
+				{link: "https://github.com/theCompanyDream/id-trials", img: github}
+			]}
+		/>
 		{children}
 	</article>
 )
