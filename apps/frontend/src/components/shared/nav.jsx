@@ -2,8 +2,8 @@ import React, { useState, memo } from 'react';
 import { Link } from "react-router-dom";
 
 interface LinkProp {
-  link: String;
-  name: String;
+  link: string;
+  name: string;
   img?: ImageBitmap;
 }
 
@@ -16,25 +16,33 @@ const Navigation = memo(({links}: NavigationProps) => {
 
   const isImageDesktop = (link: LinkProp) => {
     if (link.img) {
-      return  <Link to={link.link} className="hover:text-gray-300">
-            <img src={link.img} alt="github logo" class="w-7 -c-7" />
-          </Link>
+      return (
+        <Link to={link.link} className="hover:text-gray-300">
+          <img src={link.img} alt="github logo" className="w-7 h-7" />
+        </Link>
+      );
     } else {
-      return <Link to={link.link} className="hover:text-gray-300">
-              {link.name}
-          </Link>
+      return (
+        <Link to={link.link} className="hover:text-gray-300">
+          {link.name}
+        </Link>
+      );
     }
   }
 
   const isImageMobile = (link: LinkProp) => {
     if (link.img) {
-      return  <Link to={link.link} className="block px-3 py-2 rounded-md text-base font-medium hover:bg-gray-600" >
-            <img src={link.img} alt="github logo" class="w-7 -c-7" />
-          </Link>
+      return (
+        <Link to={link.link} className="block px-3 py-2 rounded-md text-base font-medium hover:bg-gray-600">
+          <img src={link.img} alt="github logo" className="w-7 h-7" />
+        </Link>
+      );
     } else {
-      return <Link to={link.link} className="block px-3 py-2 rounded-md text-base font-medium hover:bg-gray-600" >
-              {link.name}
-          </Link>
+      return (
+        <Link to={link.link} className="block px-3 py-2 rounded-md text-base font-medium hover:bg-gray-600">
+          {link.name}
+        </Link>
+      );
     }
   }
 
