@@ -31,7 +31,6 @@ const UserTable = () => {
       method: "DELETE"
     })
     .then((data) => {
-      console.log(users)
       const newUsers = users.filter(user => id !== user.id);
       updateStore({users: newUsers})
     })
