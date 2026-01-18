@@ -7,7 +7,7 @@ const Analysis = () => {
 	}, []);
 
 	return (
-		<main></main>
+		<main>Analytics</main>
 	);
 }
 
