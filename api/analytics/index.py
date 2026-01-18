@@ -1,5 +1,8 @@
 from http.server import BaseHTTPRequestHandler
 import json
+import numpy
+import polars
+import psycopg2-binary
 
 class handler(BaseHTTPRequestHandler):
     def do_GET(self):
