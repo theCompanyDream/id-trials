@@ -1,1 +1,5 @@
 export * from "./piechart"
+export * from "./timeseries"
+export * from "./heatmap"
+export * from "./histogram"
+export * from "./percentile"
