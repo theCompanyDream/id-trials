@@ -1,3 +1,4 @@
+export * from "./bubble"
 export * from "./piechart"
 export * from "./timeseries"
 export * from "./heatmap"
