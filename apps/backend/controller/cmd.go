@@ -61,6 +61,7 @@ func NewEchoServer(db *gorm.DB) *echo.Echo {
 	server.GET("/analytics/:type/percentiles", analyticsController.GetPercentiles)
 	server.GET("/analytics/errors", analyticsController.GetErrorRates)
 	server.GET("/analytics/:type/timeseries", analyticsController.GetTimeSeries)
+	server.GET("/analytics/tableSize", analyticsController.GetTableSizeData)
 	// Define main routes
 	server.GET("/swagger/*", echoSwagger.WrapHandler)
 	server.GET("/", Home)
