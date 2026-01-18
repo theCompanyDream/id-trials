@@ -5,7 +5,7 @@ const Layout = ({ children }) => (
 	<article className='w-full h-full'>
 		<Navigation
 			links={[
-				{link: "/analytics", name: "Analytics"}
+				{link: "/analytics", name: "Analytics"},
 				{link: "/about", name: "About"},
 				{link: "/detail", name: "Detail"},
 				{link: "https://user.tbrantleyii.dev/api/swagger/index.html", name: "Docs"},
