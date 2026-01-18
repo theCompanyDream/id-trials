@@ -32,7 +32,7 @@ const UserTable = () => {
     })
     .then((data) => {
       console.log(users)
-      const newUsers = users.users.filter(user => id !== user.id);
+      const newUsers = users.filter(user => id !== user.id);
       setUsers({...users, users: newUsers})
     })
   }
