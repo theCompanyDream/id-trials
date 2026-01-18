@@ -31,6 +31,7 @@ const UserTable = () => {
       method: "DELETE"
     })
     .then((data) => {
+      console.log(users)
       const newUsers = users.users.filter(user => id !== user.id);
       setUsers({...users, users: newUsers})
     })
