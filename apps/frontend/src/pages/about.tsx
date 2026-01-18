@@ -12,7 +12,7 @@ export default function About() {
         you actually feel when systems scale.
       </p>
 
-      <section className="grid gap-6 md:grid-cols-2 mb-12">
+      <section className="grid gap-6 md:grid-cols-2 mb-12 text-white">
         <div className="rounded-2xl bg-slate-900/60 p-6 shadow-lg">
           <h2 className="text-xl font-semibold mb-2">What’s Being Tested</h2>
           <ul className="list-disc list-inside space-y-1">
@@ -25,7 +25,7 @@ export default function About() {
           </ul>
         </div>
 
-        <div className="rounded-2xl bg-slate-900/60 p-6 shadow-lg">
+        <div className="rounded-2xl bg-slate-900/60 p-6 shadow-lg text-white">
           <h2 className="text-xl font-semibold mb-2">How They’re Evaluated</h2>
           <ul className="list-disc list-inside space-y-1">
             <li>Generation performance</li>
