@@ -11,14 +11,14 @@
 		"config": { "distDir": "dist/frontend" }
 	  },
 	 {
-		"src": "api/python/index.py",
+		"src": "api/analytics/index.py",
 		"use": "@vercel/python"
 	  }
 	],
 	"routes": [
     {
-      "src": "/api/python/.*",
-      "dest": "api/python/index.py"
+      "src": "/api/analytics/.*",
+      "dest": "api/analytics/index.py"
     },
 	  {
 		"src": "/api/.*",
