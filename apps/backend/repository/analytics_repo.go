@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/theCompanyDream/id-trials/apps/backend/models"
+	"github.com/theCompanyDream/id-trials/apps/backend/utils"
 	"gorm.io/gorm"
 )
 
@@ -65,7 +66,7 @@ func (r *MetricsRepository) GetPercentiles(idType string, hours int) (*models.Pe
 		return nil, err
 	}
 
-	return calculatePercentiles(durations), nil
+	return utils.CalculatePercentiles(durations), nil
 }
 
 // Get error rate by ID type
@@ -106,25 +107,6 @@ func (r *MetricsRepository) GetTimeSeriesData(idType string, interval string, ho
 		Scan(&results).Error
 
 	return results, err
-}
-
-func calculatePercentiles(sorted []float64) *models.PercentileStats {
-	if len(sorted) == 0 {
-		return &models.PercentileStats{}
-	}
-
-	return &models.PercentileStats{
-		P50: percentile(sorted, 0.50),
-		P75: percentile(sorted, 0.75),
-		P90: percentile(sorted, 0.90),
-		P95: percentile(sorted, 0.95),
-		P99: percentile(sorted, 0.99),
-	}
-}
-
-func percentile(sorted []float64, p float64) float64 {
-	index := int(float64(len(sorted)-1) * p)
-	return sorted[index]
 }
 
 func (r *MetricsRepository) GetSpecificTableSizes() ([]models.TableSize, error) {
