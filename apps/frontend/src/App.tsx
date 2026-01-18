@@ -15,7 +15,7 @@ const App = () =>  (
     <Suspense fallback={<Loading />}>
       <Routes>
         <Route index path="/" element={<Table />} />
-        <Route path="/analytics" element={Analytics} />
+        <Route path="/analytics" element={<Analytics />} />
         <Route path="/about" element={<About />} />
         <Route path="/detail/:id?" element={<Detail />} />
         <Route path="*" element={<Page404 />} />
