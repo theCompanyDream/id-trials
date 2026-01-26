@@ -6,9 +6,9 @@ const Analysis = () => {
 	const [tableSize, setTableSize] = useState()
 
 	useEffect(() => {
-		fetch(`/analytics/tableSize?`)
+		fetch(`/api/analytics/tableSize?`)
 			.then(data => data.json())
-			.then(table => setTableSize(table))
+			.then(table => setTableSize(table.map(t => ({ name: t.table_name, value: t.size, sizePretty: t.size_pretty }))))
 
 	}, []);
 
@@ -24,7 +24,10 @@ const Analysis = () => {
 
 			{tableSize && (
 				<PieChartComponent
-					data={Object.entries(tableSize).map(([name, value]) => ({ name, value }))}
+					data={tableSize}
+					title="Table Size Analysis"
+					legendPosition="bottom"
+					width="30%"
 				/>)}
 		</main>
 	);

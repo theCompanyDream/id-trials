@@ -42,6 +42,8 @@ type TimeSeriesPoint struct {
 }
 
 type TableSize struct {
-	TableName string `json:"table_name"`
-	Size      string `json:"size"`
+	TableName  string `json:"table_name"`
+	Size       int64  `json:"size"`        // Numeric size for charts
+	SizeBytes  int64  `json:"size_bytes"`  // Numeric bytes for charts
+	SizePretty string `json:"size_pretty"` // Human-readable (from PostgreSQL)
 }

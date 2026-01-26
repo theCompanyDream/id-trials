@@ -115,10 +115,15 @@ func (r *MetricsRepository) GetSpecificTableSizes() ([]models.TableSize, error) 
 	err := r.DB.Raw(`
 		SELECT
 			tablename as table_name,
-			pg_size_pretty(pg_total_relation_size(schemaname||'.'||tablename)) AS size
+			REGEXP_REPLACE(
+				pg_size_pretty(pg_total_relation_size(schemaname||'.'||tablename)),
+				'[^0-9.]', '', 'g'
+			)::numeric AS size,
+			pg_total_relation_size(schemaname||'.'||tablename) AS size_bytes,
+			pg_size_pretty(pg_total_relation_size(schemaname||'.'||tablename)) AS size_pretty
 		FROM pg_tables
 		WHERE schemaname = 'public'
-			AND tablename like 'users%'
+			AND tablename LIKE 'users%'
 		ORDER BY pg_total_relation_size(schemaname||'.'||tablename) DESC
     `).Scan(&sizes).Error
 

@@ -16,6 +16,8 @@ interface PieChartComponentProps {
   showTooltip?: boolean;
   labelLine?: boolean;
   dataKey?: string;
+  legendLayout?: 'horizontal' | 'vertical';  // ← Add this
+  legendAlign?: 'left' | 'center' | 'right'; // ← Add this
 }
 
 const DEFAULT_COLORS = [
@@ -23,17 +25,35 @@ const DEFAULT_COLORS = [
   '#8884D8', '#82CA9D', '#FFC658', '#FF6B9D'
 ];
 
+const CustomTooltip = ({ active, payload }: any) => {
+  if (active && payload && payload.length) {
+    const data = payload[0].payload; // Access full data object
+
+    return (
+      <div className="bg-white p-3 border border-gray-300 rounded shadow-lg">
+        <p className="font-semibold text-gray-800">{data.name}</p>
+        <p className="text-blue-600 font-medium">
+          {data.sizePretty || `${data.value} MB`}
+        </p>
+      </div>
+    );
+  }
+  return null;
+};
+
 export default function PieChartComponent({
   data,
   colors = DEFAULT_COLORS,
   width = '100%',
   height = 400,
-  innerRadius = 0,
-  outerRadius = 80,
+  innerRadius = 20,
+  outerRadius = 120,
   showLegend = true,
   showTooltip = true,
   labelLine = false,
-  dataKey = 'value'
+  dataKey = 'value',
+  legendLayout = 'vertical',      // ← Default to vertical
+  legendAlign = 'right'
 }: PieChartComponentProps) {
   return (
     <ResponsiveContainer width={width} height={height}>
@@ -52,8 +72,13 @@ export default function PieChartComponent({
             <Cell key={`cell-${index}`} fill={colors[index % colors.length]} />
           ))}
         </Pie>
-        {showTooltip && <Tooltip />}
-        {showLegend && <Legend />}
+        {showTooltip && <Tooltip content={<CustomTooltip />} />}
+        {showLegend &&
+          <Legend
+            layout={legendLayout}
+            verticalAlign="middle"
+            align={legendAlign}
+          />}
       </PieChart>
     </ResponsiveContainer>
   );
