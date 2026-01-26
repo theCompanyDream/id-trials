@@ -14,10 +14,10 @@ const App = () =>  (
   <Layout>
     <Suspense fallback={<Loading />}>
       <Routes>
-        <Route index path="/" element={<Table />} />
-        <Route path="/analytics" element={<Analytics />} />
+        <Route index path="/" element={<Analytics />} />
         <Route path="/about" element={<About />} />
         <Route path="/detail/:id?" element={<Detail />} />
+        <Route path="/explore" element={<Table />} />
         <Route path="*" element={<Page404 />} />
       </Routes>
     </Suspense>

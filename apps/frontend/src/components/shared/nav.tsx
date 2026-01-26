@@ -49,7 +49,7 @@ const Navigation = memo(({links}: NavigationProps) => {
   return (
     <header className="bg-gray-800 text-white shadow w-full">
       <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
-        <Link to="/" className="text-xl font-bold">User Administrator</Link>
+        <Link to="/" className="text-xl font-bold">Id Trials</Link>
 
         <nav className="hidden md:flex space-x-4">
           {links && (links.map((link: LinkProp) => isImageDesktop(link)))}

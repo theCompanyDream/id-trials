@@ -270,7 +270,7 @@ const UserDetail = () => {
 
           <Link
             className="bg-gray-100 hover:bg-gray-200 text-black px-4 py-2 rounded border"
-            to="/"
+            to="/explore"
           >
             Back
           </Link>
