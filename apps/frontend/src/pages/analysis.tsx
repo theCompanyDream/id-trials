@@ -74,12 +74,12 @@ const Analysis = () => {
 	}
 
 	return (
-		<main className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+		<main className="min-h-screen ">
 			{/* Header */}
 			<section className="bg-white shadow-sm border-b">
 				<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-					<h1 className="text-3xl font-bold text-gray-900">ID Performance Analytics</h1>
-					<p className="mt-2 text-gray-600">
+					<h1 className="text-3xl font-bold">ID Performance Analytics</h1>
+					<p className="mt-2">
 						Comprehensive analysis of different ID generation strategies
 					</p>
 				</div>
@@ -97,8 +97,8 @@ const Analysis = () => {
 								</svg>
 							</div>
 							<div className="ml-4">
-								<p className="text-sm font-medium text-gray-600">Total Tables</p>
-								<p className="text-2xl font-bold text-gray-900">{tableSize?.length || 0}</p>
+								<p className="text-sm font-medium">Total Tables</p>
+								<p className="text-2xl font-bold">{tableSize?.length || 0}</p>
 							</div>
 						</div>
 					</div>
@@ -111,8 +111,8 @@ const Analysis = () => {
 								</svg>
 							</div>
 							<div className="ml-4">
-								<p className="text-sm font-medium text-gray-600">Most Efficient</p>
-								<p className="text-2xl font-bold text-gray-900">
+								<p className="text-sm font-medium">Most Efficient</p>
+								<p className="text-2xl font-bold">
 									{idEfficiency?.[0]?.table_name?.replace('users_', '').toUpperCase() || 'N/A'}
 								</p>
 							</div>
@@ -127,8 +127,8 @@ const Analysis = () => {
 								</svg>
 							</div>
 							<div className="ml-4">
-								<p className="text-sm font-medium text-gray-600">Time Range</p>
-								<p className="text-2xl font-bold text-gray-900">{slider}h</p>
+								<p className="text-sm font-medium">Time Range</p>
+								<p className="text-2xl font-bold">{slider}h</p>
 							</div>
 						</div>
 					</div>
@@ -142,9 +142,9 @@ const Analysis = () => {
 						<div className="bg-white rounded-lg shadow-lg p-6">
 							<div className="flex items-center mb-4">
 								<div className="h-2 w-2 rounded-full bg-blue-500 mr-2"></div>
-								<h2 className="text-xl font-bold text-gray-900">Storage Distribution</h2>
+								<h2 className="text-xl font-bold">Storage Distribution</h2>
 							</div>
-							<p className="text-sm text-gray-600 mb-6">
+							<p className="text-sm mb-6">
 								Database storage allocation across ID types
 							</p>
 							<PieChartComponent
@@ -159,6 +159,7 @@ const Analysis = () => {
 									valuePretty: `${d.row_count.toLocaleString()} rows`
 								}))}
 								labelLine={true}
+								showLegend={false}
 								width="100%"
 								height={450}
 							/>
@@ -170,9 +171,9 @@ const Analysis = () => {
 						<div className="bg-white rounded-lg shadow-lg p-6">
 							<div className="flex items-center mb-4">
 								<div className="h-2 w-2 rounded-full bg-green-500 mr-2"></div>
-								<h2 className="text-xl font-bold text-gray-900">Efficiency Metrics</h2>
+								<h2 className="text-xl font-bold">Efficiency Metrics</h2>
 							</div>
-							<p className="text-sm text-gray-600 mb-6">
+							<p className="text-sm mb-6">
 								Storage efficiency and waste factor analysis
 							</p>
 							<StackedBarChart
@@ -194,36 +195,14 @@ const Analysis = () => {
 					)}
 				</div>
 
-				{/* {idEfficiency && (
-					<div className="bg-white rounded-lg shadow-lg p-6">
-						<div className="flex items-center mb-4">
-							<div className="h-2 w-2 rounded-full bg-green-500 mr-2"></div>
-							<h2 className="text-xl font-bold text-gray-900">Efficiency Metrics</h2>
-						</div>
-						<p className="text-sm text-gray-600 mb-6">
-							Storage efficiency and waste factor analysis
-						</p>
-					<StackedBarChart
-						data={idEfficiency}
-						title="ID Efficiency Analysis"
-						stacks={[
-							{ dataKey: 'row_count', name: 'Row Count', fill: '#10b981' },
-						]}
-						xAxisLabel="table_name"
-						showGrid={true}
-						width="50%"
-						height={450}
-						/>
-					</div>)} */}
-
 				{/* Performance Comparison - Full Width */}
 				{comparison && (
 					<div className="bg-white rounded-lg shadow-lg p-6">
 						<div className="flex items-center mb-4">
 							<div className="h-2 w-2 rounded-full bg-purple-500 mr-2"></div>
-							<h2 className="text-xl font-bold text-gray-900">Performance Comparison</h2>
+							<h2 className="text-xl font-bold">Performance Comparison</h2>
 						</div>
-						<p className="text-sm text-gray-600 mb-6">
+						<p className="text-sm mb-6">
 							Average response time and request volume by ID type
 						</p>
 						<TimeSeriesChart
@@ -242,8 +221,8 @@ const Analysis = () => {
 				<div className="bg-white rounded-lg shadow-lg p-6">
 					<div className="flex items-center justify-between mb-6">
 						<div>
-							<h3 className="text-lg font-semibold text-gray-900">Time Range Filter</h3>
-							<p className="text-sm text-gray-600">
+							<h3 className="text-lg font-semibold">Time Range Filter</h3>
+							<p className="text-sm">
 								Adjust the time window for detailed analytics
 							</p>
 						</div>
@@ -259,7 +238,7 @@ const Analysis = () => {
 						onChange={onChangeSlider}
 						className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-500"
 					/>
-					<div className="flex justify-between text-xs text-gray-500 mt-2">
+					<div className="flex justify-between text-xs mt-2">
 						<span>1h</span>
 						<span>6h</span>
 						<span>12h</span>
@@ -272,16 +251,16 @@ const Analysis = () => {
 				<div className="bg-white rounded-lg shadow-lg p-6">
 					<div className="flex items-center mb-6">
 						<div className="h-2 w-2 rounded-full bg-indigo-500 mr-2"></div>
-						<h3 className="text-lg font-semibold text-gray-900">Detailed ID Analysis</h3>
+						<h3 className="text-lg font-semibold">Detailed ID Analysis</h3>
 					</div>
-					<p className="text-sm text-gray-600 mb-6">
+					<p className="text-sm mb-6">
 						Select an ID type to view detailed performance metrics
 					</p>
 					<div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
 						{idTypes.map((idType) => (
 							<button
 								key={idType.value}
-								onClick={() => fetchIdAnalytics(idType.value, slider)}
+								onClick={() => fetchIdAnalytics(idType.table, slider)}
 								className="group relative overflow-hidden bg-gradient-to-br from-blue-500 to-blue-600 text-white p-4 rounded-lg shadow-md hover:shadow-xl hover:from-blue-600 hover:to-blue-700 transition-all duration-200 transform hover:scale-105"
 							>
 								<div className="flex flex-col items-center">
@@ -301,7 +280,7 @@ const Analysis = () => {
 					<div className="bg-white rounded-lg shadow-lg p-6">
 						<div className="flex items-center mb-4">
 							<div className="h-2 w-2 rounded-full bg-orange-500 mr-2"></div>
-							<h3 className="text-lg font-semibold text-gray-900">Time Series Data</h3>
+							<h3 className="text-lg font-semibold">Time Series Data</h3>
 						</div>
 						<TimeSeriesChart
 							data={timeSeries}
@@ -318,13 +297,13 @@ const Analysis = () => {
 					<div className="bg-white rounded-lg shadow-lg p-6">
 						<div className="flex items-center mb-4">
 							<div className="h-2 w-2 rounded-full bg-teal-500 mr-2"></div>
-							<h3 className="text-lg font-semibold text-gray-900">Percentile Distribution</h3>
+							<h3 className="text-lg font-semibold">Percentile Distribution</h3>
 						</div>
 						<div className="grid grid-cols-2 md:grid-cols-5 gap-4">
 							{['p50', 'p75', 'p90', 'p95', 'p99'].map((p) => (
-								<div key={p} className="bg-gray-50 rounded-lg p-4 text-center">
-									<p className="text-sm text-gray-600 uppercase mb-1">{p}</p>
-									<p className="text-2xl font-bold text-gray-900">
+								<div key={p} className="rounded-lg p-4 text-center">
+									<p className="text-sm uppercase mb-1">{p}</p>
+									<p className="text-2xl font-bold">
 										{percentile[p]?.toFixed(2) || 'N/A'}ms
 									</p>
 								</div>
