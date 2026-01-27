@@ -261,7 +261,7 @@ const Analysis = () => {
 						{idTypes.map((idType) => (
 							<button
 								key={idType.value}
-								onClick={() => fetchIdAnalytics(idType.table, slider)}
+								onClick={() => fetchIdAnalytics(idType.analytics, slider)}
 								className="group relative overflow-hidden bg-gradient-to-br from-blue-500 to-blue-600 text-white p-4 rounded-lg shadow-md hover:shadow-xl hover:from-blue-600 hover:to-blue-700 transition-all duration-200 transform hover:scale-105"
 							>
 								<div className="flex flex-col items-center">
