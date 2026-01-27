@@ -1,5 +1,4 @@
 export { default as BubbleChart } from "./bubble"
-export { default as HeatmapChart } from "./heatmap"
 export { default as HistogramChart } from "./histogram"
 export { default as PercentileChart } from "./percentile"
 export { default as PieChartComponent } from "./piechart"
