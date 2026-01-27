@@ -62,6 +62,7 @@ func NewEchoServer(db *gorm.DB) *echo.Echo {
 	server.GET("/analytics/errors", analyticsController.GetErrorRates)
 	server.GET("/analytics/:type/timeseries", analyticsController.GetTimeSeries)
 	server.GET("/analytics/tableSize", analyticsController.GetTableSizeData)
+	server.GET("/analytics/idEfficiency", analyticsController.GetIdEfficiencyMetrics)
 	// Define main routes
 	server.GET("/swagger/*", echoSwagger.WrapHandler)
 	server.GET("/", Home)
@@ -141,6 +142,8 @@ func NewServerlessEchoServer(db *gorm.DB) *echo.Echo {
 	api.GET("/analytics/:type/percentiles", analyticsController.GetPercentiles)
 	api.GET("/analytics/errors", analyticsController.GetErrorRates)
 	api.GET("/analytics/:type/timeseries", analyticsController.GetTimeSeries)
+	api.GET("/analytics/tableSize", analyticsController.GetTableSizeData)
+	api.GET("/analytics/idEfficiency", analyticsController.GetIdEfficiencyMetrics)
 	// Define main routes
 	api.GET("/swagger/*", echoSwagger.WrapHandler)
 	api.GET("/", Home)

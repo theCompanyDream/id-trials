@@ -1,13 +1,13 @@
 package utils
 
-import "github.com/theCompanyDream/id-trials/apps/backend/models"
+import "github.com/theCompanyDream/id-trials/apps/backend/models/stats"
 
-func CalculatePercentiles(sorted []float64) *models.PercentileStats {
+func CalculatePercentiles(sorted []float64) *stats.PercentileStats {
 	if len(sorted) == 0 {
-		return &models.PercentileStats{}
+		return &stats.PercentileStats{}
 	}
 
-	return &models.PercentileStats{
+	return &stats.PercentileStats{
 		P50: Percentile(sorted, 0.50),
 		P75: Percentile(sorted, 0.75),
 		P90: Percentile(sorted, 0.90),

@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/theCompanyDream/id-trials/apps/backend/models"
+	"github.com/theCompanyDream/id-trials/apps/backend/models/stats"
 	"github.com/theCompanyDream/id-trials/apps/backend/utils"
 	"gorm.io/gorm"
 )
@@ -17,8 +18,8 @@ func NewMetricsRepository(db *gorm.DB) *MetricsRepository {
 }
 
 // Get average response time by ID type
-func (r *MetricsRepository) GetAverageDurationByIDType() ([]models.IDTypePerformance, error) {
-	var results []models.IDTypePerformance
+func (r *MetricsRepository) GetAverageDurationByIDType() ([]stats.IDTypePerformance, error) {
+	var results []stats.IDTypePerformance
 
 	err := r.DB.Model(&models.RouteMetric{}).
 		Select("id_type, AVG(total_duration) as avg_duration, COUNT(*) as request_count").
@@ -30,8 +31,8 @@ func (r *MetricsRepository) GetAverageDurationByIDType() ([]models.IDTypePerform
 }
 
 // Get performance by route and operation
-func (r *MetricsRepository) GetPerformanceByRoute(idType string) ([]models.RoutePerformance, error) {
-	var results []models.RoutePerformance
+func (r *MetricsRepository) GetPerformanceByRoute(idType string) ([]stats.RoutePerformance, error) {
+	var results []stats.RoutePerformance
 
 	err := r.DB.Model(&models.RouteMetric{}).
 		Select(`
@@ -52,7 +53,7 @@ func (r *MetricsRepository) GetPerformanceByRoute(idType string) ([]models.Route
 }
 
 // Get percentile performance
-func (r *MetricsRepository) GetPercentiles(idType string, hours int) (*models.PercentileStats, error) {
+func (r *MetricsRepository) GetPercentiles(idType string, hours int) (*stats.PercentileStats, error) {
 	var durations []float64
 
 	err := r.DB.Model(&models.RouteMetric{}).
@@ -70,8 +71,8 @@ func (r *MetricsRepository) GetPercentiles(idType string, hours int) (*models.Pe
 }
 
 // Get error rate by ID type
-func (r *MetricsRepository) GetErrorRates() ([]models.ErrorRate, error) {
-	var results []models.ErrorRate
+func (r *MetricsRepository) GetErrorRates() ([]stats.ErrorRate, error) {
+	var results []stats.ErrorRate
 
 	err := r.DB.Model(&models.RouteMetric{}).
 		Select(`
@@ -87,8 +88,8 @@ func (r *MetricsRepository) GetErrorRates() ([]models.ErrorRate, error) {
 }
 
 // Get time series data (for charts)
-func (r *MetricsRepository) GetTimeSeriesData(idType string, interval string, hours int) ([]models.TimeSeriesPoint, error) {
-	var results []models.TimeSeriesPoint
+func (r *MetricsRepository) GetTimeSeriesData(idType string, interval string, hours int) ([]stats.TimeSeriesPoint, error) {
+	var results []stats.TimeSeriesPoint
 
 	// PostgreSQL-specific for hourly grouping
 	query := `
@@ -109,8 +110,8 @@ func (r *MetricsRepository) GetTimeSeriesData(idType string, interval string, ho
 	return results, err
 }
 
-func (r *MetricsRepository) GetSpecificTableSizes() ([]models.TableSize, error) {
-	var sizes []models.TableSize
+func (r *MetricsRepository) GetSpecificTableSizes() ([]stats.TableSize, error) {
+	var sizes []stats.TableSize
 
 	err := r.DB.Raw(`
 		SELECT
@@ -128,4 +129,44 @@ func (r *MetricsRepository) GetSpecificTableSizes() ([]models.TableSize, error) 
     `).Scan(&sizes).Error
 
 	return sizes, err
+}
+
+func (r *MetricsRepository) GetIdEfficiencyMetrics() ([]stats.IDEfficiency, error) {
+	var results []stats.IDEfficiency
+
+	err := r.DB.Raw(`
+		WITH id_stats AS (
+		SELECT
+			'users_uuid' AS table_name,
+			COUNT(*) AS row_count,
+			AVG(pg_column_size(id))::numeric AS avg_id_bytes
+		FROM users_uuid
+
+		UNION ALL
+
+		SELECT 'users_ulid', COUNT(*), AVG(pg_column_size(id))::numeric FROM users_ulid
+		UNION ALL
+		SELECT 'users_cuid', COUNT(*), AVG(pg_column_size(id))::numeric FROM users_cuid
+		UNION ALL
+		SELECT 'users_nanoid', COUNT(*), AVG(pg_column_size(id))::numeric FROM users_nanoid
+		UNION ALL
+		SELECT 'users_ksuid', COUNT(*), AVG(pg_column_size(id))::numeric FROM users_ksuid
+		UNION ALL
+		SELECT 'users_snow', COUNT(*), AVG(pg_column_size(id))::numeric FROM users_snowflake
+	)
+	SELECT
+		table_name,
+		row_count,
+		avg_id_bytes,
+		-- Theoretical minimum bytes needed (log2(n) / 8)
+		(LOG(2, row_count) / 8)::numeric(10,2) AS theoretical_min_bytes,
+		-- Efficiency score (lower is worse, 100% is perfect)
+		ROUND(((LOG(2, row_count) / 8) / avg_id_bytes * 100)::numeric, 2) AS efficiency_percent,
+		-- Waste factor (how many times larger than needed)
+		ROUND((avg_id_bytes / (LOG(2, row_count) / 8))::numeric, 2) AS waste_factor
+		FROM id_stats
+		ORDER BY efficiency_percent DESC;
+	`).Scan(&results).Error
+
+	return results, err
 }

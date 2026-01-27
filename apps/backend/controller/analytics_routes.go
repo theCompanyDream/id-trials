@@ -84,3 +84,11 @@ func (ac *AnalyticsController) GetTableSizeData(c echo.Context) error {
 	}
 	return c.JSON(http.StatusOK, results)
 }
+
+func (ac *AnalyticsController) GetIdEfficiencyMetrics(c echo.Context) error {
+	results, err := ac.Repo.GetIdEfficiencyMetrics()
+	if err != nil {
+		return err
+	}
+	return c.JSON(http.StatusOK, results)
+}
