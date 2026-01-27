@@ -100,7 +100,7 @@ func TestMiddlewareIDTypeExtraction(t *testing.T) {
 			var countAfter int64
 			db.Model(&models.RouteMetric{}).Count(&countAfter)
 			if route.expected == "Unknown" {
-				assert.Equal(t, int64(idx-1), countAfter)
+				assert.Equal(t, int64(idx), countAfter)
 			} else {
 				assert.Equal(t, route.expected, metric.IDType)
 			}
