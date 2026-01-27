@@ -9,6 +9,7 @@ const UserTable = () => {
   const userId = useUserStore((state) => state.userId)
 	const idTypes = useUserStore((state) => state.idTypes)
   const updateStore = useUserStore((state) => state.updateStore)
+  const updateIdTypes = useUserStore((state) => state.updateIdTypes)
   const [isfetch, setFetched] = useState(false);
   const [search, setSearch] = useState("");
 
@@ -49,9 +50,7 @@ const UserTable = () => {
   };
 
   const handleSelect = (e) => {
-    updateStore({
-      userId: e.target.value
-    })
+    updateIdTypes(e.target.value)
   }
 
   // Trigger initial data fetch if no users yet

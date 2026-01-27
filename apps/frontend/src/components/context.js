@@ -15,6 +15,10 @@ const useUserStore = create((set, get) => ({
         {name: "NANO ID", value: "nanoId"}
     ],
     updateStore: (filters) => set({ ...filters }),
+    updateIdTypes: (newIdTypes) => {
+        if (!Array.isArray(newIdTypes)) return;
+        set({ idTypes: newIdTypes })
+    }
 }))
 
 export default useUserStore;

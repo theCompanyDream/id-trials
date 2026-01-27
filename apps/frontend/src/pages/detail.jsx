@@ -7,7 +7,7 @@ const UserDetail = () => {
   const navigate = useNavigate(); // For programmatic navigation
   const userId = useUserStore((state) => state.userId)
   const idTypes = useUserStore((state) => state.idTypes)
-  const updateStore = useUserStore((state) => state.updateStore)
+  const updateStore = useUserStore((state) => state.updateIdTypes)
 
   // Initialize form data with empty strings.
   const [formData, setFormData] = useState({
@@ -57,9 +57,7 @@ const UserDetail = () => {
   }, [id, userId, setFormData]);
 
   const handleSelect = (e) => {
-    updateStore({
-      userId: e.target.value
-    })
+    updateStore(e.target.value);
   }
 
   // Handle input changes.
