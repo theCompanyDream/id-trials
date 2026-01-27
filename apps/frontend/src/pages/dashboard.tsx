@@ -14,8 +14,8 @@ const Analysis = () => {
 	const [comparison, setComparison] = useState<any>(null);
 	const [percentile, setPercentile] = useState<any>(null);
 	const [timeSeries, setTimeSeries] = useState<any>(null);
+	const [details, setDetails] = useState<any>(null);
 
-	// ← BUG FIX: This was overwriting itself!
 	const fetchIdAnalytics = async (id: string, hour: number) => {
 		try {
 			// Fetch all in parallel
@@ -32,6 +32,7 @@ const Analysis = () => {
 			// Set state properly (was overwriting before!)
 			setTimeSeries(timeSeriesData);
 			setPercentile(percentilesData);
+			setDetails(details);
 
 			updateIdTypes(id);
 		} catch (error) {
