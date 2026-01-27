@@ -46,13 +46,25 @@ const Analysis = () => {
 					data={idEfficiency}
 					title="ID Efficiency Analysis"
 					stacks={[
-						{ dataKey: 'theoretical', name: 'Minimum Required', fill: '#10b981' },
-						{ dataKey: 'wasted', name: 'Wasted Space', fill: '#ef4444' }
+						{ dataKey: 'row_count', name: 'Row Count', fill: '#10b981' },
 					]}
-					xAxisKey="table_name"
-					yAxisLabel="Number of IDs"
+					xAxisLabel="table_name"
 					showGrid={true}
-					legendPosition="bottom"
+					width="50%"
+					height={450}
+				/>)}
+
+			{ idEfficiency && (
+				<StackedBarChart
+					data={idEfficiency}
+					title="ID Efficiency Analysis"
+					stacks={[
+						{ dataKey: 'efficiency_percent', name: 'Efficiency %', fill: '#3b82f6' },
+						{ dataKey: 'waste_factor', name: 'Wasted Space', fill: '#ef4444' },
+						{ dataKey: 'theoretical_min_bytes', name: 'Minimum Required', fill: '#10b981' },
+					]}
+					xAxisLabel="table_name"
+					showGrid={true}
 					width="50%"
 					height={450}
 				/>)}

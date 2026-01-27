@@ -8,7 +8,6 @@ interface StackConfig {
 
 interface StackedBarChartProps {
   data: any[];
-  xAxisKey: string;
   stacks: StackConfig[];
   width?: number | string;
   height?: number | string;
@@ -22,12 +21,11 @@ interface StackedBarChartProps {
 
 export default function StackedBarChart({
   data,
-  xAxisKey,
   stacks,
   width = '100%',
   height = 400,
   xAxisLabel,
-  yAxisLabel,
+  yAxisLabel = 'auto',
   showGrid = false,
   showLegend = true,
   showTooltip = true,
@@ -35,45 +33,25 @@ export default function StackedBarChart({
 }: StackedBarChartProps) {
   return (
     <ResponsiveContainer width={width} height={height}>
-      <BarChart data={data} layout={layout}>
+      <BarChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
         {showGrid && <CartesianGrid strokeDasharray="3 3" />}
 
-        {layout === 'vertical' ? (
-          <>
-            <XAxis
-              dataKey={xAxisKey}
-              label={xAxisLabel ? { value: xAxisLabel, position: 'insideBottom', offset: -5 } : undefined}
-            />
-            <YAxis
-              label={yAxisLabel ? { value: yAxisLabel, angle: -90, position: 'insideLeft' } : undefined}
-            />
-          </>
-        ) : (
-          <>
-            <XAxis
-              type="number"
-              label={xAxisLabel ? { value: xAxisLabel, position: 'insideBottom', offset: -5 } : undefined}
-            />
-            <YAxis
-              type="category"
-              dataKey={xAxisKey}
-              label={yAxisLabel ? { value: yAxisLabel, angle: -90, position: 'insideLeft' } : undefined}
-            />
-          </>
-        )}
+        <XAxis dataKey={xAxisLabel} />
+        <YAxis width={yAxisLabel} />
 
         {showTooltip && <Tooltip />}
         {showLegend && <Legend />}
 
         {stacks.map((stack, index) => (
           <Bar
-            key={stack.dataKey}
             dataKey={stack.dataKey}
-            stackId={`stack:${index}`}
+            stackId={`stack`}
             fill={stack.fill}
             name={stack.name}
+            background
           />
         ))}
+
       </BarChart>
     </ResponsiveContainer>
   );
