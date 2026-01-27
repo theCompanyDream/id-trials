@@ -7,6 +7,7 @@ interface PieData {
 
 interface PieChartComponentProps {
   data: PieData[];
+  data2?: PieData[];
   colors?: string[];
   width?: number | string;
   height?: number | string;
@@ -33,7 +34,7 @@ const CustomTooltip = ({ active, payload }: any) => {
       <div className="bg-white p-3 border border-gray-300 rounded shadow-lg">
         <p className="font-semibold">{data.name}</p>
         <p className="text-blue-600 font-medium">
-          {data.sizePretty || `${data.value} MB`}
+          {data.valuePretty || `${data.value} MB`}
         </p>
       </div>
     );
@@ -43,11 +44,12 @@ const CustomTooltip = ({ active, payload }: any) => {
 
 export default function PieChartComponent({
   data,
+  data2,
   colors = DEFAULT_COLORS,
   width = '100%',
   height = 400,
   innerRadius = 20,
-  outerRadius = 120,
+  outerRadius = 60,
   showLegend = true,
   showTooltip = true,
   labelLine = false,
@@ -63,8 +65,8 @@ export default function PieChartComponent({
           cx="50%"
           cy="50%"
           labelLine={labelLine}
-          outerRadius={outerRadius}
-          innerRadius={innerRadius}
+          outerRadius={`${outerRadius}%`}
+          innerRadius={`${innerRadius}%`}
           fill="#8884d8"
           dataKey={dataKey}
         >
@@ -72,6 +74,18 @@ export default function PieChartComponent({
             <Cell key={`cell-${index}`} fill={colors[index % colors.length]} />
           ))}
         </Pie>
+        {data2 && (
+          <Pie
+            data={data2}
+            cx="50%"
+            cy="50%"
+            labelLine={labelLine}
+            innerRadius={`80%`}
+            outerRadius={`95%`}
+            fill="#82ca9d"
+            dataKey={dataKey}
+          />
+        )}
         {showTooltip && <Tooltip content={<CustomTooltip />} />}
         {showLegend &&
           <Legend

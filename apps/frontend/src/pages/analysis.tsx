@@ -50,23 +50,17 @@ const Analysis = () => {
 	useEffect(() => {
 		const fetchInitialData = async () => {
 			try {
-				const [tableSizeRes, efficiencyRes, comparisonRes] = await Promise.all([
-					fetch('/api/analytics/tableSize'),
-					fetch('/api/analytics/idEfficiency'),
-					fetch('/api/analytics/comparison')
-				]);
+				await fetch(`/api/analytics/tableSize?`)
+					.then(data => data.json())
+					.then(table => setTableSize(table.map(t => ({ name: t.table_name, value: t.size, sizePretty: t.size_pretty }))))
 
-				const tableSizeData = await tableSizeRes.json();
-				const efficiencyData = await efficiencyRes.json();
-				const comparisonData = await comparisonRes.json();
+				await fetch(`/api/analytics/idEfficiency`)
+					.then(data => data.json())
+					.then(efficiency => setIdEfficiency(efficiency))
 
-				setTableSize(tableSizeData.map(t => ({
-					name: t.table_name,
-					value: t.size,
-					sizePretty: t.size_pretty
-				})));
-				setIdEfficiency(efficiencyData);
-				setComparison(comparisonData);
+				await fetch("/api/analytics/comparison")
+					.then(data => data.json())
+					.then(comparison => setComparison(comparison))
 			} catch (error) {
 				console.error('Failed to fetch initial data:', error);
 			}
@@ -82,16 +76,16 @@ const Analysis = () => {
 	return (
 		<main className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
 			{/* Header */}
-			<div className="bg-white shadow-sm border-b">
+			<section className="bg-white shadow-sm border-b">
 				<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
 					<h1 className="text-3xl font-bold text-gray-900">ID Performance Analytics</h1>
 					<p className="mt-2 text-gray-600">
 						Comprehensive analysis of different ID generation strategies
 					</p>
 				</div>
-			</div>
+			</section>
 
-			<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+			<section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
 
 				{/* Overview Cards */}
 				<div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -144,7 +138,7 @@ const Analysis = () => {
 				<div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
 
 					{/* Table Size Chart */}
-					{tableSize && (
+					{tableSize && idEfficiency && (
 						<div className="bg-white rounded-lg shadow-lg p-6">
 							<div className="flex items-center mb-4">
 								<div className="h-2 w-2 rounded-full bg-blue-500 mr-2"></div>
@@ -154,7 +148,17 @@ const Analysis = () => {
 								Database storage allocation across ID types
 							</p>
 							<PieChartComponent
-								data={tableSize}
+								data={tableSize.map((t: any) => ({
+									name: t.name,
+									value: t.value,
+									valuePretty: t.sizePretty
+								}))}
+								data2={idEfficiency.map((d: any) => ({
+									name: d.table_name,
+									value: d.row_count,
+									valuePretty: `${d.row_count.toLocaleString()} rows`
+								}))}
+								labelLine={true}
 								width="100%"
 								height={450}
 							/>
@@ -179,7 +183,7 @@ const Analysis = () => {
 								}))}
 								xAxisKey="name"
 								stacks={[
-									{ dataKey: 'theoretical', name: 'Minimum Required', fill: '#10b981' },
+									{ dataKey: 'theoretical', name: 'Minimum Required', fill: '#192fbc' },
 									{ dataKey: 'wasted', name: 'Wasted Space', fill: '#ef4444' }
 								]}
 								yAxisLabel="Bytes per ID"
@@ -189,6 +193,28 @@ const Analysis = () => {
 						</div>
 					)}
 				</div>
+
+				{/* {idEfficiency && (
+					<div className="bg-white rounded-lg shadow-lg p-6">
+						<div className="flex items-center mb-4">
+							<div className="h-2 w-2 rounded-full bg-green-500 mr-2"></div>
+							<h2 className="text-xl font-bold text-gray-900">Efficiency Metrics</h2>
+						</div>
+						<p className="text-sm text-gray-600 mb-6">
+							Storage efficiency and waste factor analysis
+						</p>
+					<StackedBarChart
+						data={idEfficiency}
+						title="ID Efficiency Analysis"
+						stacks={[
+							{ dataKey: 'row_count', name: 'Row Count', fill: '#10b981' },
+						]}
+						xAxisLabel="table_name"
+						showGrid={true}
+						width="50%"
+						height={450}
+						/>
+					</div>)} */}
 
 				{/* Performance Comparison - Full Width */}
 				{comparison && (
@@ -316,7 +342,7 @@ const Analysis = () => {
 						Dive deeper into the database with our interactive data explorer
 					</p>
 					<Link
-						to="/data"
+						to="/explore"
 						className="inline-flex items-center px-6 py-3 bg-white text-blue-600 font-semibold rounded-lg shadow-md hover:bg-gray-50 transition-colors duration-200"
 					>
 						<svg className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -326,7 +352,7 @@ const Analysis = () => {
 					</Link>
 				</div>
 
-			</div>
+			</section>
 		</main>
 	);
 }
