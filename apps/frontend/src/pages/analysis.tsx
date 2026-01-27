@@ -1,17 +1,38 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
-import { Loading, PieChartComponent, StackedBarChart } from '@backpack';
+import { Loading, PieChartComponent, StackedBarChart, TimeSeriesChart, useUserStore } from '@backpack';
 
 const Analysis = () => {
+	const idTypes = useUserStore((state) => state.idTypes)
+	const [chosenIdType, setChosenIdType] = useState()
+	const [slider, setSlider] = useState(24)
 	const [tableSize, setTableSize] = useState()
 	const [idEfficiency, setIdEfficiency] = useState()
-	const [percentile, setPercentile] = useState<string | null>(null)
+	const [comparison, setComparison] = useState<{ [key: string]: any }>({})
+	const [percentile, setPercentile] = useState<{ [key: string]: any }>({})
+	const [timeSeries, setTimeSeries] = useState<{ [key: string]: any }>({})
 
-	const fetchIdPercentile = (id: string) => {
+	const fetchIdAnalytics = async(id: string, hour: number) => {
+		fetch(`/analytics/${id}/details`)
+			.then(data => data.json())
+			.then(efficiency => setTimeSeries({id: efficiency}))
+
+		fetch(`/analytics/${id}/timeseries?hours=${hour}`)
+			.then(data => data.json())
+			.then(efficiency => setTimeSeries({id: efficiency}))
+
 		fetch(`/analytics/${id}/percentiles`)
 			.then(data => data.json())
-			.then(efficiency => setPercentile(efficiency))
+			.then(efficiency => setPercentile({id: efficiency}))
+
+		setChosenIdType(id)
+	}
+
+	const onChangeSlider = (e: any) => {
+		const hour = parseInt(e.target.value)
+		setSlider(hour)
+		fetchIdAnalytics(chosenIdType, hour)
 	}
 
 	useEffect(() => {
@@ -22,6 +43,10 @@ const Analysis = () => {
 		fetch(`/api/analytics/idEfficiency`)
 			.then(data => data.json())
 			.then(efficiency => setIdEfficiency(efficiency))
+
+		fetch("/api/analytics/comparison")
+			.then(data => data.json())
+			.then(comparison => setComparison(comparison))
 	}, []);
 
 	if (!tableSize) {
@@ -41,7 +66,7 @@ const Analysis = () => {
 					height={450}
 				/>)}
 
-			{ idEfficiency && (
+			{idEfficiency && (
 				<StackedBarChart
 					data={idEfficiency}
 					title="ID Efficiency Analysis"
@@ -54,7 +79,7 @@ const Analysis = () => {
 					height={450}
 				/>)}
 
-			{ idEfficiency && (
+			{idEfficiency && (
 				<StackedBarChart
 					data={idEfficiency}
 					title="ID Efficiency Analysis"
@@ -69,7 +94,35 @@ const Analysis = () => {
 					height={450}
 				/>)}
 
+			{comparison && <TimeSeriesChart
+				data={comparison}
+				title="ID Types Comparison Over Time"
+				series={[
+					{ dataKey: 'id_type', name: 'UUID', stroke: '#10b981' },
+				]}
+				xAxisLabel="timestamp"
+				yAxisLabel="count"
+				width="80%"
+				height={450}
+			/>}
+
+			<input type="range" min="1" max="24" defaultValue="24" value={slider} onChange={onChangeSlider} />
+
+			<ul>
+				{idTypes.map((idType) => (
+					<li key={idType.value} className="mb-8">
+						<button onClick={() => fetchIdAnalytics(idType.value, slider)} className="text-blue-500 text-center bg-blue-500 p-3 text-white rounded-md hover:bg-blue-600">{idType.name} Analysis</button>
+					</li>
+				))}
+			</ul>
+
+
+
 			<section className="flex justify-center mt-8">
+				<p>
+					If you want to explore more data, click the button below:
+					&nbsp;
+				</p>
 				<Link to="/explore" className="text-blue-500 text-center bg-blue-500 p-3 text-white rounded-md hover:bg-blue-600">
 					Explore More Data
 				</Link>
