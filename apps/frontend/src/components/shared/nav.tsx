@@ -17,13 +17,13 @@ const Navigation = memo(({links}: NavigationProps) => {
   const isImageDesktop = (link: LinkProp) => {
     if (link.img) {
       return (
-        <Link to={link.link} className="hover:text-gray-300">
+        <Link to={link.link} className="hover:text-yellow-300">
           <img src={link.img} alt="github logo" className="w-7 h-7" />
         </Link>
       );
     } else {
       return (
-        <Link to={link.link} className="hover:text-gray-300">
+        <Link to={link.link} className="hover:text-yellow-300">
           {link.name}
         </Link>
       );
@@ -33,13 +33,13 @@ const Navigation = memo(({links}: NavigationProps) => {
   const isImageMobile = (link: LinkProp) => {
     if (link.img) {
       return (
-        <Link to={link.link} className="block px-3 py-2 rounded-md text-base font-medium hover:bg-gray-600">
+        <Link to={link.link} className="block px-3 py-2 rounded-md text-base font-medium hover:bg-yellow-600">
           <img src={link.img} alt="github logo" className="w-7 h-7" />
         </Link>
       );
     } else {
       return (
-        <Link to={link.link} className="block px-3 py-2 rounded-md text-base font-medium hover:bg-gray-600">
+        <Link to={link.link} className="block px-3 py-2 rounded-md text-base font-medium hover:bg-yellow-600">
           {link.name}
         </Link>
       );
@@ -47,7 +47,7 @@ const Navigation = memo(({links}: NavigationProps) => {
   }
 
   return (
-    <header className="bg-gray-800 text-white shadow w-full">
+    <header className="bg-rose-500 text-white shadow w-full">
       <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
         <Link to="/" className="text-xl font-bold">Id Trials</Link>
 

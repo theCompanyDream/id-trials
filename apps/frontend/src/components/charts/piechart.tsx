@@ -31,7 +31,7 @@ const CustomTooltip = ({ active, payload }: any) => {
 
     return (
       <div className="bg-white p-3 border border-gray-300 rounded shadow-lg">
-        <p className="font-semibold text-gray-800">{data.name}</p>
+        <p className="font-semibold">{data.name}</p>
         <p className="text-blue-600 font-medium">
           {data.sizePretty || `${data.value} MB`}
         </p>

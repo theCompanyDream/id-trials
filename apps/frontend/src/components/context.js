@@ -6,6 +6,14 @@ const useUserStore = create((set, get) => ({
     page_count: 10,
     page_size: 20,
     userId: "uuid4",
+    idTypes: [
+        {name: "UUID4", value: "uuid4"},
+        {name: "CUID", value: "cuidId"},
+        {name: "SNOW", value: "snowId"},
+        {name: "KSUID", value: "ksuidId"},
+        {name: "ULID", value: "ulidId"},
+        {name: "NANO ID", value: "nanoId"}
+    ],
     updateStore: (filters) => set({ ...filters }),
 }))
 

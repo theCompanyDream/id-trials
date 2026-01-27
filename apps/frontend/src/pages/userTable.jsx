@@ -7,6 +7,7 @@ const UserTable = () => {
   const page = useUserStore((state) => state.page)
   const page_count = useUserStore((state) => state.page_count)
   const userId = useUserStore((state) => state.userId)
+	const idTypes = useUserStore((state) => state.idTypes)
   const updateStore = useUserStore((state) => state.updateStore)
   const [isfetch, setFetched] = useState(false);
   const [search, setSearch] = useState("");
@@ -74,14 +75,13 @@ const UserTable = () => {
           <select
             onChange={handleSelect}  // Changed from onSelect to onChange
             value={userId}
-            className="px-4 py-2 border border-gray-300 rounded-lg bg-white text-gray-800 font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition hover:border-blue-400 cursor-pointer"
+            className="px-4 py-2 border border-gray-300 rounded-lg bg-white font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition hover:border-blue-400 cursor-pointer"
           >
-            <option value="uuid4">UUID</option>
-            <option value="cuidId">CUID</option>
-            <option value="snowId">Snowflake</option>
-            <option value="ksuidId">KSUID</option>
-            <option value="ulidId">ULID</option>
-            <option value="nanoId">NanoID</option>
+            {idTypes.map((type) => (
+              <option key={type.value} value={type.value}>
+                {type.name}
+              </option>
+            ))}
           </select>
 
           <input

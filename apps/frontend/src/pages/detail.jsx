@@ -6,6 +6,7 @@ const UserDetail = () => {
   const { id } = useParams(); // If there's an ID, we're editing an existing user.
   const navigate = useNavigate(); // For programmatic navigation
   const userId = useUserStore((state) => state.userId)
+  const idTypes = useUserStore((state) => state.idTypes)
   const updateStore = useUserStore((state) => state.updateStore)
 
   // Initialize form data with empty strings.
@@ -108,8 +109,8 @@ const UserDetail = () => {
 
         // Success - navigate to the user detail page
         // Use the ID field from the UserDTO response
-        const userId = data.id || id; // data.ID is the primary key from your UserDTO
-        navigate(`/detail/${userId}`);
+        const resultId = data.id || id; // data.ID is the primary key from your UserDTO
+        navigate(`/detail/${resultId}`);
 
         return data;
       })
@@ -155,12 +156,11 @@ const UserDetail = () => {
             value={userId}
             className="px-4 py-2 border rounded-lg bg-white w-full font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition hover:border-blue-400 cursor-pointer"
           >
-            <option value="uuid4">UUID</option>
-            <option value="cuidId">CUID</option>
-            <option value="snowId">Snowflake</option>
-            <option value="ksuidId">KSUID</option>
-            <option value="ulidId">ULID</option>
-            <option value="nanoId">NanoID</option>
+            {idTypes.map((type) => (
+              <option key={type.value} value={type.value}>
+                {type.name}
+              </option>
+            ))}
           </select>
           {errors.user_name && (
             <p className="text-red-600 text-sm mt-1">{errors.user_name}</p>
@@ -268,8 +268,15 @@ const UserDetail = () => {
             {isSubmitting ? 'Saving...' : (id ? 'Update User' : 'Create User')}
           </button>
 
+          {id && <Link
+            className="bg-red-500 hover:bg-red-200 text-black px-4 py-2 rounded border text-white"
+            to="/detail"
+          >
+            Create
+          </Link>}
+
           <Link
-            className="bg-gray-100 hover:bg-gray-200 text-black px-4 py-2 rounded border"
+            className="bg-yellow-500 hover:bg-yellow-200 text-black px-4 py-2 rounded border text-white"
             to="/explore"
           >
             Back
