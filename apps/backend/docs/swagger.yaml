@@ -62,9 +62,308 @@ definitions:
           $ref: '#/definitions/models.UserDTO'
         type: array
     type: object
+  stats.ErrorRate:
+    properties:
+      error_count:
+        type: integer
+      error_percentage:
+        type: number
+      id_type:
+        type: string
+      total_requests:
+        type: integer
+    type: object
+  stats.IDEfficiency:
+    properties:
+      avg_id_bytes:
+        type: number
+      efficiency_percent:
+        type: number
+      row_count:
+        type: integer
+      table_name:
+        type: string
+      theoretical_min_bytes:
+        type: number
+      waste_factor:
+        type: number
+    type: object
+  stats.IDTypePerformance:
+    properties:
+      avg_duration:
+        type: number
+      id_type:
+        type: string
+      request_count:
+        type: integer
+    type: object
+  stats.PercentileStats:
+    properties:
+      p50:
+        type: number
+      p75:
+        type: number
+      p90:
+        type: number
+      p95:
+        type: number
+      p99:
+        type: number
+    type: object
+  stats.RoutePerformance:
+    properties:
+      avg_db_duration:
+        type: number
+      avg_duration:
+        type: number
+      error_count:
+        type: integer
+      http_method:
+        type: string
+      max_duration:
+        type: number
+      min_duration:
+        type: number
+      request_count:
+        type: integer
+      route_path:
+        type: string
+    type: object
+  stats.TableSize:
+    properties:
+      size:
+        description: Numeric size for charts
+        type: integer
+      size_bytes:
+        description: Numeric bytes for charts
+        type: integer
+      size_pretty:
+        description: Human-readable (from PostgreSQL)
+        type: string
+      table_name:
+        type: string
+    type: object
+  stats.TimeSeriesPoint:
+    properties:
+      avg_duration:
+        type: number
+      request_count:
+        type: integer
+      time_bucket:
+        type: string
+    type: object
 info:
   contact: {}
 paths:
+  /analytics/comparison:
+    get:
+      consumes:
+      - application/json
+      description: Returns average duration metrics for all ID types
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/stats.IDTypePerformance'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get performance comparison across all ID types
+      tags:
+      - Analytics
+  /analytics/details/{type}:
+    get:
+      consumes:
+      - application/json
+      description: Returns performance metrics by route for a specific ID type
+      parameters:
+      - description: ID Type
+        enum:
+        - uuid
+        - ulid
+        - ksuid
+        - cuid
+        - nanoid
+        - snowflake
+        in: path
+        name: type
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/stats.RoutePerformance'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get detailed performance for specific ID type
+      tags:
+      - Analytics
+  /analytics/efficiency:
+    get:
+      consumes:
+      - application/json
+      description: Returns efficiency metrics comparing different ID types
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/stats.IDEfficiency'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get ID efficiency metrics
+      tags:
+      - Analytics
+  /analytics/errors:
+    get:
+      consumes:
+      - application/json
+      description: Returns error rates across all ID types and routes
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/stats.ErrorRate'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get error rates
+      tags:
+      - Analytics
+  /analytics/percentiles/{type}:
+    get:
+      consumes:
+      - application/json
+      description: Returns percentile statistics (p50, p95, p99) for a specific ID
+        type
+      parameters:
+      - description: ID Type
+        enum:
+        - uuid
+        - ulid
+        - ksuid
+        - cuid
+        - nanoid
+        - snowflake
+        in: path
+        name: type
+        required: true
+        type: string
+      - default: 24
+        description: Number of hours to look back
+        in: query
+        name: hours
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/stats.PercentileStats'
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get percentile statistics
+      tags:
+      - Analytics
+  /analytics/table-sizes:
+    get:
+      consumes:
+      - application/json
+      description: Returns database table size metrics for all ID types
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/stats.TableSize'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get table size data
+      tags:
+      - Analytics
+  /analytics/timeseries/{type}:
+    get:
+      consumes:
+      - application/json
+      description: Returns time series performance data for a specific ID type
+      parameters:
+      - description: ID Type
+        enum:
+        - uuid
+        - ulid
+        - ksuid
+        - cuid
+        - nanoid
+        - snowflake
+        in: path
+        name: type
+        required: true
+        type: string
+      - default: 24
+        description: Number of hours to look back
+        in: query
+        name: hours
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/stats.TimeSeriesPoint'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get time series data for charts
+      tags:
+      - Analytics
   /cuid:
     post:
       consumes:

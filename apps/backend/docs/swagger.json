@@ -4,6 +4,313 @@
         "contact": {}
     },
     "paths": {
+        "/analytics/comparison": {
+            "get": {
+                "description": "Returns average duration metrics for all ID types",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Analytics"
+                ],
+                "summary": "Get performance comparison across all ID types",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/stats.IDTypePerformance"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/analytics/details/{type}": {
+            "get": {
+                "description": "Returns performance metrics by route for a specific ID type",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Analytics"
+                ],
+                "summary": "Get detailed performance for specific ID type",
+                "parameters": [
+                    {
+                        "enum": [
+                            "uuid",
+                            "ulid",
+                            "ksuid",
+                            "cuid",
+                            "nanoid",
+                            "snowflake"
+                        ],
+                        "type": "string",
+                        "description": "ID Type",
+                        "name": "type",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/stats.RoutePerformance"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/analytics/efficiency": {
+            "get": {
+                "description": "Returns efficiency metrics comparing different ID types",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Analytics"
+                ],
+                "summary": "Get ID efficiency metrics",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/stats.IDEfficiency"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/analytics/errors": {
+            "get": {
+                "description": "Returns error rates across all ID types and routes",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Analytics"
+                ],
+                "summary": "Get error rates",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/stats.ErrorRate"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/analytics/percentiles/{type}": {
+            "get": {
+                "description": "Returns percentile statistics (p50, p95, p99) for a specific ID type",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Analytics"
+                ],
+                "summary": "Get percentile statistics",
+                "parameters": [
+                    {
+                        "enum": [
+                            "uuid",
+                            "ulid",
+                            "ksuid",
+                            "cuid",
+                            "nanoid",
+                            "snowflake"
+                        ],
+                        "type": "string",
+                        "description": "ID Type",
+                        "name": "type",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "default": 24,
+                        "description": "Number of hours to look back",
+                        "name": "hours",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/stats.PercentileStats"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/analytics/table-sizes": {
+            "get": {
+                "description": "Returns database table size metrics for all ID types",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Analytics"
+                ],
+                "summary": "Get table size data",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/stats.TableSize"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/analytics/timeseries/{type}": {
+            "get": {
+                "description": "Returns time series performance data for a specific ID type",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Analytics"
+                ],
+                "summary": "Get time series data for charts",
+                "parameters": [
+                    {
+                        "enum": [
+                            "uuid",
+                            "ulid",
+                            "ksuid",
+                            "cuid",
+                            "nanoid",
+                            "snowflake"
+                        ],
+                        "type": "string",
+                        "description": "ID Type",
+                        "name": "type",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "default": 24,
+                        "description": "Number of hours to look back",
+                        "name": "hours",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/stats.TimeSeriesPoint"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/cuid": {
             "post": {
                 "description": "Create a new user with the provided information",
@@ -1379,6 +1686,143 @@
                     "items": {
                         "$ref": "#/definitions/models.UserDTO"
                     }
+                }
+            }
+        },
+        "stats.ErrorRate": {
+            "type": "object",
+            "properties": {
+                "error_count": {
+                    "type": "integer"
+                },
+                "error_percentage": {
+                    "type": "number"
+                },
+                "id_type": {
+                    "type": "string"
+                },
+                "total_requests": {
+                    "type": "integer"
+                }
+            }
+        },
+        "stats.IDEfficiency": {
+            "type": "object",
+            "properties": {
+                "avg_id_bytes": {
+                    "type": "number"
+                },
+                "efficiency_percent": {
+                    "type": "number"
+                },
+                "row_count": {
+                    "type": "integer"
+                },
+                "table_name": {
+                    "type": "string"
+                },
+                "theoretical_min_bytes": {
+                    "type": "number"
+                },
+                "waste_factor": {
+                    "type": "number"
+                }
+            }
+        },
+        "stats.IDTypePerformance": {
+            "type": "object",
+            "properties": {
+                "avg_duration": {
+                    "type": "number"
+                },
+                "id_type": {
+                    "type": "string"
+                },
+                "request_count": {
+                    "type": "integer"
+                }
+            }
+        },
+        "stats.PercentileStats": {
+            "type": "object",
+            "properties": {
+                "p50": {
+                    "type": "number"
+                },
+                "p75": {
+                    "type": "number"
+                },
+                "p90": {
+                    "type": "number"
+                },
+                "p95": {
+                    "type": "number"
+                },
+                "p99": {
+                    "type": "number"
+                }
+            }
+        },
+        "stats.RoutePerformance": {
+            "type": "object",
+            "properties": {
+                "avg_db_duration": {
+                    "type": "number"
+                },
+                "avg_duration": {
+                    "type": "number"
+                },
+                "error_count": {
+                    "type": "integer"
+                },
+                "http_method": {
+                    "type": "string"
+                },
+                "max_duration": {
+                    "type": "number"
+                },
+                "min_duration": {
+                    "type": "number"
+                },
+                "request_count": {
+                    "type": "integer"
+                },
+                "route_path": {
+                    "type": "string"
+                }
+            }
+        },
+        "stats.TableSize": {
+            "type": "object",
+            "properties": {
+                "size": {
+                    "description": "Numeric size for charts",
+                    "type": "integer"
+                },
+                "size_bytes": {
+                    "description": "Numeric bytes for charts",
+                    "type": "integer"
+                },
+                "size_pretty": {
+                    "description": "Human-readable (from PostgreSQL)",
+                    "type": "string"
+                },
+                "table_name": {
+                    "type": "string"
+                }
+            }
+        },
+        "stats.TimeSeriesPoint": {
+            "type": "object",
+            "properties": {
+                "avg_duration": {
+                    "type": "number"
+                },
+                "request_count": {
+                    "type": "integer"
+                },
+                "time_bucket": {
+                    "type": "string"
                 }
             }
         }
