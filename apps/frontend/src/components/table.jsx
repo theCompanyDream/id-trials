@@ -8,7 +8,7 @@ const Table = ({ users, currentPage, totalPages, onPageChange, onDelete }) => (
   <section>
     <div className="overflow-x-auto">
       <table className="min-w-full divide-y divide-gray-200">
-        <thead className="bg-gray-50">
+        <thead>
           <tr>
             <th
               scope="col"

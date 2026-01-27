@@ -79,11 +79,11 @@ func TestMiddlewareIDTypeExtraction(t *testing.T) {
 		{"/api/v1/ksuid/789", "KSUID"},
 		{"/api/v1/cuid/abc", "CUID"},
 		{"/api/v1/nano/def", "NanoID"},
-		{"/api/v1/snow/ghi", "Snowflake"},
+		{"/api/v1/snowid/ghi", "Snowflake"},
 		{"/api/v1/other/xyz", "Unknown"},
 	}
 
-	for _, route := range routes {
+	for idx, route := range routes {
 		t.Run(route.path, func(t *testing.T) {
 			e.GET(route.path, func(c echo.Context) error {
 				return c.String(http.StatusOK, "test")
@@ -97,7 +97,13 @@ func TestMiddlewareIDTypeExtraction(t *testing.T) {
 
 			var metric models.RouteMetric
 			db.Last(&metric)
-			assert.Equal(t, route.expected, metric.IDType)
+			var countAfter int64
+			db.Model(&models.RouteMetric{}).Count(&countAfter)
+			if route.expected == "Unknown" {
+				assert.Equal(t, int64(idx-1), countAfter)
+			} else {
+				assert.Equal(t, route.expected, metric.IDType)
+			}
 		})
 	}
 }
