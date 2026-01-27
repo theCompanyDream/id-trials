@@ -28,9 +28,8 @@ interface TimeSeriesChartProps {
   showGrid?: boolean;
   showLegend?: boolean;
   showTooltip?: boolean;
+  color: ColorGamut;
   xAxisKey?: string;
-  xAxisLabel?: string;
-  yAxisLabel?: string;
   strokeWidth?: number;
   dotSize?: number;
 }
@@ -49,23 +48,20 @@ export default function TimeSeriesChart({
   showLegend = true,
   showTooltip = true,
   xAxisKey = 'timestamp',
-  xAxisLabel,
-  yAxisLabel,
   strokeWidth = 2,
   dotSize = 3
 }: TimeSeriesChartProps) {
   return (
     <ResponsiveContainer width={width} height={height}>
-      <LineChart data={data} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+      <LineChart data={data}>
         {showGrid && <CartesianGrid strokeDasharray="3 3" />}
 
         <XAxis
           dataKey={xAxisKey}
-          label={xAxisLabel ? { value: xAxisLabel, position: 'insideBottom', offset: -5 } : undefined}
         />
 
         <YAxis
-          label={yAxisLabel ? { value: yAxisLabel, angle: -90, position: 'insideLeft' } : undefined}
+          width="auto"
         />
 
         {showTooltip && <Tooltip />}
@@ -73,10 +69,8 @@ export default function TimeSeriesChart({
 
         {series.map((s, index) => (
           <Line
-            key={s.dataKey}
             type="monotone"
             dataKey={s.dataKey}
-            name={s.name || s.dataKey}
             stroke={s.color || DEFAULT_COLORS[index % DEFAULT_COLORS.length]}
             strokeWidth={strokeWidth}
             dot={{ r: dotSize }}

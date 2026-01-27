@@ -5,7 +5,9 @@ import { Loading, PieChartComponent, StackedBarChart, TimeSeriesChart, useUserSt
 
 const Analysis = () => {
 	const idTypes = useUserStore((state) => state.idTypes)
-	const [chosenIdType, setChosenIdType] = useState()
+  	const updateIdTypes = useUserStore((state) => state.updateIdTypes)
+	const userId = useUserStore((state) => state.userId)
+
 	const [slider, setSlider] = useState(24)
 	const [tableSize, setTableSize] = useState()
 	const [idEfficiency, setIdEfficiency] = useState()
@@ -26,13 +28,13 @@ const Analysis = () => {
 			.then(data => data.json())
 			.then(efficiency => setPercentile({id: efficiency}))
 
-		setChosenIdType(id)
+		updateIdTypes(id)
 	}
 
 	const onChangeSlider = (e: any) => {
 		const hour = parseInt(e.target.value)
 		setSlider(hour)
-		fetchIdAnalytics(chosenIdType, hour)
+		fetchIdAnalytics(userId, hour)
 	}
 
 	useEffect(() => {
@@ -96,12 +98,11 @@ const Analysis = () => {
 
 			{comparison && <TimeSeriesChart
 				data={comparison}
-				title="ID Types Comparison Over Time"
 				series={[
-					{ dataKey: 'id_type', name: 'UUID', stroke: '#10b981' },
+					{ dataKey: 'avg_duration', name: 'Average Duration', stroke: '#10b981' },
+					{ dataKey: 'request_count', name: 'Request Count', stroke: '#3b82f6' },
 				]}
-				xAxisLabel="timestamp"
-				yAxisLabel="count"
+				xAxisKey="id_type"
 				width="80%"
 				height={450}
 			/>}
@@ -116,7 +117,7 @@ const Analysis = () => {
 				))}
 			</ul>
 
-
+			<hr />
 
 			<section className="flex justify-center mt-8">
 				<p>
