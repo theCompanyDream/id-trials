@@ -165,7 +165,7 @@ func (r *MetricsRepository) GetIdEfficiencyMetrics() ([]stats.IDEfficiency, erro
 		-- Waste factor (how many times larger than needed)
 		ROUND((avg_id_bytes / (LOG(2, row_count) / 8))::numeric, 2) AS waste_factor
 		FROM id_stats
-		ORDER BY efficiency_percent DESC;
+		ORDER BY efficiency_percent DESC
 	`).Scan(&results).Error
 
 	return results, err
