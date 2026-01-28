@@ -62,17 +62,6 @@ definitions:
           $ref: '#/definitions/models.UserDTO'
         type: array
     type: object
-  stats.ErrorRate:
-    properties:
-      error_count:
-        type: integer
-      error_percentage:
-        type: number
-      id_type:
-        type: string
-      total_requests:
-        type: integer
-    type: object
   stats.IDEfficiency:
     properties:
       avg_id_bytes:
@@ -97,35 +86,42 @@ definitions:
       request_count:
         type: integer
     type: object
-  stats.PercentileStats:
+  stats.PercentilePoint:
     properties:
-      p50:
+      percentile:
+        type: string
+      value:
         type: number
-      p75:
+    type: object
+  stats.PercentileTrend:
+    properties:
+      p50_duration:
         type: number
-      p90:
+      p95_duration:
         type: number
-      p95:
+      p99_duration:
         type: number
-      p99:
-        type: number
+      request_count:
+        type: integer
+      time_bucket:
+        type: string
     type: object
   stats.RoutePerformance:
     properties:
-      avg_db_duration:
-        type: number
       avg_duration:
         type: number
-      error_count:
-        type: integer
       http_method:
         type: string
       max_duration:
         type: number
+      median:
+        type: number
       min_duration:
         type: number
-      request_count:
-        type: integer
+      quartile1:
+        type: number
+      quartile3:
+        type: number
       route_path:
         type: string
     type: object
@@ -155,6 +151,42 @@ definitions:
 info:
   contact: {}
 paths:
+  /analytics/{type}/errors:
+    get:
+      consumes:
+      - application/json
+      description: Returns time series performance data for a specific ID type
+      parameters:
+      - description: ID Type
+        enum:
+        - uuid
+        - ulid
+        - ksuid
+        - cuid
+        - nanoid
+        - snowflake
+        in: path
+        name: type
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/stats.TimeSeriesPoint'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get time series data for charts
+      tags:
+      - Analytics
   /analytics/comparison:
     get:
       consumes:
@@ -237,29 +269,6 @@ paths:
       summary: Get ID efficiency metrics
       tags:
       - Analytics
-  /analytics/errors:
-    get:
-      consumes:
-      - application/json
-      description: Returns error rates across all ID types and routes
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              $ref: '#/definitions/stats.ErrorRate'
-            type: array
-        "500":
-          description: Internal Server Error
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-      summary: Get error rates
-      tags:
-      - Analytics
   /analytics/percentiles/{type}:
     get:
       consumes:
@@ -290,7 +299,11 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/stats.PercentileStats'
+            additionalProperties:
+              items:
+                $ref: '#/definitions/stats.PercentilePoint'
+              type: array
+            type: object
         "500":
           description: Internal Server Error
           schema:
@@ -341,11 +354,6 @@ paths:
         name: type
         required: true
         type: string
-      - default: 24
-        description: Number of hours to look back
-        in: query
-        name: hours
-        type: integer
       produces:
       - application/json
       responses:
@@ -353,7 +361,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/stats.TimeSeriesPoint'
+              $ref: '#/definitions/stats.PercentileTrend'
             type: array
         "500":
           description: Internal Server Error

@@ -1,3 +1,4 @@
+export { default as AreaChartComponent } from "./areachart"
 export { default as BoxPlotChart } from "./boxplot"
 export { default as BubbleChart } from "./bubble"
 export { default as PieChartComponent } from "./piechart"

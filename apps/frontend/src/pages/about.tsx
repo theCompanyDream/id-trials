@@ -9,8 +9,7 @@ export default function About() {
       </h1>
 
       <p className="leading-relaxed mb-3">
-        This website is a practical playground for comparing modern identifier
-        generation strategies. Initially this was a user project that was a test
+        This website is a playground for comparing modern identifier generation strategies. Initially this was a user project that was a test
          and it was just a less functional explore page. Then I saw theo's <a href="https://www.youtube.com/watch?v=a-K2C3sf1_Q">video</a>
          on the problem with UUIDS. Then I had the idea why not build an entire site dedicated to exploring the performance of different Id types.
       </p>

@@ -63,7 +63,7 @@ func (ac *AnalyticsController) GetIDTypeDetails(c echo.Context) error {
 // @Produce json
 // @Param type path string true "ID Type" Enums(uuid, ulid, ksuid, cuid, nanoid, snowflake)
 // @Param hours query int false "Number of hours to look back" default(24)
-// @Success 200 {object} map[string][]stats.PercentileStats
+// @Success 200 {object} map[string][]stats.PercentilePoint
 // @Failure 500 {object} map[string]string
 // @Router /analytics/percentiles/{type} [get]
 func (ac *AnalyticsController) GetPercentiles(c echo.Context) error {
@@ -80,17 +80,20 @@ func (ac *AnalyticsController) GetPercentiles(c echo.Context) error {
 	return c.JSON(http.StatusOK, stats)
 }
 
-// GetErrorRates godoc
-// @Summary Get error rates
-// @Description Returns error rates across all ID types and routes
+// GetIdDurationTrend godoc
+// @Summary Get time series data for charts
+// @Description Returns time series performance data for a specific ID type
 // @Tags Analytics
 // @Accept json
 // @Produce json
-// @Success 200 {array} stats.ErrorRate
+// @Param type path string true "ID Type" Enums(uuid, ulid, ksuid, cuid, nanoid, snowflake)
+// @Success 200 {array} stats.PercentileTrend
 // @Failure 500 {object} map[string]string
-// @Router /analytics/errors [get]
-func (ac *AnalyticsController) GetErrorRates(c echo.Context) error {
-	results, err := ac.Repo.GetErrorRates()
+// @Router /analytics/timeseries/{type} [get]
+func (ac *AnalyticsController) GetIdDurationTrend(c echo.Context) error {
+	idType := c.Param("type")
+
+	results, err := ac.Repo.GetIdDurationTrend(idType)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
 	}
@@ -104,18 +107,13 @@ func (ac *AnalyticsController) GetErrorRates(c echo.Context) error {
 // @Accept json
 // @Produce json
 // @Param type path string true "ID Type" Enums(uuid, ulid, ksuid, cuid, nanoid, snowflake)
-// @Param hours query int false "Number of hours to look back" default(24)
 // @Success 200 {array} stats.TimeSeriesPoint
 // @Failure 500 {object} map[string]string
-// @Router /analytics/timeseries/{type} [get]
-func (ac *AnalyticsController) GetTimeSeries(c echo.Context) error {
+// @Router /analytics/{type}/errors [get]
+func (ac *AnalyticsController) GetErrorRateTrend(c echo.Context) error {
 	idType := c.Param("type")
-	hours, _ := strconv.Atoi(c.QueryParam("hours"))
-	if hours == 0 {
-		hours = 24
-	}
 
-	results, err := ac.Repo.GetTimeSeriesData(idType, "hour", hours)
+	results, err := ac.Repo.GetErrorRateTrend(idType)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
 	}

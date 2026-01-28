@@ -57,10 +57,10 @@ func NewEchoServer(db *gorm.DB) *echo.Echo {
 	server.Use(metricsMiddleware.CaptureMetrics())
 
 	server.GET("/analytics/comparison", analyticsController.GetIDTypeComparison)
-	server.GET("/analytics/:type/details", analyticsController.GetIDTypeDetails)
-	server.GET("/analytics/:type/percentiles", analyticsController.GetPercentiles)
-	server.GET("/analytics/errors", analyticsController.GetErrorRates)
-	server.GET("/analytics/:type/timeseries", analyticsController.GetTimeSeries)
+	server.GET("/analytics/details/:type", analyticsController.GetIDTypeDetails)
+	server.GET("/analytics/percentiles/:type", analyticsController.GetPercentiles)
+	server.GET("/analytics/errors/:type", analyticsController.GetErrorRateTrend)
+	server.GET("/analytics/trend/:type", analyticsController.GetIdDurationTrend)
 	server.GET("/analytics/tableSize", analyticsController.GetTableSizeData)
 	server.GET("/analytics/idEfficiency", analyticsController.GetIdEfficiencyMetrics)
 	// Define main routes
@@ -138,10 +138,10 @@ func NewServerlessEchoServer(db *gorm.DB) *echo.Echo {
 	api := server.Group("/api")
 
 	api.GET("/analytics/comparison", analyticsController.GetIDTypeComparison)
-	api.GET("/analytics/:type/details", analyticsController.GetIDTypeDetails)
-	api.GET("/analytics/:type/percentiles", analyticsController.GetPercentiles)
-	api.GET("/analytics/errors", analyticsController.GetErrorRates)
-	api.GET("/analytics/:type/timeseries", analyticsController.GetTimeSeries)
+	api.GET("/analytics/details/:type", analyticsController.GetIDTypeDetails)
+	api.GET("/analytics/percentiles/:type", analyticsController.GetPercentiles)
+	api.GET("/analytics/errors/:type", analyticsController.GetErrorRateTrend)
+	api.GET("/analytics/trend/:type", analyticsController.GetIdDurationTrend)
 	api.GET("/analytics/tableSize", analyticsController.GetTableSizeData)
 	api.GET("/analytics/idEfficiency", analyticsController.GetIdEfficiencyMetrics)
 	// Define main routes

@@ -1,7 +1,17 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
-import { Loading, BoxPlotChart, PieChartComponent, StackedBarChart, TimeSeriesChart, transformPercentileData, useUserStore, DEFAULT_COLORS } from '@backpack';
+import {
+	Loading,
+	AreaChartComponent,
+	BoxPlotChart,
+	PieChartComponent,
+	StackedBarChart,
+	TimeSeriesChart,
+	transformPercentileData,
+	useUserStore,
+	DEFAULT_COLORS
+} from '@backpack';
 
 const Analysis = () => {
 	const idTypes = useUserStore((state) => state.idTypes);
@@ -13,16 +23,18 @@ const Analysis = () => {
 	const [idEfficiency, setIdEfficiency] = useState<any>(null);
 	const [comparison, setComparison] = useState<any>(null);
 	const [percentiles, setPercentiles] = useState<any>(null);
-	const [timeSeries, setTimeSeries] = useState<any>(null);
 	const [details, setDetails] = useState<any>(null);
+	const [trends, setTrends] = useState<any>(null);
+	const [errorRates, setErrorRates] = useState<any>(null);
 
 	const fetchIdAnalytics = async (id: string, hour: number) => {
 		try {
 			// Fetch all in parallel
-			const [detailsRes, timeSeriesRes, percentilesRes] = await Promise.all([
-				fetch(`/api/analytics/${id}/details`),
-				fetch(`/api/analytics/${id}/timeseries?hours=${hour}`),
-				fetch(`/api/analytics/${id}/percentiles`)
+			const [detailsRes, percentilesRes, trendRes, errorRateRes] = await Promise.all([
+				fetch(`/api/analytics/details/${id}`),
+				fetch(`/api/analytics/percentiles/${id}?hours=${hour}`),
+				fetch(`/api/analytics/trend/${id}?hours=${hour}`),
+				fetch(`/api/analytics/errors/${id}`)
 			]).then(responses => Promise.all(responses.map(res => {
 				if (!res.ok) {
 					throw new Error(`Failed to fetch: ${res.url}`);
@@ -32,15 +44,21 @@ const Analysis = () => {
 
 			const chartData = transformPercentileData(percentilesRes);
 
-			setTimeSeries(timeSeriesRes);
+			// setTimeSeries(timeSeriesRes);
 			setPercentiles(chartData);
 			setDetails(detailsRes);
+			setTrends(trendRes);
+			setErrorRates(errorRateRes);
 
 			updateIdTypes(id);
 		} catch (error) {
 			console.error('Failed to fetch analytics:', error);
 		}
 	};
+
+	const onClick = (idType: string) => {
+		fetchIdAnalytics(idType, slider);
+	}
 
 	const onChangeSlider = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const hour = parseInt(e.target.value);
@@ -278,8 +296,6 @@ const Analysis = () => {
 					</div>
 				</div>
 
-				{/* Time Series and Percentiles - Conditional Rendering */}
-
 				{percentiles && (
 					<div className="bg-white rounded-lg shadow-lg p-6">
 						<div className="flex items-center mb-4">
@@ -311,6 +327,45 @@ const Analysis = () => {
 						</div>
 						<BoxPlotChart data={details} height={500} />
 					</div>
+				)}
+
+				{
+					trends && (
+						<div className="bg-white rounded-lg shadow-lg p-6">
+							<div className="flex items-center mb-4">
+								<div className="h-2 w-2 rounded-full bg-red-500 mr-2"></div>
+								<h3 className="text-lg font-semibold">Error Rate Trend</h3>
+								<AreaChartComponent
+									data={trends}
+									series={[
+										{ dataKey: 'p50_duration', name: 'P50', fill: '#3b82f6', stroke: '#1d4ed8' },
+										{ dataKey: 'p95_duration', name: 'P95', fill: '#f59e0b', stroke: '#d97706' },
+										{ dataKey: 'p99_duration', name: 'P99', fill: '#ef4444', stroke: '#dc2626' }
+									]}
+									stackId="percentiles"
+									height={450}
+								/>
+							</div>
+						</div>
+				)}
+
+				{
+					errorRates && (
+						<div className="bg-white rounded-lg shadow-lg p-6">
+							<div className="flex items-center mb-4">
+								<div className="h-2 w-2 rounded-full bg-red-500 mr-2"></div>
+								<h3 className="text-lg font-semibold">Error Rate Trend</h3>
+									<AreaChartComponent
+									data={errorRates}
+									series={[
+										{ dataKey: 'error_count', name: 'Errors', fill: '#ef4444', stroke: '#dc2626' },
+										{ dataKey: 'request_count', name: 'Successful', fill: '#10b981', stroke: '#059669' }
+									]}
+									stackId="errors"
+									height={450}
+									/>
+							</div>
+						</div>
 				)}
 
 				{/* Call to Action */}

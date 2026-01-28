@@ -77,41 +77,40 @@ func (r *MetricsRepository) GetPercentiles(idType string, hours int) (*map[strin
 	return &result, nil
 }
 
-// Get error rate by ID type
-func (r *MetricsRepository) GetErrorRates() ([]stats.ErrorRate, error) {
-	var results []stats.ErrorRate
+// Get time series data (for charts)
+func (r *MetricsRepository) GetErrorRateTrend(idType string) ([]stats.ErrorRateTrend, error) {
+	var results []stats.ErrorRateTrend
 
 	err := r.DB.Model(&models.RouteMetric{}).
 		Select(`
-            id_type,
-            COUNT(*) as total_requests,
-            SUM(CASE WHEN is_error THEN 1 ELSE 0 END) as error_count,
-            (SUM(CASE WHEN is_error THEN 1 ELSE 0 END) * 100.0 / COUNT(*)) as error_percentage
-        `).
-		Group("id_type").
+			DATE_TRUNC('hour', timestamp) as time_bucket,
+			COUNT(*) as request_count,
+			SUM(CASE WHEN is_error THEN 1 ELSE 0 END) as error_count,
+			ROUND(100.0 * SUM(CASE WHEN is_error THEN 1 ELSE 0 END) / COUNT(*), 2) as error_rate
+		`).
+		Where("id_type = ?", idType).
+		Group("DATE_TRUNC('hour', timestamp)").
+		Order("time_bucket ASC").
+		Limit(20).
 		Scan(&results).Error
 
 	return results, err
 }
 
-// Get time series data (for charts)
-func (r *MetricsRepository) GetTimeSeriesData(idType string, interval string, hours int) ([]stats.TimeSeriesPoint, error) {
-	var results []stats.TimeSeriesPoint
+func (r *MetricsRepository) GetIdDurationTrend(idType string) ([]stats.PercentileTrend, error) {
+	var results []stats.PercentileTrend
 
-	// PostgreSQL-specific for hourly grouping
-	query := `
-        SELECT
-            DATE_TRUNC('hour', timestamp) as time_bucket,
-            AVG(total_duration) as avg_duration,
-            COUNT(*) as request_count
-        FROM route_metrics
-        WHERE id_type = ?
-        AND timestamp >= ?
-        GROUP BY time_bucket
-        ORDER BY time_bucket ASC
-    `
-
-	err := r.DB.Raw(query, idType, time.Now().Add(-time.Duration(hours)*time.Hour)).
+	err := r.DB.Model(&models.RouteMetric{}).
+		Select(`
+			DATE_TRUNC('hour', timestamp) as time_bucket,
+			COUNT(*) as request_count,
+			PERCENTILE_CONT(0.50) WITHIN GROUP (ORDER BY total_duration) as p50_duration,
+			PERCENTILE_CONT(0.95) WITHIN GROUP (ORDER BY total_duration) as p95_duration,
+			PERCENTILE_CONT(0.99) WITHIN GROUP (ORDER BY total_duration) as p99_duration
+		`).
+		Where("id_type = ?", idType).
+		Group("DATE_TRUNC('hour', timestamp)").
+		Order("time_bucket ASC").
 		Scan(&results).Error
 
 	return results, err
