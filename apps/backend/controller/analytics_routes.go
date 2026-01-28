@@ -63,7 +63,7 @@ func (ac *AnalyticsController) GetIDTypeDetails(c echo.Context) error {
 // @Produce json
 // @Param type path string true "ID Type" Enums(uuid, ulid, ksuid, cuid, nanoid, snowflake)
 // @Param hours query int false "Number of hours to look back" default(24)
-// @Success 200 {object} stats.PercentileStats
+// @Success 200 {object} map[string][]stats.PercentileStats
 // @Failure 500 {object} map[string]string
 // @Router /analytics/percentiles/{type} [get]
 func (ac *AnalyticsController) GetPercentiles(c echo.Context) error {

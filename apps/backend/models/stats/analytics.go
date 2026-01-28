@@ -20,12 +20,9 @@ type RoutePerformance struct {
 	ErrorCount    int     `json:"error_count"`
 }
 
-type PercentileStats struct {
-	P50 float64 `json:"p50"`
-	P75 float64 `json:"p75"`
-	P90 float64 `json:"p90"`
-	P95 float64 `json:"p95"`
-	P99 float64 `json:"p99"`
+type PercentilePoint struct {
+	Percentile string  `json:"percentile"`
+	Value      float64 `json:"value"`
 }
 
 type ErrorRate struct {

@@ -53,21 +53,28 @@ func (r *MetricsRepository) GetPerformanceByRoute(idType string) ([]stats.RouteP
 }
 
 // Get percentile performance
-func (r *MetricsRepository) GetPercentiles(idType string, hours int) (*stats.PercentileStats, error) {
-	var durations []float64
+func (r *MetricsRepository) GetPercentiles(idType string, hours int) (*map[string][]stats.PercentilePoint, error) {
+	// var result []stats.PercentileStats
+	methods := []string{"GET", "POST", "PUT", "DELETE"}
+	result := make(map[string][]stats.PercentilePoint)
 
-	err := r.DB.Model(&models.RouteMetric{}).
-		Select("total_duration").
-		Where("id_type = ? AND is_error = ? AND timestamp >= ?",
-			idType, false, time.Now().Add(-time.Duration(hours)*time.Hour)).
-		Order("total_duration ASC").
-		Pluck("total_duration", &durations).Error
+	for _, method := range methods {
+		var durations []float64
+		err := r.DB.Model(&models.RouteMetric{}).
+			Select("total_duration").
+			Where("id_type = ? AND is_error = ? AND timestamp >= ? AND http_method = ?",
+				idType, false, time.Now().Add(-time.Duration(hours)*time.Hour), method).
+			Order("total_duration ASC").
+			Pluck("total_duration", &durations).Error
 
-	if err != nil {
-		return nil, err
+		if err != nil {
+			return nil, err
+		}
+
+		result[method] = utils.CalculatePercentiles(durations)
 	}
 
-	return utils.CalculatePercentiles(durations), nil
+	return &result, nil
 }
 
 // Get error rate by ID type
