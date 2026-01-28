@@ -16,7 +16,7 @@ const useUserStore = create((set, get) => ({
     },
     getIdTypesArray: (renderfunc) => {
         const { idTypesMap } = get();
-        return Object.entries(idTypesMap).map(([key, value]) => renderfunc(key, value));
+        return Object.entries(idTypesMap).map(([key, value], index) => renderfunc(key, value, index));
     },
     updateStore: (filters) => set({ ...filters }),
     updateIdTypes: (newIdTypes) => {

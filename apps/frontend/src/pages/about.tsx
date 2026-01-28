@@ -41,7 +41,7 @@ export default function About() {
         <div className="rounded-2xl bg-slate-900/60 p-6 shadow-lg">
           <h2 className="text-xl font-semibold mb-2">What’s Being Tested</h2>
           <ul className="list-disc list-inside space-y-1">
-            {getIdTypesArray((key, idType) => (
+            {getIdTypesArray((key, idType, idx) => (
               <li key={key}>{idType.name}</li>
             ))}
           </ul>

@@ -154,7 +154,7 @@ const UserDetail = () => {
             value={userId}
             className="px-4 py-2 border rounded-lg bg-white w-full font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition hover:border-blue-400 cursor-pointer"
           >
-            {getIdTypesArray((key, type) => (
+            {getIdTypesArray((key, type, idx) => (
               <option key={key} value={type.value}>
                 {type.name}
               </option>

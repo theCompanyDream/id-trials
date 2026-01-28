@@ -277,7 +277,7 @@ const Analysis = () => {
 						Select an ID type to view detailed performance metrics
 					</p>
 					<div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-						{getIdTypesArray((key, idType) => (
+						{getIdTypesArray((key, idType, idx) => (
 							<button
 								key={key}
 								onClick={() => fetchIdAnalytics(idType.analytics, slider)}
