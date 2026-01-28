@@ -12,7 +12,7 @@ const Analysis = () => {
 	const [tableSize, setTableSize] = useState<any>(null);
 	const [idEfficiency, setIdEfficiency] = useState<any>(null);
 	const [comparison, setComparison] = useState<any>(null);
-	const [percentile, setPercentile] = useState<any>(null);
+	const [percentiles, setPercentiles] = useState<any>(null);
 	const [timeSeries, setTimeSeries] = useState<any>(null);
 	const [details, setDetails] = useState<any>(null);
 
@@ -23,16 +23,23 @@ const Analysis = () => {
 				fetch(`/api/analytics/${id}/details`),
 				fetch(`/api/analytics/${id}/timeseries?hours=${hour}`),
 				fetch(`/api/analytics/${id}/percentiles`)
-			]);
+			]).then(responses => Promise.all(responses.map(res => {
+				if (!res.ok) {
+					throw new Error(`Failed to fetch: ${res.url}`);
+				}
+				return res.json();
+			})));
 
-			const details = await detailsRes.json();
-			const timeSeriesData = await timeSeriesRes.json();
-			const percentilesData = await percentilesRes.json();
+			const percentilesData = Object.entries(percentilesRes).map(([percentile, value]) => ({
+				name: percentile,
+				percent: value  // or whatever ID type this is
+			}));
 
-			// Set state properly (was overwriting before!)
-			setTimeSeries(timeSeriesData);
-			setPercentile(percentilesData);
-			setDetails(details);
+			console.log('Fetched ID Analytics:', percentilesData);
+
+			setTimeSeries(timeSeriesRes);
+			setPercentiles(percentilesData);
+			setDetails(detailsRes);
 
 			updateIdTypes(id);
 		} catch (error) {
@@ -51,15 +58,15 @@ const Analysis = () => {
 	useEffect(() => {
 		const fetchInitialData = async () => {
 			try {
-				await fetch(`/api/analytics/tableSize?`)
+				fetch(`/api/analytics/tableSize?`)
 					.then(data => data.json())
 					.then(table => setTableSize(table.map(t => ({ name: t.table_name, value: t.size, sizePretty: t.size_pretty }))))
 
-				await fetch(`/api/analytics/idEfficiency`)
+				fetch(`/api/analytics/idEfficiency`)
 					.then(data => data.json())
 					.then(efficiency => setIdEfficiency(efficiency))
 
-				await fetch("/api/analytics/comparison")
+				fetch("/api/analytics/comparison")
 					.then(data => data.json())
 					.then(comparison => setComparison(comparison))
 			} catch (error) {
@@ -68,7 +75,7 @@ const Analysis = () => {
 		};
 
 		fetchInitialData();
-	}, []);
+	}, [setTableSize, setIdEfficiency, setComparison]);
 
 	if (!tableSize) {
 		return <Loading />;
@@ -87,7 +94,6 @@ const Analysis = () => {
 			</section>
 
 			<section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
-
 				{/* Overview Cards */}
 				<div className="grid grid-cols-1 md:grid-cols-3 gap-6">
 					<div className="bg-white rounded-lg shadow p-6 border-l-4 border-blue-500">
@@ -277,39 +283,34 @@ const Analysis = () => {
 				</div>
 
 				{/* Time Series and Percentiles - Conditional Rendering */}
+
+				{percentiles && (
+					<div className="bg-white rounded-lg shadow-lg p-6">
+						<div className="flex items-center mb-4">
+							<div className="h-2 w-2 rounded-full bg-teal-500 mr-2"></div>
+							<h3 className="text-lg font-semibold">Percentile Distribution</h3>
+						</div>
+						<div className="gap-4">
+							<TimeSeriesChart
+								data={percentiles}
+								series={[
+									{ dataKey: 'percent', name: 'Name', stroke: '#f97316' },
+								]}
+								xAxisKey="name"
+								width="100%"
+								height={400}
+							/>
+						</div>
+					</div>
+				)}
+
 				{timeSeries && (
 					<div className="bg-white rounded-lg shadow-lg p-6">
 						<div className="flex items-center mb-4">
 							<div className="h-2 w-2 rounded-full bg-orange-500 mr-2"></div>
 							<h3 className="text-lg font-semibold">Time Series Data</h3>
 						</div>
-						<TimeSeriesChart
-							data={timeSeries}
-							series={[
-								{ dataKey: 'avg_duration', name: 'Average Duration', stroke: '#f97316' },
-							]}
-							xAxisKey="timestamp"
-							height={400}
-						/>
-					</div>
-				)}
 
-				{percentile && (
-					<div className="bg-white rounded-lg shadow-lg p-6">
-						<div className="flex items-center mb-4">
-							<div className="h-2 w-2 rounded-full bg-teal-500 mr-2"></div>
-							<h3 className="text-lg font-semibold">Percentile Distribution</h3>
-						</div>
-						<div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-							{['p50', 'p75', 'p90', 'p95', 'p99'].map((p) => (
-								<div key={p} className="rounded-lg p-4 text-center">
-									<p className="text-sm uppercase mb-1">{p}</p>
-									<p className="text-2xl font-bold">
-										{percentile[p]?.toFixed(2) || 'N/A'}ms
-									</p>
-								</div>
-							))}
-						</div>
 					</div>
 				)}
 

@@ -1,6 +1,4 @@
 export { default as BubbleChart } from "./bubble"
-export { default as HistogramChart } from "./histogram"
-export { default as PercentileChart } from "./percentile"
 export { default as PieChartComponent } from "./piechart"
 export { default as StackedBarChart } from "./stackedbarchart"
 export { default as TimeSeriesChart } from "./timeseries"
