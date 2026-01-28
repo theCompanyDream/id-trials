@@ -10,14 +10,14 @@ type IDTypePerformance struct {
 }
 
 type RoutePerformance struct {
-	RoutePath     string  `json:"route_path"`
-	HTTPMethod    string  `json:"http_method"`
-	AvgDuration   float64 `json:"avg_duration"`
-	MinDuration   float64 `json:"min_duration"`
-	MaxDuration   float64 `json:"max_duration"`
-	AvgDBDuration float64 `json:"avg_db_duration"`
-	RequestCount  int     `json:"request_count"`
-	ErrorCount    int     `json:"error_count"`
+	RoutePath   string  `json:"route_path"`
+	HTTPMethod  string  `json:"http_method"`
+	AvgDuration float64 `json:"avg_duration"`
+	MinDuration float64 `json:"min_duration"`
+	MaxDuration float64 `json:"max_duration"`
+	Quartile1   float64 `json:"quartile1"`
+	Median      float64 `json:"median"`
+	Quartile3   float64 `json:"quartile3"`
 }
 
 type PercentilePoint struct {

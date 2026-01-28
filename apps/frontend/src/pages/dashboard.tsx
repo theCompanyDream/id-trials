@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
-import { Loading, PieChartComponent, StackedBarChart, TimeSeriesChart, transformPercentileData, useUserStore, DEFAULT_COLORS } from '@backpack';
+import { Loading, BoxPlotChart, PieChartComponent, StackedBarChart, TimeSeriesChart, transformPercentileData, useUserStore, DEFAULT_COLORS } from '@backpack';
 
 const Analysis = () => {
 	const idTypes = useUserStore((state) => state.idTypes);
@@ -303,13 +303,13 @@ const Analysis = () => {
 					</div>
 				)}
 
-				{timeSeries && (
+				{details && (
 					<div className="bg-white rounded-lg shadow-lg p-6">
 						<div className="flex items-center mb-4">
 							<div className="h-2 w-2 rounded-full bg-orange-500 mr-2"></div>
 							<h3 className="text-lg font-semibold">Time Series Data</h3>
 						</div>
-
+						<BoxPlotChart data={details} height={500} />
 					</div>
 				)}
 

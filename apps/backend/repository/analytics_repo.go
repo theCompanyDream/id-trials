@@ -40,10 +40,10 @@ func (r *MetricsRepository) GetPerformanceByRoute(idType string) ([]stats.RouteP
             http_method,
             AVG(total_duration) as avg_duration,
             MIN(total_duration) as min_duration,
-            MAX(total_duration) as max_duration,
-            AVG(db_query_duration) as avg_db_duration,
-            COUNT(*) as request_count,
-            SUM(CASE WHEN is_error THEN 1 ELSE 0 END) as error_count
+			PERCENTILE_CONT(0.25) WITHIN GROUP (ORDER BY total_duration) as quartile1,
+			PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY total_duration) as median,
+			PERCENTILE_CONT(0.75) WITHIN GROUP (ORDER BY total_duration) as quartile3,
+            MAX(total_duration) as max_duration
         `).
 		Where("id_type = ?", idType).
 		Group("route_path, http_method").
