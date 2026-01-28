@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
-import { Loading, PieChartComponent, StackedBarChart, TimeSeriesChart, useUserStore } from '@backpack';
+import { Loading, PieChartComponent, StackedBarChart, TimeSeriesChart, transformPercentileData, useUserStore } from '@backpack';
 
 const Analysis = () => {
 	const idTypes = useUserStore((state) => state.idTypes);
@@ -30,15 +30,10 @@ const Analysis = () => {
 				return res.json();
 			})));
 
-			const percentilesData = Object.entries(percentilesRes).map(([percentile, value]) => ({
-				name: percentile,
-				percent: value  // or whatever ID type this is
-			}));
-
-			console.log('Fetched ID Analytics:', percentilesData);
+			const chartData = transformPercentileData(percentilesRes);
 
 			setTimeSeries(timeSeriesRes);
-			setPercentiles(percentilesData);
+			setPercentiles(chartData);
 			setDetails(detailsRes);
 
 			updateIdTypes(id);
@@ -294,9 +289,12 @@ const Analysis = () => {
 							<TimeSeriesChart
 								data={percentiles}
 								series={[
-									{ dataKey: 'percent', name: 'Duration', stroke: '#f97316' },
+									{ dataKey: 'POST', name: 'POST Duration (ms)', stroke: '#14b8a6' },
+									{ dataKey: 'GET', name: 'GET Duration (ms)', stroke: '#0ea5e9' },
+									{ dataKey: 'PUT', name: 'PUT Duration (ms)', stroke: '#8b5cf6' },
+									{ dataKey: 'DELETE', name: 'DELETE Duration (ms)', stroke: '#f43f5e' },
 								]}
-								xAxisKey="name"
+								xAxisKey="percentile"
 								width="100%"
 								height={400}
 							/>
