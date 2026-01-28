@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react';
 
-import { useUserStore, Table, Loading } from '../components';
+import { useUserStore, Table, Loading } from '@backpack';
 
 const UserTable = () => {
   const users = useUserStore((state) => state.users)
   const page = useUserStore((state) => state.page)
   const page_count = useUserStore((state) => state.page_count)
   const userId = useUserStore((state) => state.userId)
+	const idTypes = useUserStore((state) => state.idTypes)
   const updateStore = useUserStore((state) => state.updateStore)
+  const updateIdTypes = useUserStore((state) => state.updateIdTypes)
   const [isfetch, setFetched] = useState(false);
   const [search, setSearch] = useState("");
 
@@ -17,7 +19,7 @@ const UserTable = () => {
     await fetch(`/api/${userId}s?search=${encodeURIComponent(query)}&page=${page}`)
       .then((response) => response.json())
       .then((data) => {
-        updateStore({...data})
+        updateStore(data)
         setFetched(true);
       })
       .catch((err) => {
@@ -31,8 +33,8 @@ const UserTable = () => {
       method: "DELETE"
     })
     .then((data) => {
-      const newUsers = users.users.filter(user => id != user.id);
-      setUsers({...users, users: newUsers})
+      const newUsers = users.filter(user => id !== user.id);
+      updateStore({users: newUsers})
     })
   }
 
@@ -48,9 +50,7 @@ const UserTable = () => {
   };
 
   const handleSelect = (e) => {
-    updateStore({
-      userId: e.target.value
-    })
+    updateIdTypes(e.target.value)
   }
 
   // Trigger initial data fetch if no users yet
@@ -74,14 +74,13 @@ const UserTable = () => {
           <select
             onChange={handleSelect}  // Changed from onSelect to onChange
             value={userId}
-            className="px-4 py-2 border border-gray-300 rounded-lg bg-white text-gray-800 font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition hover:border-blue-400 cursor-pointer"
+            className="px-4 py-2 border border-gray-300 rounded-lg bg-white font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition hover:border-blue-400 cursor-pointer"
           >
-            <option value="uuid4">UUID</option>
-            <option value="cuidId">CUID</option>
-            <option value="snowId">Snowflake</option>
-            <option value="ksuidId">KSUID</option>
-            <option value="ulidId">ULID</option>
-            <option value="nanoId">NanoID</option>
+            {idTypes.map((type) => (
+              <option key={type.value} value={type.value}>
+                {type.name}
+              </option>
+            ))}
           </select>
 
           <input

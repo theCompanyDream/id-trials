@@ -9,9 +9,17 @@
 		"src": "apps/frontend/package.json",
 		"use": "@vercel/static-build",
 		"config": { "distDir": "dist/frontend" }
+	  },
+	 {
+		"src": "api/analytics/index.py",
+		"use": "@vercel/python"
 	  }
 	],
 	"routes": [
+      {
+		"src": "/api/analytics",
+		"dest": "api/analytics/index.py"
+      },
 	  {
 		"src": "/api/.*",
 		"dest": "api/index.go"

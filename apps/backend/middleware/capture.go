@@ -40,29 +40,32 @@ func (m *MetricsMiddleware) CaptureMetrics() echo.MiddlewareFunc {
 			// Extract ID type from route
 			idType := ExtractIDType(c.Path())
 
-			// Create metric record
-			metric := models.RouteMetric{
-				RoutePath:       c.Path(),
-				HTTPMethod:      c.Request().Method,
-				IDType:          idType,
-				TotalDuration:   float64(duration.Milliseconds()),
-				DBQueryDuration: dbDuration,
-				HandlerDuration: float64(duration.Milliseconds()) - dbDuration,
-				StatusCode:      c.Response().Status,
-				ResponseSize:    int(c.Response().Size),
-				IsError:         err != nil || c.Response().Status >= 400,
-				RequestID:       c.Response().Header().Get(echo.HeaderXRequestID),
-				Timestamp:       start,
-				UserAgent:       c.Request().UserAgent(),
-				IPAddress:       c.RealIP(),
-			}
+			if idType != "Unknown" {
+				// Create metric record
+				c.Logger().Infof("Do you see this %s", idType)
+				metric := models.RouteMetric{
+					RoutePath:       c.Path(),
+					HTTPMethod:      c.Request().Method,
+					IDType:          idType,
+					TotalDuration:   float64(duration.Milliseconds()),
+					DBQueryDuration: dbDuration,
+					HandlerDuration: float64(duration.Milliseconds()) - dbDuration,
+					StatusCode:      c.Response().Status,
+					ResponseSize:    int(c.Response().Size),
+					IsError:         err != nil || c.Response().Status >= 400,
+					RequestID:       c.Response().Header().Get(echo.HeaderXRequestID),
+					Timestamp:       start,
+					UserAgent:       c.Request().UserAgent(),
+					IPAddress:       c.RealIP(),
+				}
 
-			if err != nil {
-				metric.ErrorMessage = err.Error()
-			}
+				if err != nil {
+					metric.ErrorMessage = err.Error()
+				}
 
-			// Save asynchronously to avoid slowing down response
-			go m.saveMetric(metric)
+				// Save asynchronously to avoid slowing down response
+				go m.saveMetric(metric)
+			}
 
 			return err
 		}

@@ -9,8 +9,8 @@ import (
 	"github.com/brianvoe/gofakeit/v6"
 	"github.com/bwmarrin/snowflake"
 	"github.com/google/uuid"
-	"github.com/lucsky/cuid"
 	gonanoid "github.com/matoous/go-nanoid/v2"
+	"github.com/nrednav/cuid2"
 	"github.com/oklog/ulid/v2"
 	"github.com/segmentio/ksuid"
 	"gorm.io/gorm"
@@ -258,7 +258,7 @@ func generateCUIDData(db *gorm.DB, totalRecords, batchSize int) {
 			firstName := gofakeit.FirstName()
 			lastName := gofakeit.LastName()
 			users = append(users, models.UserCUID{
-				ID: cuid.New(),
+				ID: cuid2.Generate(),
 				UserBase: &models.UserBase{
 					UserName:   gofakeit.Username(),
 					FirstName:  firstName,
