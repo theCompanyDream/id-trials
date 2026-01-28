@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
-import { Loading, PieChartComponent, StackedBarChart, TimeSeriesChart, transformPercentileData, useUserStore } from '@backpack';
+import { Loading, PieChartComponent, StackedBarChart, TimeSeriesChart, transformPercentileData, useUserStore, DEFAULT_COLORS } from '@backpack';
 
 const Analysis = () => {
 	const idTypes = useUserStore((state) => state.idTypes);
@@ -259,11 +259,12 @@ const Analysis = () => {
 						Select an ID type to view detailed performance metrics
 					</p>
 					<div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-						{idTypes.map((idType) => (
+						{idTypes.map((idType, idx) => (
 							<button
 								key={idType.value}
 								onClick={() => fetchIdAnalytics(idType.analytics, slider)}
-								className="group relative overflow-hidden bg-gradient-to-br from-blue-500 to-blue-600 text-white p-4 rounded-lg shadow-md hover:shadow-xl hover:from-blue-600 hover:to-blue-700 transition-all duration-200 transform hover:scale-105"
+								className="group relative overflow-hidden text-white p-4 rounded-lg shadow-md hover:shadow-xl hover:from-blue-600 hover:to-blue-700 transition-all duration-200 transform hover:scale-105"
+								style={{ backgroundColor: DEFAULT_COLORS[idx % DEFAULT_COLORS.length] }}
 							>
 								<div className="flex flex-col items-center">
 									<svg className="h-8 w-8 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">

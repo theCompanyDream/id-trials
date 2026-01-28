@@ -16,7 +16,6 @@ interface StackedBarChartProps {
   showGrid?: boolean;
   showLegend?: boolean;
   showTooltip?: boolean;
-  layout?: 'horizontal' | 'vertical';
 }
 
 export default function StackedBarChart({
@@ -29,7 +28,6 @@ export default function StackedBarChart({
   showGrid = false,
   showLegend = true,
   showTooltip = true,
-  layout = 'vertical'
 }: StackedBarChartProps) {
   return (
     <ResponsiveContainer width={width} height={height}>

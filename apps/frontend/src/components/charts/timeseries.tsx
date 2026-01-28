@@ -9,6 +9,8 @@ import {
   ResponsiveContainer
 } from 'recharts';
 
+import { DEFAULT_COLORS } from '@backpack';
+
 interface TimeSeriesDataPoint {
   timestamp: string | number | Date;
   [key: string]: string | number | Date;
@@ -33,11 +35,6 @@ interface TimeSeriesChartProps {
   strokeWidth?: number;
   dotSize?: number;
 }
-
-const DEFAULT_COLORS = [
-  '#8884d8', '#82ca9d', '#ffc658', '#ff7c7c',
-  '#8dd1e1', '#a4de6c', '#d0ed57', '#ffa07a'
-];
 
 export default function TimeSeriesChart({
   data,
