@@ -33,7 +33,7 @@ const Analysis = () => {
 			const [detailsRes, percentilesRes, trendRes, errorRateRes] = await Promise.all([
 				fetch(`/api/analytics/details/${userId}`),
 				fetch(`/api/analytics/percentiles/${userId}?hours=${slider}`),
-				fetch(`/api/analytics/trend/${userId}?hours=${slider}`),
+				fetch(`/api/analytics/trend/${userId}`),
 				fetch(`/api/analytics/errors/${userId}`)
 			]).then(responses => Promise.all(responses.map(res => {
 				if (!res.ok) {
