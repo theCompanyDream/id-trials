@@ -6,8 +6,8 @@ const UserDetail = () => {
   const { id } = useParams(); // If there's an ID, we're editing an existing user.
   const navigate = useNavigate(); // For programmatic navigation
   const userId = useUserStore((state) => state.userId)
-  const idTypes = useUserStore((state) => state.idTypes)
   const updateStore = useUserStore((state) => state.updateIdTypes)
+  const getIdTypesArray = useUserStore((state) => state.getIdTypesArray)
 
   // Initialize form data with empty strings.
   const [formData, setFormData] = useState({
@@ -154,8 +154,8 @@ const UserDetail = () => {
             value={userId}
             className="px-4 py-2 border rounded-lg bg-white w-full font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition hover:border-blue-400 cursor-pointer"
           >
-            {idTypes.map((type) => (
-              <option key={type.value} value={type.value}>
+            {getIdTypesArray((key, type) => (
+              <option key={key} value={type.value}>
                 {type.name}
               </option>
             ))}

@@ -14,9 +14,9 @@ import {
 } from '@backpack';
 
 const Analysis = () => {
-	const idTypes = useUserStore((state) => state.idTypes);
 	const updateIdTypes = useUserStore((state) => state.updateIdTypes);
 	const userId = useUserStore((state) => state.userId);
+	const getIdTypesArray = useUserStore((state) => state.getIdTypesArray)
 
 	const [slider, setSlider] = useState(24);
 	const [tableSize, setTableSize] = useState<any>(null);
@@ -277,9 +277,9 @@ const Analysis = () => {
 						Select an ID type to view detailed performance metrics
 					</p>
 					<div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-						{idTypes.map((idType, idx) => (
+						{getIdTypesArray((key, idType) => (
 							<button
-								key={idType.value}
+								key={key}
 								onClick={() => fetchIdAnalytics(idType.analytics, slider)}
 								className="group relative overflow-hidden text-white p-4 rounded-lg shadow-md hover:shadow-xl hover:from-blue-600 hover:to-blue-700 transition-all duration-200 transform hover:scale-105"
 								style={{ backgroundColor: DEFAULT_COLORS[idx % DEFAULT_COLORS.length] }}

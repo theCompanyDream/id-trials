@@ -7,9 +7,9 @@ const UserTable = () => {
   const page = useUserStore((state) => state.page)
   const page_count = useUserStore((state) => state.page_count)
   const userId = useUserStore((state) => state.userId)
-	const idTypes = useUserStore((state) => state.idTypes)
   const updateStore = useUserStore((state) => state.updateStore)
   const updateIdTypes = useUserStore((state) => state.updateIdTypes)
+  const getIdTypesArray = useUserStore((state) => state.getIdTypesArray)
   const [isfetch, setFetched] = useState(false);
   const [search, setSearch] = useState("");
 
@@ -76,8 +76,8 @@ const UserTable = () => {
             value={userId}
             className="px-4 py-2 border border-gray-300 rounded-lg bg-white font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition hover:border-blue-400 cursor-pointer"
           >
-            {idTypes.map((type) => (
-              <option key={type.value} value={type.value}>
+            {getIdTypesArray((key, type) => (
+              <option key={key} value={type.value}>
                 {type.name}
               </option>
             ))}
