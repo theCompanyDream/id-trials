@@ -288,13 +288,13 @@ const Analysis = () => {
 					<div className="bg-white rounded-lg shadow-lg p-6">
 						<div className="flex items-center mb-4">
 							<div className="h-2 w-2 rounded-full bg-teal-500 mr-2"></div>
-							<h3 className="text-lg font-semibold">Percentile Distribution</h3>
+							<h3 className="text-lg font-semibold">Percentile Duration Distribution</h3>
 						</div>
 						<div className="gap-4">
 							<TimeSeriesChart
 								data={percentiles}
 								series={[
-									{ dataKey: 'percent', name: 'Name', stroke: '#f97316' },
+									{ dataKey: 'percent', name: 'Duration', stroke: '#f97316' },
 								]}
 								xAxisKey="name"
 								width="100%"
