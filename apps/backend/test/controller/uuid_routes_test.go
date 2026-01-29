@@ -42,9 +42,6 @@ func TestGetUuid_Success(t *testing.T) {
 	c.SetParamNames("id")
 	c.SetParamValues("cmk7nncf000054hz3gxgka8v9")
 
-	// Note: You'll need to expose the repo field or use dependency injection
-	// For now, this shows the pattern
-
 	// ✅ Inject the mock into the controller
 	controller := &controller.UuidUsersController{
 		Repo: mockRepo, // Set the repo field directly

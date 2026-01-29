@@ -15,6 +15,11 @@ type MyLogger struct {
 
 var Logger MyLogger
 
+// ✅ Initialize logger when package loads
+func init() {
+	Logger = NewLogger()
+}
+
 func NewLogger() MyLogger {
 	// create output configuration
 	output := zerolog.ConsoleWriter{Out: os.Stdout, TimeFormat: time.RFC3339}
@@ -29,15 +34,13 @@ func NewLogger() MyLogger {
 	output.FormatFieldValue = func(i interface{}) string {
 		return fmt.Sprintf("%s", i)
 	}
-
-	// format error
 	output.FormatErrFieldName = func(i interface{}) string {
 		return fmt.Sprintf("%s: ", i)
 	}
 
 	zerolog := zerolog.New(output).With().Caller().Timestamp().Logger()
-	Logger = MyLogger{zerolog}
-	return Logger
+
+	return MyLogger{zerolog}
 }
 
 func (l *MyLogger) LogInfo() *zerolog.Event {

@@ -14,9 +14,9 @@ import {
 } from '@backpack';
 
 const Analysis = () => {
-	const idTypes = useUserStore((state) => state.idTypes);
 	const updateIdTypes = useUserStore((state) => state.updateIdTypes);
 	const userId = useUserStore((state) => state.userId);
+	const getIdTypesArray = useUserStore((state) => state.getIdTypesArray)
 
 	const [slider, setSlider] = useState(24);
 	const [tableSize, setTableSize] = useState<any>(null);
@@ -27,14 +27,14 @@ const Analysis = () => {
 	const [trends, setTrends] = useState<any>(null);
 	const [errorRates, setErrorRates] = useState<any>(null);
 
-	const fetchIdAnalytics = async (id: string, hour: number) => {
+	const fetchIdAnalytics = async () => {
 		try {
 			// Fetch all in parallel
 			const [detailsRes, percentilesRes, trendRes, errorRateRes] = await Promise.all([
-				fetch(`/api/analytics/details/${id}`),
-				fetch(`/api/analytics/percentiles/${id}?hours=${hour}`),
-				fetch(`/api/analytics/trend/${id}?hours=${hour}`),
-				fetch(`/api/analytics/errors/${id}`)
+				fetch(`/api/analytics/details/${userId}`),
+				fetch(`/api/analytics/percentiles/${userId}?hours=${slider}`),
+				fetch(`/api/analytics/trend/${userId}`),
+				fetch(`/api/analytics/errors/${userId}`)
 			]).then(responses => Promise.all(responses.map(res => {
 				if (!res.ok) {
 					throw new Error(`Failed to fetch: ${res.url}`);
@@ -44,20 +44,18 @@ const Analysis = () => {
 
 			const chartData = transformPercentileData(percentilesRes);
 
-			// setTimeSeries(timeSeriesRes);
 			setPercentiles(chartData);
 			setDetails(detailsRes);
 			setTrends(trendRes);
 			setErrorRates(errorRateRes);
-
-			updateIdTypes(id);
 		} catch (error) {
 			console.error('Failed to fetch analytics:', error);
 		}
 	};
 
-	const onClick = (idType: string) => {
-		fetchIdAnalytics(idType, slider);
+	const onIdButtonClick = (idType: string) => {
+		updateIdTypes(idType);
+		fetchIdAnalytics();
 	}
 
 	const onChangeSlider = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -277,10 +275,10 @@ const Analysis = () => {
 						Select an ID type to view detailed performance metrics
 					</p>
 					<div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-						{idTypes.map((idType, idx) => (
+						{getIdTypesArray((key, idType, idx) => (
 							<button
-								key={idType.value}
-								onClick={() => fetchIdAnalytics(idType.analytics, slider)}
+								key={key}
+								onClick={() => onIdButtonClick(idType.value)}
 								className="group relative overflow-hidden text-white p-4 rounded-lg shadow-md hover:shadow-xl hover:from-blue-600 hover:to-blue-700 transition-all duration-200 transform hover:scale-105"
 								style={{ backgroundColor: DEFAULT_COLORS[idx % DEFAULT_COLORS.length] }}
 							>

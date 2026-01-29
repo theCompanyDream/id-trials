@@ -31,7 +31,6 @@ func NewEchoServer(db *gorm.DB) *echo.Echo {
 
 	server.HTTPErrorHandler = appMiddleware.HttpErrorHandler
 	metricsMiddleware := appMiddleware.NewMetricsMiddleware(db)
-	appMiddleware.NewLogger()
 
 	analyticsController := NewAnalyticsController(db)
 	ulidController := NewUlidController(db)
@@ -110,7 +109,6 @@ func NewServerlessEchoServer(db *gorm.DB) *echo.Echo {
 
 	server.HTTPErrorHandler = appMiddleware.HttpErrorHandler
 	metricsMiddleware := appMiddleware.NewMetricsMiddleware(db)
-	appMiddleware.NewLogger()
 
 	analyticsController := NewAnalyticsController(db)
 	ulidController := NewUlidController(db)

@@ -1,7 +1,7 @@
 import { useUserStore } from '@backpack';
 
 export default function About() {
-  const idTypes = useUserStore((state) => state.idTypes)
+  const getIdTypesArray = useUserStore((state) => state.getIdTypesArray)
   return (
     <main className="min-h-screen px-6 py-16 mx-auto max-w-4xl">
       <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-6">
@@ -41,8 +41,8 @@ export default function About() {
         <div className="rounded-2xl bg-slate-900/60 p-6 shadow-lg">
           <h2 className="text-xl font-semibold mb-2">What’s Being Tested</h2>
           <ul className="list-disc list-inside space-y-1">
-            {idTypes.map((idType) => (
-              <li key={idType.value}>{idType.name}</li>
+            {getIdTypesArray((key, idType, idx) => (
+              <li key={key}>{idType.name}</li>
             ))}
           </ul>
         </div>
