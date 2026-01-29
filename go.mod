@@ -6,7 +6,7 @@ toolchain go1.24.4
 
 require (
 	github.com/labstack/echo/v4 v4.15.0
-	github.com/theCompanyDream/id-trials/apps/backend v0.3.6
+	github.com/theCompanyDream/id-trials/apps/backend v0.3.7
 	gorm.io/gorm v1.31.1
 )
 
