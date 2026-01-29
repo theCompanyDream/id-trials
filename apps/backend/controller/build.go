@@ -44,7 +44,6 @@ func NewEchoServer(db *gorm.DB) *echo.Echo {
 	server.Use(appMiddleware.LoggingMiddleware)
 	server.Use(middleware.Recover())
 	server.Use(middleware.RequestID())
-	server.Use(middleware.RequestLogger()) // Add request logging for security auditing
 	server.Use(middleware.Gzip())
 	server.Use(middleware.BodyLimit("20k"))
 	server.Use(middleware.RateLimiter(middleware.NewRateLimiterMemoryStore(rate.Limit(10))))
@@ -107,7 +106,6 @@ func NewEchoServer(db *gorm.DB) *echo.Echo {
 func NewServerlessEchoServer(db *gorm.DB) *echo.Echo {
 	server := echo.New()
 
-	server.HTTPErrorHandler = appMiddleware.HttpErrorHandler
 	metricsMiddleware := appMiddleware.NewMetricsMiddleware(db)
 
 	analyticsController := NewAnalyticsController(db)
@@ -119,10 +117,9 @@ func NewServerlessEchoServer(db *gorm.DB) *echo.Echo {
 	snowController := NewSnowCuidController(db)
 
 	// Middleware
-	server.Use(appMiddleware.LoggingMiddleware)
 	server.Use(middleware.Recover())
 	server.Use(middleware.RequestID())
-	server.Use(middleware.RequestLogger()) // Add request logging for security auditing
+	server.Use(middleware.RequestLogger())
 	server.Use(middleware.Gzip())
 	server.Use(middleware.BodyLimit("20k"))
 	server.Use(middleware.RateLimiter(middleware.NewRateLimiterMemoryStore(rate.Limit(10))))
